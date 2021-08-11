@@ -1,12 +1,15 @@
-## 一、如何使用
+## 一、功能介绍及如何使用
+### 1、功能简介
+该模块是基于spring-boot-starter-data-redis（spring-boot-starter-parent版本2.4.8），并且对spring-boot-starter-data-redis模块部分功能增强，
+提供动态切换redis db功能，以及一些Redis操作常用帮助器。
 
-### 1、下载源码打包到自己的maven仓库
+### 2、下载源码打包到自己的maven仓库
 
 mvn clean install
 
 ![](images/动态切换redis-db打包.png)
 
-### 2、pom中引入该项目依赖
+### 3、pom中引入该项目依赖
 
 ```xml
 <dependency>
@@ -31,7 +34,7 @@ mvn clean install
 -->
 ```
 
-### 3、application.yml配置文件中开启动态切换redis db
+### 4、application.yml配置文件中开启动态切换redis db
 
 ```yml
 spring:
@@ -66,7 +69,7 @@ stone:
     dynamic-database: true
 ```
 
-### 4、使用
+### 5、使用
 
 在RedisHelper对Redis的常用操作做了封装，如果是使用的常见方法，则直接调用RedisHelper中的相关方法即可，使用上非常的方便。
 
