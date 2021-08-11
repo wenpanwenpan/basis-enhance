@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.basis.enhance.helper.RedisHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.redis.core.BoundListOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,8 +31,6 @@ public class TestEnhanceDataRedisController {
         redisHelper.setCurrentDatabase(2);
         // 默认写到1号库
         stringRedisTemplate.opsForValue().set("test-wenpan", "112233");
-        BoundListOperations<String, String> boundKey = stringRedisTemplate.boundListOps("bound-key");
-        boundKey.leftPop();
         // 写到2号库
         redisHelper.strSet("dynamic-key-test-1", "value-1");
         // 写到2号库

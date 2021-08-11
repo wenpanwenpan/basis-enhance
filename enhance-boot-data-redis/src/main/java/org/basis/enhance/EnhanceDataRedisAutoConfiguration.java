@@ -41,6 +41,7 @@ public class EnhanceDataRedisAutoConfiguration {
      * RedisConnectionFactory由对应的spring-boot-autoconfigure自动配置到容器
      */
     @Bean
+    @ConditionalOnMissingBean(RedisTemplate.class)
     public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory redisConnectionFactory) {
         RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
         buildRedisTemplate(redisTemplate, redisConnectionFactory);
@@ -51,6 +52,7 @@ public class EnhanceDataRedisAutoConfiguration {
      * 注入StringRedisTemplate，key-value序列化器都使用String序列化器
      */
     @Bean
+    @ConditionalOnMissingBean(StringRedisTemplate.class)
     public StringRedisTemplate stringRedisTemplate(RedisConnectionFactory redisConnectionFactory) {
         StringRedisTemplate redisTemplate = new StringRedisTemplate();
         buildRedisTemplate(redisTemplate, redisConnectionFactory);

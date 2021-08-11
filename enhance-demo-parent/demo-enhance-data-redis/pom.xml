@@ -33,12 +33,12 @@
             <groupId>org.basis.enhance</groupId>
             <artifactId>enhance-boot-data-redis</artifactId>
             <!-- 排除lettuce依赖，data-redis默认选择lettuce -->
-            <!--            <exclusions>-->
-            <!--                <exclusion>-->
-            <!--                    <groupId>io.lettuce</groupId>-->
-            <!--                    <artifactId>lettuce-core</artifactId>-->
-            <!--                </exclusion>-->
-            <!--            </exclusions>-->
+            <!--                        <exclusions>-->
+            <!--                            <exclusion>-->
+            <!--                                <groupId>io.lettuce</groupId>-->
+            <!--                                <artifactId>lettuce-core</artifactId>-->
+            <!--                            </exclusion>-->
+            <!--                        </exclusions>-->
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <!-- 使用jedis客户端时需要引入Jedis客户端依赖，并排除lettuce依赖 -->
