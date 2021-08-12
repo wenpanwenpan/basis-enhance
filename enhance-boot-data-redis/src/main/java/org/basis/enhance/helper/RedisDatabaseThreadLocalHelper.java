@@ -29,7 +29,6 @@ public class RedisDatabaseThreadLocalHelper {
         }
         deque.addFirst(db);
         THREAD_DB.set(deque);
-        // 记录
     }
 
     /**

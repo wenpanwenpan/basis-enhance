@@ -73,14 +73,14 @@ stone:
 
 在RedisHelper对Redis的常用操作做了封装，如果是使用的常见方法，则直接调用RedisHelper中的相关方法即可，使用上非常的方便。
 
-#### ①、使用封装的方法切换db
+#### ①、使用redisHelper封装的api操作指定db
 
 ```java
 @Slf4j
 @RestController("TestEncryptController.v1")
 @RequestMapping("/v1/test-enhance-redis")
 public class TestEnhanceDataRedisController {
-    // 注入
+
     @Autowired
     @Qualifier("redisHelper")
     private RedisHelper redisHelper;
@@ -96,7 +96,7 @@ public class TestEnhanceDataRedisController {
 }
 ```
 
-#### ②、使用原生的RedisTemplate切换db
+#### ②、使用原生的RedisTemplate的api操作指定db
 
 如果提供的RedisHelper的封装方法中没有你想要使用的方法，你想要调用原生的redisTemplate的方法，并且实现自定义db写入，那么怎么办呢？直接调用`redisHelper.getRedisTemplate()`即可获取RedisTemplate，然后进行操作即可。
 
@@ -105,7 +105,7 @@ public class TestEnhanceDataRedisController {
 @RestController("TestEncryptController.v1")
 @RequestMapping("/v1/test-enhance-redis")
 public class TestEnhanceDataRedisController {
-    // 注入
+
     @Autowired
     @Qualifier("redisHelper")
     private RedisHelper redisHelper;
@@ -121,6 +121,59 @@ public class TestEnhanceDataRedisController {
     }
 }
 ```
+
+#### ③、更简单的使用
+
+上面的使用可能你觉得有点麻烦，每次都要手动的去set db 和清除db，那么能不能省去这两部操作更简单的使用呢？可以的，直接通过提供的`EasyRedisHelper`来操作即可，`EasyRedisHelper`提供多种便捷使用的方式，这里以一种举例。
+
+##### 1、指定操作db，使用redisHelper封装的api
+
+```java
+@Slf4j
+@RestController("TestEncryptController.v1")
+@RequestMapping("/v1/test-enhance-redis")
+public class TestEnhanceDataRedisController {
+
+    @Autowired
+    @Qualifier("redisHelper")
+    private RedisHelper redisHelper;
+    
+    @GetMapping("/test-")
+    public void testChangeDb6() {
+        // 指定操作库，不带返回值的操作，使用redisHelper封装的api
+        EasyRedisHelper.execute(2, () -> redisHelper.lstLeftPush("key", "value"));
+        // 指定操作库，带返回值的操作，使用redisHelper封装的api
+        String result = EasyRedisHelper.executeWithResult(2, () -> redisHelper.strGet("dynamic-key-test-2"));
+    }
+}
+```
+
+##### 2、指定操作db，使用redisTemplate原生的api
+
+```java
+@Slf4j
+@RestController("TestEncryptController.v1")
+@RequestMapping("/v1/test-enhance-redis")
+public class TestEnhanceDataRedisController {
+
+    @Autowired
+    @Qualifier("redisHelper")
+    private RedisHelper redisHelper;
+    
+    @GetMapping("/test-7")
+    public void testChangeDb7() {
+      	// 指定操作库，不带返回值的操作，使用redisTemplate原生api
+        EasyRedisHelper.execute(1, (redisTemplate) -> redisTemplate.opsForList().leftPush("key", "value"));
+        // 指定操作库，带返回值的操作，使用redisTemplate原生api
+        String result = EasyRedisHelper.executeWithResult(1, 
+                     (redisTemplate) -> redisTemplate.opsForList().leftPop("queue"));
+    }
+}
+```
+
+#### ④、其他使用
+
+该增强组件中提供了其他的对redis的相关操作的工具类封装，可参考源代码自由使用！
 
 ## 二、特点分析
 
@@ -181,10 +234,7 @@ public class TestEnhanceDataRedisController {
 
 ## 四、核心源代码介绍
 
-待后面补上！！！
-
-
-
+[java实现redis动态切换db](https://blog.csdn.net/Hellowenpan/article/details/119643657)
 
 
 

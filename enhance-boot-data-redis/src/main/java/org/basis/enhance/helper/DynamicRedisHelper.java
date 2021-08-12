@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.lang.NonNull;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -20,6 +21,9 @@ public class DynamicRedisHelper extends RedisHelper {
 
     private static final Logger logger = LoggerFactory.getLogger(DynamicRedisHelper.class);
 
+    /**
+     * 动态redisTemplate
+     */
     private final DynamicRedisTemplate<String, String> redisTemplate;
 
     /**
@@ -153,10 +157,7 @@ public class DynamicRedisHelper extends RedisHelper {
      */
     @Override
     public void delKeys(Collection<String> keys) {
-        Set<String> hs = new HashSet<>();
-        for (String key : keys) {
-            hs.add(key);
-        }
+        Set<String> hs = new HashSet<>(keys);
         redisTemplate.delete(hs);
     }
 
@@ -617,11 +618,12 @@ public class DynamicRedisHelper extends RedisHelper {
      * 获取hash对象中的对象序列字符
      */
     @Override
-    public byte[] hshGetSerial(String key, String hashKey) {
+    public byte[] hshGetSerial(@NonNull String key, String hashKey) {
         RedisSerializer<String> redisSerializer = redisTemplate.getStringSerializer();
         return redisTemplate.execute((RedisCallback<byte[]>) connection -> {
             try {
-                return connection.hGet(redisSerializer.serialize(key), redisSerializer.serialize(hashKey));
+                return connection.hGet(Objects.requireNonNull(redisSerializer.serialize(key)),
+                        Objects.requireNonNull(redisSerializer.serialize(hashKey)));
             } catch (Exception e) {
                 logger.error("获取HASH对象序列失败", e);
             }
@@ -633,12 +635,12 @@ public class DynamicRedisHelper extends RedisHelper {
      * 插入hash对象序列值
      */
     @Override
-    public Boolean hshPutSerial(String key, String hashKey, byte[] value) {
+    public Boolean hshPutSerial(@NonNull String key, String hashKey, byte[] value) {
         RedisSerializer<String> redisSerializer = redisTemplate.getStringSerializer();
         return redisTemplate.execute((RedisCallback<Boolean>) connection -> {
             try {
-                return connection.hSet(redisSerializer.serialize(key), redisSerializer.serialize(hashKey),
-                        value);
+                return connection.hSet(Objects.requireNonNull(redisSerializer.serialize(key)),
+                        Objects.requireNonNull(redisSerializer.serialize(hashKey)), value);
             } catch (Exception e) {
                 logger.error("插入HASH对象序列失败", e);
             }
