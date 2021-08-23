@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -90,6 +91,26 @@ public class RedisHelper implements InitializingBean {
         return redisTemplate;
     }
 
+    protected ValueOperations<String, String> getValueOperations() {
+        return valueOpr;
+    }
+
+    protected HashOperations<String, String, String> getHashOperations() {
+        return hashOpr;
+    }
+
+    protected ListOperations<String, String> getListOperations() {
+        return listOpr;
+    }
+
+    protected SetOperations<String, String> getSetOperations() {
+        return setOpr;
+    }
+
+    protected ZSetOperations<String, String> getZSetOperations() {
+        return zSetOpr;
+    }
+
     /**
      * 设置当前线程操作 redis database，同一个线程内操作多次redis，不同database，
      * 需要调用 {@link RedisHelper#clearCurrentDatabase()} 清除当前线程redis database，从而使用默认的db.
@@ -105,6 +126,19 @@ public class RedisHelper implements InitializingBean {
      */
     public void clearCurrentDatabase() {
         logger.warn("Use default RedisHelper, you'd better use a DynamicRedisHelper instead.");
+    }
+
+    /**
+     * 将 Lua 脚本封装到 RedisScript 中执行
+     *
+     * @param redisScript Lua 脚本
+     * @param keys        脚本中对应的key，可以用 KEYS[1]、KEYS[2]... 获取
+     * @param args        脚本中用到的参数，可以用 ARGV[1]、ARGV[2]... 获取
+     * @param <T>         返回类型
+     * @return T
+     */
+    public <T> T executeScript(RedisScript<T> redisScript, List<String> keys, List<Object> args) {
+        return getRedisTemplate().execute(redisScript, keys, args.toArray());
     }
 
     // =======================================以下是基于redisTemplate封装的redis操作===================================
@@ -219,7 +253,7 @@ public class RedisHelper implements InitializingBean {
      * @param expire 过期时间
      */
     public void strSet(String key, String value, long expire, TimeUnit timeUnit) {
-        valueOpr.set(key, value);
+        getValueOperations().set(key, value);
         if (expire != NOT_EXPIRE) {
             setExpire(key, expire, timeUnit == null ? TimeUnit.SECONDS : timeUnit);
         }
@@ -232,7 +266,7 @@ public class RedisHelper implements InitializingBean {
      * @param value value
      */
     public void strSet(String key, String value) {
-        valueOpr.set(key, value);
+        getValueOperations().set(key, value);
     }
 
     /**
@@ -241,7 +275,7 @@ public class RedisHelper implements InitializingBean {
      * @param key key
      */
     public String strGet(String key) {
-        return valueOpr.get(key);
+        return getValueOperations().get(key);
     }
 
     /**
@@ -251,7 +285,7 @@ public class RedisHelper implements InitializingBean {
      * @param expire 过期时间
      */
     public String strGet(String key, long expire, TimeUnit timeUnit) {
-        String value = valueOpr.get(key);
+        String value = getValueOperations().get(key);
         if (expire != NOT_EXPIRE) {
             setExpire(key, expire, timeUnit == null ? TimeUnit.SECONDS : timeUnit);
         }
@@ -265,7 +299,7 @@ public class RedisHelper implements InitializingBean {
      * @param clazz 待转换的类Class
      */
     public <T> T strGet(String key, Class<T> clazz) {
-        String value = valueOpr.get(key);
+        String value = getValueOperations().get(key);
         return value == null ? null : fromJson(value, clazz);
     }
 
@@ -277,7 +311,7 @@ public class RedisHelper implements InitializingBean {
      * @param expire 过期时间
      */
     public <T> T strGet(String key, Class<T> clazz, long expire, TimeUnit timeUnit) {
-        String value = valueOpr.get(key);
+        String value = getValueOperations().get(key);
         if (expire != NOT_EXPIRE) {
             setExpire(key, expire, timeUnit == null ? TimeUnit.SECONDS : timeUnit);
         }
@@ -292,7 +326,7 @@ public class RedisHelper implements InitializingBean {
      * @param end   结束的位置
      */
     public String strGet(String key, Long start, Long end) {
-        return valueOpr.get(key, start, end);
+        return getValueOperations().get(key, start, end);
     }
 
     /**
@@ -302,7 +336,7 @@ public class RedisHelper implements InitializingBean {
      * @param value value
      */
     public Boolean strSetIfAbsent(String key, String value) {
-        return valueOpr.setIfAbsent(key, value);
+        return getValueOperations().setIfAbsent(key, value);
     }
 
     /**
@@ -312,7 +346,7 @@ public class RedisHelper implements InitializingBean {
      * @param delta delta
      */
     public Long strIncrement(String key, Long delta) {
-        return valueOpr.increment(key, delta);
+        return getValueOperations().increment(key, delta);
     }
 
     /**
@@ -322,7 +356,7 @@ public class RedisHelper implements InitializingBean {
      * @param value value
      */
     public Long lstLeftPush(String key, String value) {
-        return listOpr.leftPush(key, value);
+        return getListOperations().leftPush(key, value);
     }
 
     /**
@@ -332,7 +366,7 @@ public class RedisHelper implements InitializingBean {
      * @param values Collection集合
      */
     public Long lstLeftPushAll(String key, Collection<String> values) {
-        return listOpr.leftPushAll(key, values);
+        return getListOperations().leftPushAll(key, values);
     }
 
     /**
@@ -342,7 +376,7 @@ public class RedisHelper implements InitializingBean {
      * @param value value
      */
     public Long lstRightPush(String key, String value) {
-        return listOpr.rightPush(key, value);
+        return getListOperations().rightPush(key, value);
     }
 
     /**
@@ -352,7 +386,7 @@ public class RedisHelper implements InitializingBean {
      * @param values Collection集合
      */
     public Long lstRightPushAll(String key, Collection<String> values) {
-        return listOpr.rightPushAll(key, values);
+        return getListOperations().rightPushAll(key, values);
     }
 
     /**
@@ -363,7 +397,7 @@ public class RedisHelper implements InitializingBean {
      * @param end   结束位置
      */
     public List<String> lstRange(String key, long start, long end) {
-        return listOpr.range(key, start, end);
+        return getListOperations().range(key, start, end);
     }
 
     /**
@@ -381,7 +415,7 @@ public class RedisHelper implements InitializingBean {
      * @param key key
      */
     public String lstLeftPop(String key) {
-        return listOpr.leftPop(key);
+        return getListOperations().leftPop(key);
     }
 
     /**
@@ -390,7 +424,7 @@ public class RedisHelper implements InitializingBean {
      * @param key key
      */
     public String lstRightPop(String key) {
-        return listOpr.rightPop(key);
+        return getListOperations().rightPop(key);
     }
 
     /**
@@ -400,7 +434,7 @@ public class RedisHelper implements InitializingBean {
      * @param timeout 等待超时时间
      */
     public String lstLeftPop(String key, long timeout, TimeUnit timeUnit) {
-        return listOpr.leftPop(key, timeout, timeUnit);
+        return getListOperations().leftPop(key, timeout, timeUnit);
     }
 
     /**
@@ -410,7 +444,7 @@ public class RedisHelper implements InitializingBean {
      * @param timeout 等待超时时间
      */
     public String lstRightPop(String key, long timeout, TimeUnit timeUnit) {
-        return listOpr.rightPop(key, timeout, timeUnit);
+        return getListOperations().rightPop(key, timeout, timeUnit);
     }
 
     /**
@@ -419,7 +453,7 @@ public class RedisHelper implements InitializingBean {
      * @param key key
      */
     public Long lstLen(String key) {
-        return listOpr.size(key);
+        return getListOperations().size(key);
     }
 
     /**
@@ -430,7 +464,7 @@ public class RedisHelper implements InitializingBean {
      * @param value value
      */
     public void lstSet(String key, long index, String value) {
-        listOpr.set(key, index, value);
+        getListOperations().set(key, index, value);
     }
 
     /**
@@ -442,7 +476,7 @@ public class RedisHelper implements InitializingBean {
      * @param value value
      */
     public Long lstRemove(String key, long index, String value) {
-        return listOpr.remove(key, index, value);
+        return getListOperations().remove(key, index, value);
     }
 
     /**
@@ -452,7 +486,7 @@ public class RedisHelper implements InitializingBean {
      * @param index index
      */
     public Object lstIndex(String key, long index) {
-        return listOpr.index(key, index);
+        return getListOperations().index(key, index);
     }
 
     /**
@@ -463,7 +497,7 @@ public class RedisHelper implements InitializingBean {
      * @param end   结束位置
      */
     public void lstTrim(String key, long start, long end) {
-        listOpr.trim(key, start, end);
+        getListOperations().trim(key, start, end);
     }
 
     /**
@@ -473,7 +507,7 @@ public class RedisHelper implements InitializingBean {
      * @param values values
      */
     public Long setAdd(String key, String[] values) {
-        return setOpr.add(key, values);
+        return getSetOperations().add(key, values);
     }
 
     /**
@@ -483,7 +517,7 @@ public class RedisHelper implements InitializingBean {
      * @param values values
      */
     public Long setIrt(String key, String... values) {
-        return setOpr.add(key, values);
+        return getSetOperations().add(key, values);
     }
 
     /**
@@ -492,7 +526,7 @@ public class RedisHelper implements InitializingBean {
      * @param key key
      */
     public Set<String> setMembers(String key) {
-        return setOpr.members(key);
+        return getSetOperations().members(key);
     }
 
     /**
@@ -501,7 +535,7 @@ public class RedisHelper implements InitializingBean {
      * @param key key
      */
     public Boolean setIsmember(String key, String o) {
-        return setOpr.isMember(key, o);
+        return getSetOperations().isMember(key, o);
     }
 
     /**
@@ -510,7 +544,7 @@ public class RedisHelper implements InitializingBean {
      * @param key key
      */
     public Long setSize(String key) {
-        return setOpr.size(key);
+        return getSetOperations().size(key);
     }
 
     /**
@@ -520,7 +554,7 @@ public class RedisHelper implements InitializingBean {
      * @param otherKey otherKey
      */
     public Set<String> setIntersect(String key, String otherKey) {
-        return setOpr.intersect(key, otherKey);
+        return getSetOperations().intersect(key, otherKey);
     }
 
     /**
@@ -530,7 +564,7 @@ public class RedisHelper implements InitializingBean {
      * @param otherKey otherKey
      */
     public Set<String> setUnion(String key, String otherKey) {
-        return setOpr.union(key, otherKey);
+        return getSetOperations().union(key, otherKey);
     }
 
     /**
@@ -540,7 +574,7 @@ public class RedisHelper implements InitializingBean {
      * @param otherKeys otherKey
      */
     public Set<String> setUnion(String key, Collection<String> otherKeys) {
-        return setOpr.union(key, otherKeys);
+        return getSetOperations().union(key, otherKeys);
     }
 
     /**
@@ -550,7 +584,7 @@ public class RedisHelper implements InitializingBean {
      * @param otherKey otherKey
      */
     public Set<String> setDifference(String key, String otherKey) {
-        return setOpr.difference(key, otherKey);
+        return getSetOperations().difference(key, otherKey);
     }
 
     /**
@@ -560,7 +594,7 @@ public class RedisHelper implements InitializingBean {
      * @param otherKeys otherKeys
      */
     public Set<String> setDifference(String key, Collection<String> otherKeys) {
-        return setOpr.difference(key, otherKeys);
+        return getSetOperations().difference(key, otherKeys);
     }
 
     /**
@@ -570,7 +604,7 @@ public class RedisHelper implements InitializingBean {
      * @param value value
      */
     public Long setDel(String key, String value) {
-        return setOpr.remove(key, value);
+        return getSetOperations().remove(key, value);
     }
 
     /**
@@ -580,7 +614,7 @@ public class RedisHelper implements InitializingBean {
      * @param value value
      */
     public Long setRemove(String key, Object[] value) {
-        return setOpr.remove(key, value);
+        return getSetOperations().remove(key, value);
     }
 
     /**
@@ -592,56 +626,56 @@ public class RedisHelper implements InitializingBean {
      * @param score 得分
      */
     public Boolean zSetAdd(String key, String value, double score) {
-        return zSetOpr.add(key, value, score);
+        return getZSetOperations().add(key, value, score);
     }
 
     /**
      * ZSet 返回有序集合中，指定元素的分值
      */
     public Double zSetScore(String key, String value) {
-        return zSetOpr.score(key, value);
+        return getZSetOperations().score(key, value);
     }
 
     /**
      * ZSet 为有序集合指定元素的分值加上增量increment，命令返回执行操作之后，元素的分值 可以通过将 increment设置为负数来减少分值
      */
     public Double zSetIncrementScore(String key, String value, double delta) {
-        return zSetOpr.incrementScore(key, value, delta);
+        return getZSetOperations().incrementScore(key, value, delta);
     }
 
     /**
      * ZSet 返回指定元素在有序集合中的排名，其中排名按照元素的分值从小到大计算。排名以 0 开始
      */
     public Long zSetRank(String key, String value) {
-        return zSetOpr.rank(key, value);
+        return getZSetOperations().rank(key, value);
     }
 
     /**
      * ZSet 返回成员在有序集合中的逆序排名，其中排名按照元素的分值从大到小计算
      */
     public Long zSetReverseRank(String key, String value) {
-        return zSetOpr.reverseRank(key, value);
+        return getZSetOperations().reverseRank(key, value);
     }
 
     /**
      * ZSet 返回有序集合的基数
      */
     public Long zSetSize(String key) {
-        return zSetOpr.size(key);
+        return getZSetOperations().size(key);
     }
 
     /**
      * ZSet 删除数据
      */
     public Long zSetRemove(String key, String value) {
-        return zSetOpr.remove(key, value);
+        return getZSetOperations().remove(key, value);
     }
 
     /**
      * ZSet 根据score区间删除数据
      */
     public Long zSetRemoveByScore(String key, double min, double max) {
-        return zSetOpr.removeRangeByScore(key, min, max);
+        return getZSetOperations().removeRangeByScore(key, min, max);
     }
 
 
@@ -650,28 +684,28 @@ public class RedisHelper implements InitializingBean {
      * )排列。
      */
     public Set<String> zSetRange(String key, Long start, Long end) {
-        return zSetOpr.range(key, start, end);
+        return getZSetOperations().range(key, start, end);
     }
 
     /**
      * ZSet
      */
     public Set<String> zSetReverseRange(String key, Long start, Long end) {
-        return zSetOpr.reverseRange(key, start, end);
+        return getZSetOperations().reverseRange(key, start, end);
     }
 
     /**
      * ZSet 返回有序集合在按照分值升序排列元素的情况下，分值在 min 和 max范围之内的所有元素
      */
     public Set<String> zSetRangeByScore(String key, Double min, Double max) {
-        return zSetOpr.rangeByScore(key, min, max);
+        return getZSetOperations().rangeByScore(key, min, max);
     }
 
     /**
      * ZSet 返回有序集合在按照分值降序排列元素的情况下，分值在 min 和 max范围之内的所有元素
      */
     public Set<String> zSetReverseRangeByScore(String key, Double min, Double max) {
-        return zSetOpr.reverseRangeByScore(key, min, max);
+        return getZSetOperations().reverseRangeByScore(key, min, max);
     }
 
     /**
@@ -679,21 +713,21 @@ public class RedisHelper implements InitializingBean {
      * )排列。
      */
     public Set<String> zSetRangeByScore(String key, Double min, Double max, Long offset, Long count) {
-        return zSetOpr.rangeByScore(key, min, max, offset, count);
+        return getZSetOperations().rangeByScore(key, min, max, offset, count);
     }
 
     /**
      * 返回有序集中指定分数区间内的所有的成员。有序集成员按分数值递减(从大到小)的次序排列。 具有相同分数值的成员按字典序的逆序(reverse lexicographical order )排列。
      */
     public Set<String> zSetReverseRangeByScore(String key, Double min, Double max, Long offset, Long count) {
-        return zSetOpr.reverseRangeByScore(key, min, max, offset, count);
+        return getZSetOperations().reverseRangeByScore(key, min, max, offset, count);
     }
 
     /**
      * ZSet 返回有序集合在升序排列元素的情况下，分值在 min和 max范围内的元素数量
      */
     public Long zSetCount(String key, Double min, Double max) {
-        return zSetOpr.count(key, min, max);
+        return getZSetOperations().count(key, min, max);
     }
 
     /**
@@ -704,7 +738,7 @@ public class RedisHelper implements InitializingBean {
      * @param value   value
      */
     public void hshPut(String key, String hashKey, String value) {
-        hashOpr.put(key, hashKey, value);
+        getHashOperations().put(key, hashKey, value);
     }
 
     /**
@@ -714,7 +748,7 @@ public class RedisHelper implements InitializingBean {
      * @param map map
      */
     public void hshPutAll(String key, Map<String, String> map) {
-        hashOpr.putAll(key, map);
+        getHashOperations().putAll(key, map);
     }
 
     /**
@@ -762,7 +796,7 @@ public class RedisHelper implements InitializingBean {
      * @param hashKey hashKey
      */
     public String hshGet(String key, String hashKey) {
-        return hashOpr.get(key, hashKey);
+        return getHashOperations().get(key, hashKey);
     }
 
     /**
@@ -772,7 +806,7 @@ public class RedisHelper implements InitializingBean {
      * @param hashKeys hashKeys
      */
     public List<String> hshMultiGet(String key, Collection<String> hashKeys) {
-        return hashOpr.multiGet(key, hashKeys);
+        return getHashOperations().multiGet(key, hashKeys);
     }
 
     /**
@@ -781,7 +815,7 @@ public class RedisHelper implements InitializingBean {
      * @param key key
      */
     public Map<String, String> hshGetAll(String key) {
-        return hashOpr.entries(key);
+        return getHashOperations().entries(key);
     }
 
     /**
@@ -791,7 +825,7 @@ public class RedisHelper implements InitializingBean {
      * @param hashKey hashKey
      */
     public Boolean hshHasKey(String key, String hashKey) {
-        return hashOpr.hasKey(key, hashKey);
+        return getHashOperations().hasKey(key, hashKey);
     }
 
     /**
@@ -800,7 +834,7 @@ public class RedisHelper implements InitializingBean {
      * @param key key
      */
     public Set<String> hshKeys(String key) {
-        return hashOpr.keys(key);
+        return getHashOperations().keys(key);
     }
 
     /**
@@ -809,7 +843,7 @@ public class RedisHelper implements InitializingBean {
      * @param key key
      */
     public List<String> hshVals(String key) {
-        return hashOpr.values(key);
+        return getHashOperations().values(key);
     }
 
     /**
@@ -819,7 +853,7 @@ public class RedisHelper implements InitializingBean {
      * @param hashKeys hashKeys
      */
     public List<String> hshVals(String key, Collection<String> hashKeys) {
-        return hashOpr.multiGet(key, hashKeys);
+        return getHashOperations().multiGet(key, hashKeys);
     }
 
     /**
@@ -828,7 +862,7 @@ public class RedisHelper implements InitializingBean {
      * @param key key
      */
     public Long hshSize(String key) {
-        return hashOpr.size(key);
+        return getHashOperations().size(key);
     }
 
     /**
@@ -838,7 +872,7 @@ public class RedisHelper implements InitializingBean {
      * @param hashKeys hashKeys
      */
     public void hshDelete(String key, Object... hashKeys) {
-        hashOpr.delete(key, hashKeys);
+        getHashOperations().delete(key, hashKeys);
     }
 
     /**
@@ -848,7 +882,7 @@ public class RedisHelper implements InitializingBean {
      * @param hashKeys hashKeys
      */
     public void hshRemove(String key, Object[] hashKeys) {
-        hashOpr.delete(key, hashKeys);
+        getHashOperations().delete(key, hashKeys);
     }
 
     /**

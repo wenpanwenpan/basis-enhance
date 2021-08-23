@@ -17,6 +17,7 @@
     <modules>
         <module>enhance-boot-data-redis</module>
         <module>enhance-demo-parent</module>
+        <module>enhance-boot-mybatis</module>
     </modules>
 
     <properties>
