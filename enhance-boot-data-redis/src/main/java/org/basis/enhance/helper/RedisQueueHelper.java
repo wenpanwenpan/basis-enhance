@@ -9,6 +9,8 @@ import java.util.List;
 
 /**
  * redis队列操作帮助器，基于Redis的消息队列，生产者消费者模式
+ * todo redis官方要求集群模式不支持库的切换，如果生产上的Redis部署模式是集群，这里指定db然后去拉取数据会有问题
+ * 所以这里改用连接Redis时使用的默认db
  *
  * @author Mr_wenpan@163.com 2021/08/10 22:45
  */
@@ -125,6 +127,25 @@ public class RedisQueueHelper {
      */
     public List<String> popAll(boolean isFromLeft, int db, String queue, int max) {
         return popAllCommon(isFromLeft, db, queue, max);
+    }
+
+    /**
+     * 批量获取队列消息(默认Redis db)
+     *
+     * @param key key
+     */
+    public List<String> popAll(String key) {
+        redisHelper.setCurrentDatabase(properties.getQueueDb());
+        List<String> result = new ArrayList<>();
+        while (true) {
+            String str = pop(true, key);
+            if (str == null) {
+                break;
+            }
+            result.add(str);
+        }
+        redisHelper.clearCurrentDatabase();
+        return result;
     }
 
     /**

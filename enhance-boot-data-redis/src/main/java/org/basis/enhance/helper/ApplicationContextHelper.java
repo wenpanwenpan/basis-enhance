@@ -97,12 +97,14 @@ public class ApplicationContextHelper implements ApplicationContextAware {
      * @param targetField 目标字段
      */
     public static void asyncStaticSetter(Class<?> type, Class<?> target, String targetField) {
+
         if (setByField(type, target, targetField)) {
             return;
         }
 
         AtomicInteger counter = new AtomicInteger(0);
         ScheduledExecutorService executorService = new ScheduledThreadPoolExecutor(1, r -> new Thread(r, "sync-setter"));
+
         executorService.scheduleAtFixedRate(() -> {
             boolean success = setByField(type, target, targetField);
             if (success) {
@@ -114,6 +116,7 @@ public class ApplicationContextHelper implements ApplicationContextAware {
                 }
             }
         }, 0, 1, TimeUnit.SECONDS);
+
     }
 
     private static boolean setByMethod(Class<?> type, Object target, String targetMethod) {

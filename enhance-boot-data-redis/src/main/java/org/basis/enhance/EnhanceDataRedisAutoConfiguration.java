@@ -2,6 +2,8 @@ package org.basis.enhance;
 
 import org.basis.enhance.config.DynamicRedisTemplateFactory;
 import org.basis.enhance.config.properties.StoneRedisProperties;
+import org.basis.enhance.handler.AcceptorHandler;
+import org.basis.enhance.helper.ApplicationContextHelper;
 import org.basis.enhance.helper.DynamicRedisHelper;
 import org.basis.enhance.helper.RedisHelper;
 import org.basis.enhance.helper.RedisQueueHelper;
@@ -38,6 +40,17 @@ import java.util.Map;
 @EnableConfigurationProperties({StoneRedisProperties.class})
 @ConditionalOnClass(name = {"org.springframework.data.redis.connection.RedisConnectionFactory"})
 public class EnhanceDataRedisAutoConfiguration {
+
+    @Bean
+    public ApplicationContextHelper applicationContextHelper() {
+        return new ApplicationContextHelper();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public AcceptorHandler handlerInit(RedisQueueHelper redisQueueHelper, StoneRedisProperties redisProperties) {
+        return new AcceptorHandler(redisProperties, redisQueueHelper);
+    }
 
     /**
      * 注入RedisTemplate，key-value都使用string类型
@@ -216,9 +229,9 @@ public class EnhanceDataRedisAutoConfiguration {
         return redisTemplate.opsForZSet();
     }
 
+    @Documented
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(RetentionPolicy.RUNTIME)
-    @Documented
     @Conditional(OnDynamicRedisHelperCondition.class)
     @interface ConditionalOnDynamicRedisHelper {
     }
@@ -228,6 +241,9 @@ public class EnhanceDataRedisAutoConfiguration {
      */
     private static class OnDynamicRedisHelperCondition extends AllNestedConditions {
 
+        /**
+         * 注册bean时生效
+         */
         public OnDynamicRedisHelperCondition() {
             super(ConfigurationPhase.REGISTER_BEAN);
         }
