@@ -4,6 +4,7 @@ spring:
   application:
     name: enhance-data-redis-demo
   redis:
+    # 默认数据源
     host: ${SPRING_REDIS_HOST:wenpan-host}
     port: ${SPRING_REDIS_PORT:6379}
     password: ${SPRING_REDIS_PASSWORD:WenPan@123}
@@ -36,6 +37,20 @@ spring:
         # 当资源池连接用尽后，调用者的最大等待时间(单位为毫秒)
         # 默认 -1 表示永不超时，设置5秒
         max-wait: ${SPRING_REDIS_POOL_MAX_WAIT:5000}
+    datasource:
+      # 第一个数据源
+      source1:
+        host: ${SPRING_REDIS_HOST:wenpan-host}
+        port: ${SPRING_REDIS_PORT:6379}
+        password: ${SPRING_REDIS_PASSWORD:WenPan@123}
+        database: ${SPRING_REDIS_DATABASE:2}
+      # 第二个数据源
+      source2:
+        host: ${SPRING_REDIS_HOST:wenpan-host}
+        port: ${SPRING_REDIS_PORT:6379}
+        password: ${SPRING_REDIS_PASSWORD:WenPan@123}
+        database: ${SPRING_REDIS_DATABASE:3}
+
 stone:
   redis:
     dynamic-database: true

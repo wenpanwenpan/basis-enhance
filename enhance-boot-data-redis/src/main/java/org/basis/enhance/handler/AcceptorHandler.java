@@ -72,6 +72,7 @@ public class AcceptorHandler implements CommandLineRunner {
         if (CollectionUtils.isEmpty(keys)) {
             return;
         }
+        // 通过订阅的队列名称获取到该队列对应的线程池，使用对应的线程池执行消息扫描
         keys.forEach(key -> HandlerRepository.getThreadPool(key).execute(new Consumer(key, redisQueueHelper)));
     }
 
@@ -87,11 +88,11 @@ public class AcceptorHandler implements CommandLineRunner {
                 QueueHandler queueHandler = ProxyUtils.getUserClass(service).getAnnotation(QueueHandler.class);
                 if (ObjectUtils.isEmpty(queueHandler)) {
                     LOGGER.debug("could not get target bean , queueHandler : {}", service);
-                } else {
-                    HandlerRepository.addHandler(queueHandler.value(), service);
-                    LOGGER.info("Start listening to the redis queue : {}", queueHandler.value());
-                    flag = true;
+                    continue;
                 }
+                HandlerRepository.addHandler(queueHandler.value(), service);
+                LOGGER.info("Start listening to the redis queue : {}", queueHandler.value());
+                flag = true;
             }
         }
         return flag;

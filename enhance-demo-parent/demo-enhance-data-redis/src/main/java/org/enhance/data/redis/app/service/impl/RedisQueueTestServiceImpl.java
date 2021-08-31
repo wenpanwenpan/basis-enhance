@@ -5,8 +5,6 @@ import org.basis.enhance.handler.IQueueHandler;
 import org.basis.enhance.handler.QueueHandler;
 import org.enhance.data.redis.app.service.RedisQueueTestService;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * redis队列测试service实现
  *
@@ -19,13 +17,6 @@ public class RedisQueueTestServiceImpl implements RedisQueueTestService, IQueueH
     @Override
     public void handle(String message) {
         log.info("message = {}, 回调handle方法.....", message);
-        while (true) {
-            System.out.println("我还在...");
-            try {
-                TimeUnit.SECONDS.sleep(4);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        // do something.....
     }
 }

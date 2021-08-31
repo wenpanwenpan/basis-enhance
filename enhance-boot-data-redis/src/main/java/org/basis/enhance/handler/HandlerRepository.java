@@ -23,6 +23,9 @@ public class HandlerRepository {
      */
     private static final Map<String, ThreadPoolExecutor> THREAD_MAP = new ConcurrentHashMap<>();
 
+    /**
+     * 享元模式
+     */
     public static void addHandler(String key, Object handler) {
         if (HANDLER_MAP.containsKey(key)) {
             // 相同的key有两个实现，保留批量的

@@ -2,7 +2,6 @@ package org.basis.enhance.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.data.redis.JedisClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
@@ -12,6 +11,8 @@ import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.util.Assert;
+
+import java.util.List;
 
 /**
  * 动态 RedisTemplate 工厂类，用于创建和管理RedisTemplate
@@ -36,19 +37,19 @@ public class DynamicRedisTemplateFactory<K, V> {
     /**
      * redis 哨兵配置
      */
-    private final ObjectProvider<RedisSentinelConfiguration> sentinelConfiguration;
+    private final RedisSentinelConfiguration sentinelConfiguration;
     /**
      * redis 集群配置
      */
-    private final ObjectProvider<RedisClusterConfiguration> clusterConfiguration;
+    private final RedisClusterConfiguration clusterConfiguration;
     /**
      * jedis配置定制
      */
-    private final ObjectProvider<JedisClientConfigurationBuilderCustomizer> jedisBuilderCustomizers;
+    private final List<JedisClientConfigurationBuilderCustomizer> jedisBuilderCustomizers;
     /**
      * lettuce配置定制
      */
-    private final ObjectProvider<LettuceClientConfigurationBuilderCustomizer> lettuceBuilderCustomizers;
+    private final List<LettuceClientConfigurationBuilderCustomizer> lettuceBuilderCustomizers;
 
     private static final String REDIS_CLIENT_LETTUCE = "lettuce";
     private static final String REDIS_CLIENT_JEDIS = "jedis";
@@ -58,10 +59,10 @@ public class DynamicRedisTemplateFactory<K, V> {
      * ObjectProvider更加宽松的依赖注入
      */
     public DynamicRedisTemplateFactory(RedisProperties properties,
-                                       ObjectProvider<RedisSentinelConfiguration> sentinelConfiguration,
-                                       ObjectProvider<RedisClusterConfiguration> clusterConfiguration,
-                                       ObjectProvider<JedisClientConfigurationBuilderCustomizer> jedisBuilderCustomizers,
-                                       ObjectProvider<LettuceClientConfigurationBuilderCustomizer> lettuceBuilderCustomizers) {
+                                       RedisSentinelConfiguration sentinelConfiguration,
+                                       RedisClusterConfiguration clusterConfiguration,
+                                       List<JedisClientConfigurationBuilderCustomizer> jedisBuilderCustomizers,
+                                       List<LettuceClientConfigurationBuilderCustomizer> lettuceBuilderCustomizers) {
         this.properties = properties;
         this.sentinelConfiguration = sentinelConfiguration;
         this.clusterConfiguration = clusterConfiguration;

@@ -1,6 +1,5 @@
 package org.basis.enhance.config;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.data.redis.JedisClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.PropertyMapper;
@@ -12,6 +11,10 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.util.StringUtils;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 /**
  * Redis connection configuration using Jedis.
  * 当使用jedis客户端时，jedis客户端的配置信息
@@ -21,15 +24,15 @@ import redis.clients.jedis.JedisPoolConfig;
  */
 class JedisConnectionConfigure extends RedisConnectionConfiguration {
 
-    private final ObjectProvider<JedisClientConfigurationBuilderCustomizer> builderCustomizers;
+    private final List<JedisClientConfigurationBuilderCustomizer> builderCustomizers;
 
     JedisConnectionConfigure(RedisProperties properties,
-                             ObjectProvider<RedisSentinelConfiguration> sentinelConfiguration,
-                             ObjectProvider<RedisClusterConfiguration> clusterConfiguration,
-                             ObjectProvider<JedisClientConfigurationBuilderCustomizer> builderCustomizers,
+                             RedisSentinelConfiguration sentinelConfiguration,
+                             RedisClusterConfiguration clusterConfiguration,
+                             List<JedisClientConfigurationBuilderCustomizer> builderCustomizers,
                              int database) {
         super(properties, sentinelConfiguration, clusterConfiguration, database);
-        this.builderCustomizers = builderCustomizers;
+        this.builderCustomizers = Optional.ofNullable(builderCustomizers).orElse(new ArrayList<>());
     }
 
     /**
@@ -62,7 +65,7 @@ class JedisConnectionConfigure extends RedisConnectionConfiguration {
      * 获取jedis客户端配置
      */
     private JedisClientConfiguration getJedisClientConfiguration(
-            ObjectProvider<JedisClientConfigurationBuilderCustomizer> builderCustomizers) {
+            List<JedisClientConfigurationBuilderCustomizer> builderCustomizers) {
         JedisClientConfigurationBuilder builder = applyProperties(JedisClientConfiguration.builder());
         RedisProperties.Pool pool = getProperties().getJedis().getPool();
         if (pool != null) {
@@ -71,7 +74,7 @@ class JedisConnectionConfigure extends RedisConnectionConfiguration {
         if (StringUtils.hasText(getProperties().getUrl())) {
             customizeConfigurationFromUrl(builder);
         }
-        builderCustomizers.orderedStream().forEach((customizer) -> customizer.customize(builder));
+        customize(builder);
         return builder.build();
     }
 
@@ -113,6 +116,12 @@ class JedisConnectionConfigure extends RedisConnectionConfiguration {
         ConnectionInfo connectionInfo = RedisConnectionConfiguration.parseUrl(getProperties().getUrl());
         if (connectionInfo.isUseSsl()) {
             builder.useSsl();
+        }
+    }
+
+    private void customize(JedisClientConfigurationBuilder builder) {
+        for (JedisClientConfigurationBuilderCustomizer customizer : builderCustomizers) {
+            customizer.customize(builder);
         }
     }
 

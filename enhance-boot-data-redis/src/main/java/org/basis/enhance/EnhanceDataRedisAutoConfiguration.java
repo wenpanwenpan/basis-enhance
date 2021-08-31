@@ -16,10 +16,7 @@ import org.springframework.boot.autoconfigure.data.redis.JedisClientConfiguratio
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
@@ -28,6 +25,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.lang.annotation.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +34,7 @@ import java.util.Map;
  * @author Mr_wenpan@163.com 2021/07/22 22:48
  */
 @Configuration
+@Import({EnhanceRedisQueueAutoConfiguration.class})
 @EnableConfigurationProperties({StoneRedisProperties.class, RedisDataSourceProperties.class})
 @ConditionalOnClass(name = {"org.springframework.data.redis.connection.RedisConnectionFactory"})
 public class EnhanceDataRedisAutoConfiguration {
@@ -47,12 +46,13 @@ public class EnhanceDataRedisAutoConfiguration {
 
     /**
      * 导入springboot自动配置中导入的RedisTemplate和StringRedisTemplate
+     * 该配置导入后下面的RedisTemplate和StringRedisTemplate就无法注入了
      */
-//    @Import(RedisAutoConfiguration.class)
-//    @Configuration
-//    static class ImportRedisAutoConfiguration {
-//
-//    }
+    /*@Import(RedisAutoConfiguration.class)
+    @Configuration
+    static class ImportRedisAutoConfiguration {
+
+    }*/
 
     /**
      * 注入RedisTemplate，key-value都使用string类型
@@ -112,13 +112,14 @@ public class EnhanceDataRedisAutoConfiguration {
                                           RedisProperties redisProperties,
                                           ObjectProvider<RedisSentinelConfiguration> sentinelConfiguration,
                                           ObjectProvider<RedisClusterConfiguration> clusterConfiguration,
-                                          ObjectProvider<JedisClientConfigurationBuilderCustomizer> jedisBuilderCustomizers,
-                                          ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers) {
+                                          ObjectProvider<List<JedisClientConfigurationBuilderCustomizer>> jedisBuilderCustomizers,
+                                          ObjectProvider<List<LettuceClientConfigurationBuilderCustomizer>> builderCustomizers) {
 
         // 构建动态RedisTemplate工厂
         DynamicRedisTemplateFactory<String, String> dynamicRedisTemplateFactory =
-                new DynamicRedisTemplateFactory<>(redisProperties, sentinelConfiguration,
-                        clusterConfiguration, jedisBuilderCustomizers, builderCustomizers);
+                new DynamicRedisTemplateFactory<>(redisProperties, sentinelConfiguration.getIfAvailable(),
+                        clusterConfiguration.getIfAvailable(), jedisBuilderCustomizers.getIfAvailable(),
+                        builderCustomizers.getIfAvailable());
         // ======================================================================================================
         // 这里在注入的时候默认值注入一个默认的redisTemplate，以及将这个redisTemplate放入到map中，该redisTemplate
         // 操作的是配置文件中使用spring.redis.database属性指定的db（若不显示指定，则使用的0号db）

@@ -2,8 +2,8 @@ package org.basis.enhance.handler;
 
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -13,8 +13,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Test {
     public static void main(String[] args) throws InterruptedException {
 
-        List<String> list = new ArrayList<>(null);
-        System.out.println("======>>>>>" + list.get(0));
+        HashMap<String, String> map = new HashMap<>();
+        Collection<String> values = map.values();
+        System.out.println(values.size());
+//        List<String> list = new ArrayList<>(null);
+//        System.out.println("======>>>>>" + list.get(0));
     }
 
     public static void test01() throws InterruptedException {

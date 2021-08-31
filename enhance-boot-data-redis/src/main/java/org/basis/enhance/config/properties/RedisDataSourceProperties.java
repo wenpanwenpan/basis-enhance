@@ -17,7 +17,7 @@ public class RedisDataSourceProperties {
     static final String PREFIX = "spring.redis";
 
     /**
-     * 数据源配置集合
+     * 数据源配置集合（key: 数据源名称， value: 数据源对应的Redis配置）
      */
     private Map<String, RedisProperties> datasource = new HashMap<>();
 

@@ -9,7 +9,6 @@ import io.lettuce.core.cluster.ClusterTopologyRefreshOptions.Builder;
 import io.lettuce.core.resource.ClientResources;
 import io.lettuce.core.resource.DefaultClientResources;
 import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurationBuilderCustomizer;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties.Lettuce.Cluster.Refresh;
@@ -23,6 +22,7 @@ import org.springframework.data.redis.connection.lettuce.LettucePoolingClientCon
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
+import java.util.List;
 
 /**
  * Redis connection configuration using Lettuce.
@@ -38,14 +38,17 @@ class LettuceConnectionConfigure extends RedisConnectionConfiguration {
      */
     private final RedisProperties properties;
 
-    private final ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers;
+    /**
+     * Lettuce客户端定制
+     */
+    private final List<LettuceClientConfigurationBuilderCustomizer> builderCustomizers;
 
     private final ClientResources clientResources;
 
     LettuceConnectionConfigure(RedisProperties properties,
-                               ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
-                               ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
-                               ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
+                               RedisSentinelConfiguration sentinelConfigurationProvider,
+                               RedisClusterConfiguration clusterConfigurationProvider,
+                               List<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
                                int database) {
         super(properties, sentinelConfigurationProvider, clusterConfigurationProvider, database);
         this.properties = properties;
@@ -60,8 +63,7 @@ class LettuceConnectionConfigure extends RedisConnectionConfiguration {
      */
     LettuceConnectionFactory redisConnectionFactory() {
         // 获取lettuce连接工厂配置信息
-        LettuceClientConfiguration clientConfig = getLettuceClientConfiguration(
-                builderCustomizers, clientResources, properties.getLettuce().getPool());
+        LettuceClientConfiguration clientConfig = getLettuceClientConfiguration(clientResources, properties.getLettuce().getPool());
         // 创建lettuce连接工厂
         return createLettuceConnectionFactory(clientConfig);
     }
@@ -87,9 +89,7 @@ class LettuceConnectionConfigure extends RedisConnectionConfiguration {
     /**
      * 获取lettuce客户端配置
      */
-    private LettuceClientConfiguration getLettuceClientConfiguration(
-            ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers,
-            ClientResources clientResources, Pool pool) {
+    private LettuceClientConfiguration getLettuceClientConfiguration(ClientResources clientResources, Pool pool) {
         LettuceClientConfigurationBuilder builder = createBuilder(pool);
         applyProperties(builder);
         if (StringUtils.hasText(getProperties().getUrl())) {
@@ -97,8 +97,18 @@ class LettuceConnectionConfigure extends RedisConnectionConfiguration {
         }
         builder.clientOptions(createClientOptions());
         builder.clientResources(clientResources);
-        builderCustomizers.orderedStream().forEach((customizer) -> customizer.customize(builder));
+        customize(builder);
         return builder.build();
+    }
+
+    /**
+     * 变更源码排序
+     */
+    private void customize(
+            LettuceClientConfigurationBuilder builder) {
+        for (LettuceClientConfigurationBuilderCustomizer customizer : builderCustomizers) {
+            customizer.customize(builder);
+        }
     }
 
     /**

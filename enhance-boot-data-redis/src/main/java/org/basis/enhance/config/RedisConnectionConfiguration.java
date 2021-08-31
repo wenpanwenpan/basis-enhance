@@ -1,6 +1,5 @@
 package org.basis.enhance.config;
 
-import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.data.redis.connection.*;
 import org.springframework.util.Assert;
@@ -44,12 +43,12 @@ public abstract class RedisConnectionConfiguration {
     private final int database;
 
     protected RedisConnectionConfiguration(RedisProperties properties,
-                                           ObjectProvider<RedisSentinelConfiguration> sentinelConfigurationProvider,
-                                           ObjectProvider<RedisClusterConfiguration> clusterConfigurationProvider,
+                                           RedisSentinelConfiguration sentinelConfiguration,
+                                           RedisClusterConfiguration clusterConfiguration,
                                            int database) {
         this.properties = properties;
-        sentinelConfiguration = sentinelConfigurationProvider.getIfAvailable();
-        clusterConfiguration = clusterConfigurationProvider.getIfAvailable();
+        this.sentinelConfiguration = sentinelConfiguration;
+        this.clusterConfiguration = clusterConfiguration;
         this.database = database;
     }
 
