@@ -39,8 +39,7 @@ public class AcceptorHandler implements CommandLineRunner {
     private final StoneRedisProperties redisProperties;
     private final RedisQueueHelper redisQueueHelper;
 
-    public AcceptorHandler(StoneRedisProperties redisProperties,
-                           RedisQueueHelper redisQueueHelper) {
+    public AcceptorHandler(StoneRedisProperties redisProperties, RedisQueueHelper redisQueueHelper) {
         this.redisProperties = redisProperties;
         this.redisQueueHelper = redisQueueHelper;
     }

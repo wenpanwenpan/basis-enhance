@@ -1,5 +1,6 @@
 package org.basis.enhance.config.properties;
 
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -7,6 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  *
  * @author Mr_wenpan@163.com 2021/8/7 3:13 下午
  */
+@Data
 @ConfigurationProperties(prefix = StoneRedisProperties.PREFIX)
 public class StoneRedisProperties {
 
@@ -27,6 +29,11 @@ public class StoneRedisProperties {
     private boolean redisQueue = false;
 
     /**
+     * 是否启用Redis发布订阅
+     */
+    private boolean redisPubSub = false;
+
+    /**
      * 队列消息默认db
      */
     private int queueDb = 1;
@@ -36,12 +43,46 @@ public class StoneRedisProperties {
      */
     private int intervals = 5;
 
+    /**
+     * 线程池配置
+     */
+    private ThreadPoolProperties threadPoolProperties = new ThreadPoolProperties();
+
+    @Data
+    public static class ThreadPoolProperties {
+        /**
+         * 核心线程数 默认 2
+         */
+        private int corePoolSize = 2;
+        /**
+         * 最大线程数 默认 10
+         */
+        private int maxPoolSize = 10;
+        /**
+         * 线程完成任务后的待机存活时间 默认 60
+         */
+        private int keepAliveSeconds = 60;
+        /**
+         * 等待队列长度 默认 Integer.MAX_VALUE
+         */
+        private int queueCapacity = Integer.MAX_VALUE;
+        /**
+         * 是否允许停止闲置核心线程 默认 false
+         */
+        private boolean allowCoreThreadTimeOut = false;
+        /**
+         * 线程名前缀
+         */
+        private String threadNamePrefix = PREFIX;
+
+    }
+
     public boolean isDynamicDatabase() {
         return dynamicDatabase;
     }
 
-    public void setDynamicDatabase(boolean dynamicDatabase) {
-        this.dynamicDatabase = dynamicDatabase;
+    public boolean getDynamicDatabase() {
+        return dynamicDatabase;
     }
 
     public int getQueueDb() {

@@ -8,6 +8,11 @@ spring:
     port: ${SPRING_REDIS_PORT:6379}
     password: ${SPRING_REDIS_PASSWORD:WenPan@123}
     database: ${SPRING_REDIS_DATABASE:1}
+    # 集群环境打开下面注释，单机不需要打开(单机只需要用上面的配置即可)
+    #cluster:
+    #nodes: xxx.xxx.xxx.xxx:xxxx,xxx.xxx.xxx.xxx:xxxx,xxx.xxx.xxx.xxx:xxxx
+    # 默认值是5 一般当此值设置过大时，容易报：Too many Cluster redirections
+    #maxRedirects: 3
     client-type: lettuce
     lettuce:
       pool:
@@ -33,6 +38,7 @@ spring:
         max-wait: ${SPRING_REDIS_POOL_MAX_WAIT:5000}
 stone:
   redis:
-    dynamic-database: false
-    redis-queue: true
+    dynamic-database: true
+    redis-queue: false
+    redis-pub-sub: true
 

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.basis.enhance.handler.IQueueHandler;
 import org.basis.enhance.handler.QueueHandler;
 import org.enhance.data.redis.app.service.RedisQueueTestService;
-import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
 
@@ -14,7 +13,6 @@ import java.util.concurrent.TimeUnit;
  * @author Mr_wenpan@163.com 2021/08/27 22:42
  */
 @Slf4j
-@Service
 @QueueHandler("test-queue")
 public class RedisQueueTestServiceImpl implements RedisQueueTestService, IQueueHandler {
 

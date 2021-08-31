@@ -9,9 +9,9 @@ import java.lang.annotation.*;
  *
  * @author Mr_wenpan@163.com 2021/8/22 10:04 下午
  */
+@Documented
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE, ElementType.METHOD})
-@Documented
 @Conditional(OnMissingPropertyCondition.class)
 public @interface ConditionalOnMissingProperty {
 

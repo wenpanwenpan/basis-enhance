@@ -1,8 +1,8 @@
 package org.basis.enhance;
 
 import org.basis.enhance.config.DynamicRedisTemplateFactory;
+import org.basis.enhance.config.properties.RedisDataSourceProperties;
 import org.basis.enhance.config.properties.StoneRedisProperties;
-import org.basis.enhance.handler.AcceptorHandler;
 import org.basis.enhance.helper.ApplicationContextHelper;
 import org.basis.enhance.helper.DynamicRedisHelper;
 import org.basis.enhance.helper.RedisHelper;
@@ -31,13 +31,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * stone-redis自动配置
- * 必须要容器中有RedisConnectionFactory才启动该配置类
+ * stone-redis自动配置，必须要容器中有RedisConnectionFactory才启动该配置类
  *
  * @author Mr_wenpan@163.com 2021/07/22 22:48
  */
 @Configuration
-@EnableConfigurationProperties({StoneRedisProperties.class})
+@EnableConfigurationProperties({StoneRedisProperties.class, RedisDataSourceProperties.class})
 @ConditionalOnClass(name = {"org.springframework.data.redis.connection.RedisConnectionFactory"})
 public class EnhanceDataRedisAutoConfiguration {
 
@@ -46,11 +45,14 @@ public class EnhanceDataRedisAutoConfiguration {
         return new ApplicationContextHelper();
     }
 
-    @Bean
-    @ConditionalOnMissingBean
-    public AcceptorHandler handlerInit(RedisQueueHelper redisQueueHelper, StoneRedisProperties redisProperties) {
-        return new AcceptorHandler(redisProperties, redisQueueHelper);
-    }
+    /**
+     * 导入springboot自动配置中导入的RedisTemplate和StringRedisTemplate
+     */
+//    @Import(RedisAutoConfiguration.class)
+//    @Configuration
+//    static class ImportRedisAutoConfiguration {
+//
+//    }
 
     /**
      * 注入RedisTemplate，key-value都使用string类型
@@ -105,13 +107,13 @@ public class EnhanceDataRedisAutoConfiguration {
      */
     @Primary
     @ConditionalOnDynamicRedisHelper
-    @Bean(name = {"dynamicRedisHelper", StoneRedisProperties.DEFAULT_REDIS, StoneRedisProperties.DEFAULT_REDIS_HELPER})
-    public RedisHelper redisHelper(StringRedisTemplate redisTemplate,
-                                   RedisProperties redisProperties,
-                                   ObjectProvider<RedisSentinelConfiguration> sentinelConfiguration,
-                                   ObjectProvider<RedisClusterConfiguration> clusterConfiguration,
-                                   ObjectProvider<JedisClientConfigurationBuilderCustomizer> jedisBuilderCustomizers,
-                                   ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers) {
+    @Bean(name = {"redisHelper", StoneRedisProperties.DEFAULT_REDIS, StoneRedisProperties.DEFAULT_REDIS_HELPER})
+    public RedisHelper dynamicRedisHelper(StringRedisTemplate redisTemplate,
+                                          RedisProperties redisProperties,
+                                          ObjectProvider<RedisSentinelConfiguration> sentinelConfiguration,
+                                          ObjectProvider<RedisClusterConfiguration> clusterConfiguration,
+                                          ObjectProvider<JedisClientConfigurationBuilderCustomizer> jedisBuilderCustomizers,
+                                          ObjectProvider<LettuceClientConfigurationBuilderCustomizer> builderCustomizers) {
 
         // 构建动态RedisTemplate工厂
         DynamicRedisTemplateFactory<String, String> dynamicRedisTemplateFactory =

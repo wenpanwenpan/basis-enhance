@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
-org.basis.enhance.EnhanceDataRedisAutoConfiguration
+org.basis.enhance.EnhanceDataRedisAutoConfiguration,\
+org.basis.enhance.EnhanceRedisQueueAutoConfiguration
