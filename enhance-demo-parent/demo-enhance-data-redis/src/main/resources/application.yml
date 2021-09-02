@@ -56,4 +56,5 @@ stone:
     dynamic-database: true
     redis-queue: false
     redis-pub-sub: true
+    queue-db: 1
 

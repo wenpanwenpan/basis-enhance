@@ -51,6 +51,9 @@ public class RedisMultiDataSourceRegistrar implements EnvironmentAware, ImportBe
         this.environment = environment;
     }
 
+    /**
+     * 为每个redis数据源注入BeanDefinition
+     */
     @Override
     public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry) {
 
@@ -100,11 +103,15 @@ public class RedisMultiDataSourceRegistrar implements EnvironmentAware, ImportBe
      * 注册 RedisHelper BeanDefinition
      */
     protected final void registerRedisHelperBeanDefinition(String alias, Class<?> type, BeanDefinitionRegistry registry) {
+        // BeanDefinition构建器
         BeanDefinitionBuilder builder = BeanDefinitionBuilder.genericBeanDefinition(type);
+        // 设置通过名称注入
         builder.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_NAME);
         builder.addConstructorArgValue(null);
+        // 设置数据源的名称(即设置bean的datasource属性的值)
         builder.addPropertyValue(RedisDataSourceContext.FIELD_DATASOURCE_NAME, alias);
 
+        // 通过构建器获取bean的定义信息
         BeanDefinition beanDefinition = builder.getBeanDefinition();
         beanDefinition.setPrimary(false);
         beanDefinition.setDependsOn(alias + REDIS_TEMPLATE);
@@ -140,23 +147,27 @@ public class RedisMultiDataSourceRegistrar implements EnvironmentAware, ImportBe
      * 创建 RedisHelper 的 FactoryBean
      */
     protected class RedisHelperFactoryBean extends RedisDataSourceContext implements FactoryBean<Object> {
+
         private final Logger logger = LoggerFactory.getLogger(getClass());
 
         @Override
         public Object getObject() throws Exception {
-            // 为该数据源创建一个Redis连接工厂
+            // 为该数据源创建一个Redis连接工厂(连接到指定的数据源)
             DynamicRedisTemplateFactory<String, String> dynamicRedisTemplateFactory = getDynamicRedisTemplateFactory();
-
+            // 获取指定数据源对应的RedisTemplate
             RedisTemplate<String, String> redisTemplate = applicationContext.getBean(dataSourceName + "RedisTemplate", RedisTemplate.class);
 
             DynamicRedisTemplate<String, String> dynamicRedisTemplate = new DynamicRedisTemplate<>(dynamicRedisTemplateFactory);
+            // 将该数据源对应的默认RedisTemplate设置到动态dynamicRedisTemplate中
             dynamicRedisTemplate.setDefaultRedisTemplate(redisTemplate);
             Map<Object, RedisTemplate<String, String>> redisTemplateMap = new HashMap<>(8);
             redisTemplateMap.put(getRedisProperties().getDatabase(), redisTemplate);
+            // 动态dynamicRedisTemplate保存多个RedisTemplate（对应该数据源的不同db）
             dynamicRedisTemplate.setRedisTemplates(redisTemplateMap);
 
             logger.info("Dynamic create a RedisHelper named {}", getDataSourceName());
 
+            // 通过dynamicRedisTemplate创建一个DynamicRedisHelper
             return new DynamicRedisHelper(dynamicRedisTemplate);
         }
 
@@ -171,6 +182,7 @@ public class RedisMultiDataSourceRegistrar implements EnvironmentAware, ImportBe
      * FactoryBean一般用于构建复杂的bean
      */
     protected class RedisTemplateFactoryBean extends RedisDataSourceContext implements FactoryBean<Object> {
+
         private final Logger logger = LoggerFactory.getLogger(getClass());
 
         /**
@@ -178,11 +190,13 @@ public class RedisMultiDataSourceRegistrar implements EnvironmentAware, ImportBe
          */
         @Override
         public Object getObject() throws Exception {
-            // 为该数据源创建一个Redis连接工厂
+            // 为该数据源创建一个Redis连接工厂，连向指定的数据源
             DynamicRedisTemplateFactory<String, String> dynamicRedisTemplateFactory = getDynamicRedisTemplateFactory();
 
             logger.info("Dynamic create a RedisTemplate named {}", getDataSourceName());
 
+            // 使用工厂类去创建RedisTemplate（该工厂为我们自定义的创建RedisTemplate的工厂类，使用自定义redis相关配置以及db）
+            // getRedisProperties()表示获取到该数据源对应的Redis配置
             return dynamicRedisTemplateFactory.createRedisTemplate(getRedisProperties().getDatabase());
         }
 

@@ -16,6 +16,9 @@ import java.util.List;
  */
 public class RedisQueueHelper {
 
+    /**
+     * 默认数据源的redisHelper（非动态多数据源）
+     */
     private final RedisHelper redisHelper;
 
     private final StoneRedisProperties properties;

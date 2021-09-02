@@ -36,6 +36,7 @@ public abstract class RedisDataSourceContext implements ApplicationContextAware 
      */
     protected RedisProperties getRedisProperties() {
         RedisDataSourceProperties dataSourceProperties = applicationContext.getBean(RedisDataSourceProperties.class);
+        // 通过数据源名称获取application配置文件中配置的该数据源的redis-properties
         return dataSourceProperties.getDatasource().get(dataSourceName);
     }
 

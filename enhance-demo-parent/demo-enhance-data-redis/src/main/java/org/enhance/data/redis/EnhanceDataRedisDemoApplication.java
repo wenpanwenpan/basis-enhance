@@ -10,7 +10,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
  *
  * @author Mr_wenpan@163.com 2021/08/07 18:09
  */
-
 @SpringBootApplication
 @EnableConfigurationProperties
 @EnableRedisMultiDataSource

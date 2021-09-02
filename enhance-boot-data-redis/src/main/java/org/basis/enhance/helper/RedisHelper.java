@@ -34,8 +34,14 @@ public class RedisHelper implements InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(RedisHelper.class);
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
+    /**
+     * 使用连向默认的redis实例的redisTemplate
+     */
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
+    /**
+     * 使用连向默认的redis实例的redisTemplate.valueOpr
+     */
     @Autowired
     private ValueOperations<String, String> valueOpr;
     @Autowired

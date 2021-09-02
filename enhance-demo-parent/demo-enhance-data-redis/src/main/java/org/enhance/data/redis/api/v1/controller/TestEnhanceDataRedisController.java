@@ -28,6 +28,12 @@ public class TestEnhanceDataRedisController {
     private StringRedisTemplate stringRedisTemplate;
 
     /**
+     * 注入默认数据源
+     */
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+
+    /**
      * 默认数据源对应的redisHelper
      */
     @Autowired
@@ -47,12 +53,6 @@ public class TestEnhanceDataRedisController {
     @Autowired
     @Qualifier("source2RedisHelper")
     private RedisHelper source2RedisHelper;
-
-    /**
-     * 注入默认数据源
-     */
-    @Autowired
-    private RedisTemplate<String, String> redisTemplate;
 
     /**
      * 注入第一个数据源
@@ -158,4 +158,27 @@ public class TestEnhanceDataRedisController {
         System.out.println("beansOfType = " + beansOfType);
     }
 
+    @GetMapping("/test-default-template")
+    public void testDefaultRedisTemplate() {
+        // 使用默认数据源的redisTemplate操作默认数据源
+        redisTemplate.opsForValue().set("key", "value");
+    }
+
+    @GetMapping("/test-default-redisHelper")
+    public void testDefaultRedisHelper() {
+        // 使用默认数据源的redisHelper操作默认数据源
+        redisHelper.lstRightPop("key");
+    }
+
+    @GetMapping("/test-source1-template")
+    public void testSource1RedisTemplate() {
+        // 使用source1数据源的redisTemplate操作source1数据源
+        source1RedisTemplate.opsForValue().set("key", "value");
+    }
+
+    @GetMapping("/test-source1-redisHelper")
+    public void testSource1RedisHelper() {
+        // 使用source1数据源的redisHelper操作source1数据源(切换db操作)
+        EasyRedisHelper.execute(2, () -> source1RedisHelper.lstLeftPush("key", "value"));
+    }
 }

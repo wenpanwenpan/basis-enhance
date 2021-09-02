@@ -3,7 +3,6 @@ package org.enhance.data.redis.app.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.basis.enhance.handler.IQueueHandler;
 import org.basis.enhance.handler.QueueHandler;
-import org.enhance.data.redis.app.service.RedisQueueTestService;
 
 /**
  * redis队列测试service实现
@@ -12,11 +11,11 @@ import org.enhance.data.redis.app.service.RedisQueueTestService;
  */
 @Slf4j
 @QueueHandler("test-queue")
-public class RedisQueueTestServiceImpl implements RedisQueueTestService, IQueueHandler {
+public class RedisQueueTestServiceImpl implements IQueueHandler {
 
     @Override
     public void handle(String message) {
-        log.info("message = {}, 回调handle方法.....", message);
+        log.info("获取到redis的test-queue队列的消息，消息内容是：{}", message);
         // do something.....
     }
 }
