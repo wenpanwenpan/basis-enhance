@@ -9,6 +9,8 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.commons.lang3.StringUtils;
 import org.basis.enhance.convert.DateDeserializer;
 import org.basis.enhance.convert.DateSerializer;
+import org.basis.enhance.options.AbstractOptionsRedisDb;
+import org.basis.enhance.options.DefaultOptionsRedisDb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -53,6 +55,11 @@ public class RedisHelper implements InitializingBean {
     @Autowired
     private ZSetOperations<String, String> zSetOpr;
 
+    /**
+     * 这里按RedisTemplate的设计模式设计
+     */
+    private AbstractOptionsRedisDb<String, String> optionsRedisDb = new DefaultOptionsRedisDb(this);
+
     static final ObjectMapper objectMapper;
 
     /**
@@ -72,6 +79,13 @@ public class RedisHelper implements InitializingBean {
         javaTimeModule.addDeserializer(Date.class, new DateDeserializer());
         objectMapper.registerModule(javaTimeModule);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+    }
+
+    public RedisHelper() {
+    }
+
+    public RedisHelper(RedisTemplate<String, String> redisTemplate) {
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -132,6 +146,17 @@ public class RedisHelper implements InitializingBean {
      */
     public void clearCurrentDatabase() {
         logger.warn("Use default RedisHelper, you'd better use a DynamicRedisHelper instead.");
+    }
+
+    /**
+     * 获取RedisTemplates，静态RedisHelper中没有多个RedisTemplates，交给子类实现
+     */
+    public Map<Object, RedisTemplate<String, String>> getRedisTemplates() {
+        return null;
+    }
+
+    public AbstractOptionsRedisDb<String, String> opsDb() {
+        return optionsRedisDb;
     }
 
     /**

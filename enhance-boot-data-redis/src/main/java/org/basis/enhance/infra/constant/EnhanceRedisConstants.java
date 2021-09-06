@@ -20,4 +20,14 @@ public interface EnhanceRedisConstants {
         int TEN = 10;
         int SIXTEEN = 16;
     }
+
+    /**
+     * 多数据源相关常量
+     */
+    interface MultiSource {
+
+        String REDIS_TEMPLATE = "RedisTemplate";
+
+        String REDIS_HELPER = "RedisHelper";
+    }
 }

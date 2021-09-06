@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * redis多数据源配置
+ * redis多数据源配置，缓存每个数据源的配置信息到map中
  *
  * @author Mr_wenpan@163.com 2021/8/31 9:10 上午
  */

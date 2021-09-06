@@ -59,8 +59,13 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
         RedisTemplate<K, V> redisTemplate = redisTemplates.get(lookupKey);
         // 如果当前要操作的db还没有维护到redisTemplates中，则创建一个对该库的连接并缓存起来
         if (redisTemplate == null) {
-            redisTemplate = createRedisTemplateOnMissing(lookupKey);
-            redisTemplates.put(lookupKey, redisTemplate);
+            // 双重检查，这里直接使用synchronized锁，因为创建redisTemplate不会很频繁，一般整个生命周期只有几次，不会有性能问题
+            synchronized (DynamicRedisTemplate.class) {
+                if (null == redisTemplates.get(lookupKey)) {
+                    redisTemplate = createRedisTemplateOnMissing(lookupKey);
+                    redisTemplates.put(lookupKey, redisTemplate);
+                }
+            }
         }
         return redisTemplate;
     }
@@ -78,7 +83,7 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
      * @param lookupKey RedisDB
      * @return RedisTemplate
      */
-    protected abstract RedisTemplate<K, V> createRedisTemplateOnMissing(Object lookupKey);
+    public abstract RedisTemplate<K, V> createRedisTemplateOnMissing(Object lookupKey);
 
     public void setRedisTemplates(Map<Object, RedisTemplate<K, V>> redisTemplates) {
         this.redisTemplates = redisTemplates;

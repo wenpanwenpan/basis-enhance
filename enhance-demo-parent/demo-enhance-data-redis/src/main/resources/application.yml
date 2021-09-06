@@ -8,7 +8,7 @@ spring:
     host: ${SPRING_REDIS_HOST:wenpan-host}
     port: ${SPRING_REDIS_PORT:6379}
     password: ${SPRING_REDIS_PASSWORD:WenPan@123}
-    database: ${SPRING_REDIS_DATABASE:1}
+    database: ${SPRING_REDIS_DATABASE:0}
     # 集群环境打开下面注释，单机不需要打开(单机只需要用上面的配置即可)
     #cluster:
     #nodes: xxx.xxx.xxx.xxx:xxxx,xxx.xxx.xxx.xxx:xxxx,xxx.xxx.xxx.xxx:xxxx
@@ -37,23 +37,24 @@ spring:
         # 当资源池连接用尽后，调用者的最大等待时间(单位为毫秒)
         # 默认 -1 表示永不超时，设置5秒
         max-wait: ${SPRING_REDIS_POOL_MAX_WAIT:5000}
+    # 这里使用一台Redis的多个db来模拟多数据源
     datasource:
       # 第一个数据源
       source1:
         host: ${SPRING_REDIS_HOST:wenpan-host}
         port: ${SPRING_REDIS_PORT:6379}
         password: ${SPRING_REDIS_PASSWORD:WenPan@123}
-        database: ${SPRING_REDIS_DATABASE:2}
+        database: ${SPRING_REDIS_DATABASE:1}
       # 第二个数据源
       source2:
-        host: ${SPRING_REDIS_HOST:wenpan-host}
+        host: ${SPRING_REDIS_HOST:yuanping-host}
         port: ${SPRING_REDIS_PORT:6379}
-        password: ${SPRING_REDIS_PASSWORD:WenPan@123}
-        database: ${SPRING_REDIS_DATABASE:3}
+        #        password: ${SPRING_REDIS_PASSWORD:WenPan@123}
+        database: ${SPRING_REDIS_DATABASE:2}
 
 stone:
   redis:
-    dynamic-database: true
+    dynamic-database: false
     redis-queue: false
     redis-pub-sub: true
     queue-db: 1

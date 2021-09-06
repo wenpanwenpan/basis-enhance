@@ -33,7 +33,7 @@ public class DynamicRedisTemplate<K, V> extends AbstractRoutingRedisTemplate<K, 
      * @author Mr_wenpan@163.com 2021/8/9 10:06 上午
      */
     @Override
-    protected RedisTemplate<K, V> createRedisTemplateOnMissing(Object lookupKey) {
+    public RedisTemplate<K, V> createRedisTemplateOnMissing(Object lookupKey) {
         return dynamicRedisTemplateFactory.createRedisTemplate((Integer) lookupKey);
     }
 

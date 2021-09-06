@@ -3,50 +3,64 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.8</version>
+        <artifactId>basis-enhance</artifactId>
+        <groupId>org.basis.enhance</groupId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.basis.enhance</groupId>
-    <artifactId>basis-enhance</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
-
-    <modules>
-        <module>enhance-boot-data-redis</module>
-        <module>enhance-demo-parent</module>
-        <module>enhance-boot-mybatis</module>
-        <module>enhance-spring</module>
-        <module>enhance-jdk</module>
-    </modules>
+    <artifactId>enhance-spring</artifactId>
 
     <properties>
-        <java.version>1.8</java.version>
-        <build.encoding>UTF-8</build.encoding>
-        <fastjson.version>1.2.70</fastjson.version>
-        <cglib-nodep>3.1</cglib-nodep>
-        <lombok.version>1.18.10</lombok.version>
-        <!-- redisson -->
-        <redisson.version>3.10.2</redisson.version>
-        <collections4.version>4.2</collections4.version>
-        <collections3.version>3.11</collections3.version>
-        <mybatis.starter.version>2.1.4</mybatis.starter.version>
-        <org.springframework.version>5.0.10.RELEASE</org.springframework.version>
-        <spring-boot-autoconfigure.version>2.4.8</spring-boot-autoconfigure.version>
-        <spring-boot-configuration-processor.version>2.4.8</spring-boot-configuration-processor.version>
-        <spring-boot-starter-test.version>2.4.8</spring-boot-starter-test.version>
-        <spring-boot-starter.version>2.4.8</spring-boot-starter.version>
-
-        <maven.javadoc.skip>false</maven.javadoc.skip>
-        <maven.springboot.skip>true</maven.springboot.skip>
-        <maven.java.doc.skip>true</maven.java.doc.skip>
         <jdk.version>1.8</jdk.version>
         <build.encoding>UTF-8</build.encoding>
+        <maven.java.doc.skip>true</maven.java.doc.skip>
+        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
+        <!-- utils -->
+        <cglib-nodep>3.1</cglib-nodep>
+        <fastjson.version>1.2.78</fastjson.version>
     </properties>
 
-    <!--构建打包相关-->
+    <dependencies>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>logging-interceptor</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>cglib</groupId>
+            <artifactId>cglib-nodep</artifactId>
+            <version>${cglib-nodep}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+    </dependencies>
+
     <build>
         <finalName>app</finalName>
         <resources>
@@ -75,19 +89,6 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <configuration>
                     <nonFilteredFileExtensions>
@@ -109,9 +110,23 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
                 <configuration>
-                    <skip>${maven.javadoc.skip}</skip>
+                    <skip>${maven.java.doc.skip}</skip>
+                    <charset>UTF-8</charset>
+                    <encoding>UTF-8</encoding>
                 </configuration>
                 <executions>
                     <execution>
@@ -122,9 +137,7 @@
                         </goals>
                         <configuration>
                             <additionalOptions>
-                                <additionalOption>
-                                    -Xdoclint:none
-                                </additionalOption>
+                                <additionalOption>-Xdoclint:none</additionalOption>
                             </additionalOptions>
                         </configuration>
                     </execution>
@@ -134,7 +147,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <skip>${maven.springboot.skip}</skip>
+                    <skip>${spring-boot.repackage.skip}</skip>
                 </configuration>
                 <executions>
                     <execution>

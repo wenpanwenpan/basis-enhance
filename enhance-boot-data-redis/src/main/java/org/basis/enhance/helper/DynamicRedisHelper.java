@@ -1,9 +1,9 @@
 package org.basis.enhance.helper;
 
 import org.basis.enhance.template.DynamicRedisTemplate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.*;
+
+import java.util.Map;
 
 /**
  * Redis操作工具类，集成封装一些常用方法，支持动态切换DB
@@ -12,22 +12,10 @@ import org.springframework.data.redis.core.*;
  */
 public class DynamicRedisHelper extends RedisHelper {
 
-    private static final Logger logger = LoggerFactory.getLogger(DynamicRedisHelper.class);
-
     /**
      * 动态redisTemplate
      */
     private final DynamicRedisTemplate<String, String> redisTemplate;
-
-    /**
-     * 默认过期时长，单位：秒
-     */
-    public static final long DEFAULT_EXPIRE = 60 * 60 * 24L;
-
-    /**
-     * 不设置过期时长
-     */
-    public static final long NOT_EXPIRE = -1;
 
     public DynamicRedisHelper(DynamicRedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
@@ -41,6 +29,14 @@ public class DynamicRedisHelper extends RedisHelper {
     @Override
     public RedisTemplate<String, String> getRedisTemplate() {
         return redisTemplate;
+    }
+
+    /**
+     * 获取该redis数据源对应的多个RedisTemplate
+     */
+    @Override
+    public Map<Object, RedisTemplate<String, String>> getRedisTemplates() {
+        return redisTemplate.getRedisTemplates();
     }
 
     /**
