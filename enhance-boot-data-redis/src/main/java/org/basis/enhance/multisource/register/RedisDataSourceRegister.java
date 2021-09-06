@@ -1,6 +1,6 @@
 package org.basis.enhance.multisource.register;
 
-import org.basis.enhance.helper.DynamicRedisHelper;
+import org.basis.enhance.helper.RedisHelper;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.Map;
@@ -21,7 +21,7 @@ public class RedisDataSourceRegister {
     /**
      * 多数据源redisHelper注册（不包括默认数据源）
      */
-    private static Map<String, DynamicRedisHelper> redisHelperRegister = new ConcurrentHashMap<>();
+    private static Map<String, RedisHelper> redisHelperRegister = new ConcurrentHashMap<>();
 
     public RedisDataSourceRegister() {
 
@@ -40,7 +40,7 @@ public class RedisDataSourceRegister {
     /**
      * 注册RedisHelper
      */
-    public static void redisterRedisHelper(String name, DynamicRedisHelper redisHelper) {
+    public static void redisterRedisHelper(String name, RedisHelper redisHelper) {
         if (redisHelper == null || name == null) {
             return;
         }
@@ -57,7 +57,7 @@ public class RedisDataSourceRegister {
     /**
      * 获取指定数据源的RedisHelper
      */
-    public static DynamicRedisHelper getRedisHelper(String name) {
+    public static RedisHelper getRedisHelper(String name) {
         return redisHelperRegister.get(name);
     }
 
@@ -71,7 +71,7 @@ public class RedisDataSourceRegister {
     /**
      * 获取多数据源的RedisHelper注册器
      */
-    public static Map<String, DynamicRedisHelper> getRedisHelperRegister() {
+    public static Map<String, RedisHelper> getRedisHelperRegister() {
         return redisHelperRegister;
     }
 

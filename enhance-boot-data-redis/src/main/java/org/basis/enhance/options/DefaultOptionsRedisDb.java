@@ -97,6 +97,9 @@ public class DefaultOptionsRedisDb extends AbstractOptionsRedisDb<String, String
         return commonOpsDb(15);
     }
 
+    /**
+     * 操作db公用方法
+     */
     private RedisTemplate<String, String> commonOpsDb(int db) {
         // 获取到该redisHelper对应的Redis数据源操作的redisTemplates
         Map<Object, RedisTemplate<String, String>> redisTemplates = redisHelper.getRedisTemplates();
@@ -109,8 +112,8 @@ public class DefaultOptionsRedisDb extends AbstractOptionsRedisDb<String, String
         DynamicRedisTemplate<String, String> template = (DynamicRedisTemplate<String, String>) redisHelper.getRedisTemplate();
         RedisTemplate<String, String> redisTemplate = redisTemplates.get(db);
 
+        // 双重检查，这里直接使用synchronized锁，因为创建redisTemplate不会很频繁，一般整个生命周期只有几次，不会有性能问题
         if (null == redisTemplate) {
-            // 双重检查，这里直接使用synchronized锁，因为创建redisTemplate不会很频繁，一般整个生命周期只有几次，不会有性能问题
             synchronized (DynamicRedisTemplate.class) {
                 if (null == redisTemplates.get(db)) {
                     // 创建到该db的RedisTemplate并缓存起来

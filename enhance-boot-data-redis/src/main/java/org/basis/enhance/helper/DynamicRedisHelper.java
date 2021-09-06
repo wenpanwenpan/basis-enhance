@@ -18,6 +18,7 @@ public class DynamicRedisHelper extends RedisHelper {
     private final DynamicRedisTemplate<String, String> redisTemplate;
 
     public DynamicRedisHelper(DynamicRedisTemplate<String, String> redisTemplate) {
+        super(redisTemplate);
         this.redisTemplate = redisTemplate;
     }
 

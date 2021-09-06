@@ -34,7 +34,7 @@ public class StoneRedisProperties {
     private boolean redisPubSub = false;
 
     /**
-     * 队列消息默认db
+     * 队列消息默认db（即监控的队列的默认db）
      */
     private int queueDb = 1;
 

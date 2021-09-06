@@ -1,7 +1,7 @@
 package org.basis.enhance.runner;
 
 import org.basis.enhance.helper.ApplicationContextHelper;
-import org.basis.enhance.helper.DynamicRedisHelper;
+import org.basis.enhance.helper.RedisHelper;
 import org.basis.enhance.infra.EnvironmentUtil;
 import org.basis.enhance.infra.constant.EnhanceRedisConstants;
 import org.basis.enhance.multisource.register.RedisDataSourceRegister;
@@ -19,6 +19,7 @@ import java.util.Set;
 /**
  * Redis多数据源注册runner
  * 一个数据源对应一个RedisHelper，一个redisHelper（动态）中包含着多个RedisTemplate（每个db一个RedisTemplate）
+ * 该runner的作用是，当容器启动完毕后，将容器中所有的多数据源的RedisHelper和RedisTemplate缓存起来
  *
  * @author Mr_wenpan@163.com 2021/09/06 10:33
  */
@@ -33,22 +34,27 @@ public class RedisMultiSourceRegisterRunner implements CommandLineRunner, Enviro
     public void run(String... args) throws Exception {
         // 获取所有数据源名称（注意：只包含spring.redis.datasource下的数据源）
         Set<String> dataSourceNames = EnvironmentUtil.loadRedisDataSourceName((AbstractEnvironment) environment);
+
         if (dataSourceNames.size() < 1) {
             logger.error("no multi datasource config, register multi datasource failed. please check config.");
             return;
         }
+
         // 注册
         dataSourceNames.forEach(name -> {
             String realTemplateName = name + EnhanceRedisConstants.MultiSource.REDIS_TEMPLATE;
             String realHelperName = name + EnhanceRedisConstants.MultiSource.REDIS_HELPER;
             // 通过数据源名称获取bean
-            RedisTemplate<String, String> redisTemplate = ApplicationContextHelper.getContext().getBean(realTemplateName, RedisTemplate.class);
-            DynamicRedisHelper redisHelper = ApplicationContextHelper.getContext().getBean(realHelperName, DynamicRedisHelper.class);
+            RedisTemplate<String, String> redisTemplate =
+                    ApplicationContextHelper.getContext().getBean(realTemplateName, RedisTemplate.class);
+            // 如果开启动态切换db则创建动态redisHelper，反之则创建静态redisHelper
+            RedisHelper redisHelper = ApplicationContextHelper.getContext().getBean(realHelperName, RedisHelper.class);
             // 注册RedisTemplate
             RedisDataSourceRegister.redisterRedisTemplate(realTemplateName, redisTemplate);
             // 注册RedisHelper
             RedisDataSourceRegister.redisterRedisHelper(realHelperName, redisHelper);
         });
+
     }
 
     @Override

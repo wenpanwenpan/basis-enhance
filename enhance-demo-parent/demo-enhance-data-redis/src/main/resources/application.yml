@@ -54,8 +54,12 @@ spring:
 
 stone:
   redis:
-    dynamic-database: false
+    # 是否开启动态db切换
+    dynamic-database: true
+    # 是否开启redis队列监控
     redis-queue: false
+    # 是否开启发布订阅监控
     redis-pub-sub: true
+    # redis队列监控的默认db
     queue-db: 1
 

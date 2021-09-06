@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequestMapping("/v1/test-multi-source")
 public class TestMultiDataSourceController {
 
-    @Autowired
+    @Autowired(required = false)
     private RedisMultisourceClient multisourceClient;
 
     @Autowired
@@ -87,6 +87,24 @@ public class TestMultiDataSourceController {
     public void test06() {
         // 默认数据源的默认db
         redisHelper.getRedisTemplate().opsForValue().set("default-source-default-db-key-1", "value");
+    }
+
+    @GetMapping("/test-100")
+    public void test100() {
+        // 不开启动态db切换的情况下，使用multisourceClient强制切换db结果验证（验证结果：这里会抛异常：静态RedisHelper静止切换db）
+        String key = "test-" + UUID.randomUUID().toString();
+        String value = "value-" + UUID.randomUUID().toString();
+        log.info("key = {}, value = {}", key, value);
+        multisourceClient.opsDbThree("source1").opsForValue().set(key, value);
+    }
+
+    @GetMapping("/test-101")
+    public void test101() {
+        // 不开启动态db切换的情况下，使用multisourceClient操作默认db验证
+        String key = "test-" + UUID.randomUUID().toString();
+        String value = "value-" + UUID.randomUUID().toString();
+        log.info("key = {}, value = {}", key, value);
+        multisourceClient.opsDefaultDb("source1").opsForValue().set(key, value);
     }
 
 }

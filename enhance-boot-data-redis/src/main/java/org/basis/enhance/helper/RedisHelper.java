@@ -14,7 +14,6 @@ import org.basis.enhance.options.DefaultOptionsRedisDb;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.*;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.serializer.RedisSerializer;
@@ -34,29 +33,16 @@ import java.util.concurrent.TimeUnit;
 public class RedisHelper implements InitializingBean {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisHelper.class);
+
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     /**
      * 使用连向默认的redis实例的redisTemplate
      */
-    @Autowired
     private RedisTemplate<String, String> redisTemplate;
-    /**
-     * 使用连向默认的redis实例的redisTemplate.valueOpr
-     */
-    @Autowired
-    private ValueOperations<String, String> valueOpr;
-    @Autowired
-    private HashOperations<String, String, String> hashOpr;
-    @Autowired
-    private ListOperations<String, String> listOpr;
-    @Autowired
-    private SetOperations<String, String> setOpr;
-    @Autowired
-    private ZSetOperations<String, String> zSetOpr;
 
     /**
-     * 这里按RedisTemplate的设计模式设计
+     * 这里按RedisTemplate的设计模式设计，每一个RedisHelper一个AbstractOptionsRedisDb对象
      */
     private AbstractOptionsRedisDb<String, String> optionsRedisDb = new DefaultOptionsRedisDb(this);
 
@@ -81,9 +67,6 @@ public class RedisHelper implements InitializingBean {
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
-    public RedisHelper() {
-    }
-
     public RedisHelper(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
@@ -91,11 +74,6 @@ public class RedisHelper implements InitializingBean {
     @Override
     public void afterPropertiesSet() {
         Assert.notNull(redisTemplate, "redisTemplate must not be null.");
-        Assert.notNull(valueOpr, "valueOpr must not be null.");
-        Assert.notNull(hashOpr, "hashOpr must not be null.");
-        Assert.notNull(listOpr, "listOpr must not be null.");
-        Assert.notNull(setOpr, "setOpr must not be null.");
-        Assert.notNull(zSetOpr, "zSetOpr must not be null.");
     }
 
     public static ObjectMapper getObjectMapper() {
@@ -112,33 +90,35 @@ public class RedisHelper implements InitializingBean {
     }
 
     protected ValueOperations<String, String> getValueOperations() {
-        return valueOpr;
+        return redisTemplate.opsForValue();
     }
 
     protected HashOperations<String, String, String> getHashOperations() {
-        return hashOpr;
+        return redisTemplate.opsForHash();
     }
 
     protected ListOperations<String, String> getListOperations() {
-        return listOpr;
+        return redisTemplate.opsForList();
     }
 
     protected SetOperations<String, String> getSetOperations() {
-        return setOpr;
+        return redisTemplate.opsForSet();
     }
 
     protected ZSetOperations<String, String> getZSetOperations() {
-        return zSetOpr;
+        return redisTemplate.opsForZSet();
     }
 
     /**
      * 设置当前线程操作 redis database，同一个线程内操作多次redis，不同database，
      * 需要调用 {@link RedisHelper#clearCurrentDatabase()} 清除当前线程redis database，从而使用默认的db.
+     * 如果静态RedisHelper进行db切换，这是不被允许的，需要抛出异常
      *
      * @param database redis database
      */
     public void setCurrentDatabase(int database) {
         logger.warn("Use default RedisHelper, you'd better use a DynamicRedisHelper instead.");
+        throw new RuntimeException("static redisHelper can't change db.");
     }
 
     /**

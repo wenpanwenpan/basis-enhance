@@ -1,10 +1,9 @@
 package org.basis.enhance.multisource.client;
 
-import org.basis.enhance.helper.DynamicRedisHelper;
+import org.basis.enhance.helper.RedisHelper;
 import org.basis.enhance.multisource.register.RedisDataSourceRegister;
 import org.basis.enhance.options.AbstractOptionsRedisDb;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.stereotype.Component;
 
 import static org.basis.enhance.infra.constant.EnhanceRedisConstants.MultiSource.REDIS_HELPER;
 import static org.basis.enhance.infra.constant.EnhanceRedisConstants.MultiSource.REDIS_TEMPLATE;
@@ -14,7 +13,6 @@ import static org.basis.enhance.infra.constant.EnhanceRedisConstants.MultiSource
  *
  * @author Mr_wenpan@163.com 2021/09/06 11:10
  */
-@Component
 public class RedisMultisourceClient {
 
     /**
@@ -112,7 +110,7 @@ public class RedisMultisourceClient {
 
     private AbstractOptionsRedisDb<String, String> commonOpsDb(String datasource) {
         // 获取该数据源对应的redisHelper
-        DynamicRedisHelper redisHelper = RedisDataSourceRegister.getRedisHelper(datasource + REDIS_HELPER);
+        RedisHelper redisHelper = RedisDataSourceRegister.getRedisHelper(datasource + REDIS_HELPER);
         if (redisHelper == null) {
             throw new RuntimeException("没有该数据源，请确认传入的redis数据源名称是否正确.");
         }

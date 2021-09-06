@@ -35,7 +35,7 @@ import java.util.Map;
  */
 @Configuration
 @Import({EnhanceRedisQueueAutoConfiguration.class})
-@ComponentScan({"org.basis.enhance.runner", "org.basis.enhance.multisource.client"})
+@ComponentScan({"org.basis.enhance.multisource.client"})
 @EnableConfigurationProperties({StoneRedisProperties.class, RedisDataSourceProperties.class})
 @ConditionalOnClass(name = {"org.springframework.data.redis.connection.RedisConnectionFactory"})
 public class EnhanceDataRedisAutoConfiguration {

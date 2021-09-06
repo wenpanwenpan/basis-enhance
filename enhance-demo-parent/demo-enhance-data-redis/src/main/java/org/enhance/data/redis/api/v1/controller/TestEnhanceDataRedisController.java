@@ -43,28 +43,28 @@ public class TestEnhanceDataRedisController {
     /**
      * source1数据源对应的redisHelper
      */
-    @Autowired
+    @Autowired(required = false)
     @Qualifier("source1RedisHelper")
     private RedisHelper source1RedisHelper;
 
     /**
      * source2数据源对应的redisHelper
      */
-    @Autowired
+    @Autowired(required = false)
     @Qualifier("source2RedisHelper")
     private RedisHelper source2RedisHelper;
 
     /**
      * 注入第一个数据源
      */
-    @Autowired
+    @Autowired(required = false)
     @Qualifier("source1RedisTemplate")
     private RedisTemplate<String, String> source1RedisTemplate;
 
     /**
      * 注入第二个数据源
      */
-    @Autowired
+    @Autowired(required = false)
     @Qualifier("source1RedisTemplate")
     private RedisTemplate<String, String> source2RedisTemplate;
 
