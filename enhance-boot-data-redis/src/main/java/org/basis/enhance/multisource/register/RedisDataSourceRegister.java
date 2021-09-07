@@ -16,12 +16,12 @@ public class RedisDataSourceRegister {
     /**
      * 多数据源redisTemplate注册（不包括默认数据源）
      */
-    private static Map<String, RedisTemplate<String, String>> redisTemplateRegister = new ConcurrentHashMap<>();
+    private final static Map<String, RedisTemplate<String, String>> REDIS_TEMPLATE_REGISTER = new ConcurrentHashMap<>();
 
     /**
      * 多数据源redisHelper注册（不包括默认数据源）
      */
-    private static Map<String, RedisHelper> redisHelperRegister = new ConcurrentHashMap<>();
+    private final static Map<String, RedisHelper> REDIS_HELPER_REGISTER = new ConcurrentHashMap<>();
 
     public RedisDataSourceRegister() {
 
@@ -34,7 +34,7 @@ public class RedisDataSourceRegister {
         if (redisTemplate == null || name == null) {
             return;
         }
-        redisTemplateRegister.put(name, redisTemplate);
+        REDIS_TEMPLATE_REGISTER.put(name, redisTemplate);
     }
 
     /**
@@ -44,35 +44,35 @@ public class RedisDataSourceRegister {
         if (redisHelper == null || name == null) {
             return;
         }
-        redisHelperRegister.put(name, redisHelper);
+        REDIS_HELPER_REGISTER.put(name, redisHelper);
     }
 
     /**
      * 获取指定数据源的RedisTemplate
      */
     public static RedisTemplate<String, String> getRedisTemplate(String name) {
-        return redisTemplateRegister.get(name);
+        return REDIS_TEMPLATE_REGISTER.get(name);
     }
 
     /**
      * 获取指定数据源的RedisHelper
      */
     public static RedisHelper getRedisHelper(String name) {
-        return redisHelperRegister.get(name);
+        return REDIS_HELPER_REGISTER.get(name);
     }
 
     /**
      * 获取多数据源的RedisTemplate注册器
      */
     public static Map<String, RedisTemplate<String, String>> getRedisTemplateRegister() {
-        return redisTemplateRegister;
+        return REDIS_TEMPLATE_REGISTER;
     }
 
     /**
      * 获取多数据源的RedisHelper注册器
      */
     public static Map<String, RedisHelper> getRedisHelperRegister() {
-        return redisHelperRegister;
+        return REDIS_HELPER_REGISTER;
     }
 
 }

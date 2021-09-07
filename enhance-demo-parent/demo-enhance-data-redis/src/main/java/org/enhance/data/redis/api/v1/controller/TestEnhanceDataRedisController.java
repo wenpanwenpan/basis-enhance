@@ -168,6 +168,13 @@ public class TestEnhanceDataRedisController {
     public void testDefaultRedisHelper() {
         // 使用默认数据源的redisHelper操作默认数据源
         redisHelper.lstRightPop("key");
+        // 使用默认数据源的redisHelper动态切换db
+        try {
+            redisHelper.setCurrentDatabase(2);
+            redisHelper.lstRightPop("key");
+        } finally {
+            redisHelper.clearCurrentDatabase();
+        }
     }
 
     @GetMapping("/test-source1-template")

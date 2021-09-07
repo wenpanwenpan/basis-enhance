@@ -91,12 +91,22 @@ public class TestChangeDbController {
 
     @GetMapping("/test-100")
     public void test100() {
+        // 使用多数据源客户端操作默认数据源的指定db
+
         // 操作默认的数据源的1号db
         multisourceClient.opsDbOne(DEFAULT_SOURCE).opsForValue().set(getRandomValue(), getRandomValue());
         // 操作默认的数据源的2号db
         multisourceClient.opsDbTwo(DEFAULT_SOURCE).opsForValue().set(getRandomValue(), getRandomValue());
         // 操作默认的数据源的3号db
         multisourceClient.opsDbThree(DEFAULT_SOURCE).opsForValue().set(getRandomValue(), getRandomValue());
+
+        // 使用redisHelper操作默认数据源的指定db
+
+        // 操作默认的数据源的1号db
+        redisHelper.opsDbOne().opsForValue().get("key");
+        // 操作默认的数据源的2号db
+        redisHelper.opsDbTwo().opsForValue().get("key");
+
     }
 
     private String getRandomValue() {

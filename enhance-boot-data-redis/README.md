@@ -8,6 +8,8 @@
 - redis多数据源操作
 - 一些Redis操作常用帮助器。
 
+项目中有些功能提供了多种使用方式，建议使用最优雅的方式去使用。这些使用方式也是在开发过程中对代码一步步优化而来，所以说最后提供的使用方式一定都是最优的。
+
 ### 2、下载源码打包到自己的maven仓库
 
 mvn clean install
@@ -48,19 +50,13 @@ mvn clean install
 ```yml
 stone:
   redis:
-  	# 开启动态切换redis db【可选】
+  	# 开启动态切换redis db【可选,默认不开启】
     dynamic-database: true
-    # 开启Redis队列监控 【可选】
-    redis-queue: true
-    # 开启Redis发布订阅监控【可选】
-    redis-pub-sub: true
-    # 默认监控1号db中的队列 【可自己在这里切换】
-    queue-db: 1
 ```
 
 ### 2、动态切换redis db
 
-在RedisHelper对Redis的常用操作做了封装，如果是使用的常见方法，则直接调用RedisHelper中的相关方法即可，使用上非常的方便。
+动态切换db功能封装在`RedisHelper`中，同时在`RedisHelper`对Redis的常用操作也做了封装，如果是使用的常见方法，则直接调用RedisHelper中的相关方法即可，使用上非常的方便。
 
 #### ①、使用redisHelper封装的api操作指定db
 
@@ -314,13 +310,18 @@ spring:
         port: ${SPRING_REDIS_PORT:6379}
         password: ${SPRING_REDIS_PASSWORD:WenPan@123}
         database: ${SPRING_REDIS_DATABASE:2}
+        
+stone:
+  redis:
+  	# 开启多数据源动态切换redis db
+    dynamic-database: true
 ```
 
 ### 3、使用默认的数据源
 
-> 这里演示使用`默认数据源`和`数据源1`做演示，其他多个数据源使用方式一样。
+> 操作默认数据源，直接注入`RedisHelper`即可。
 
-**①、使用默认数据源的RedisTemplate操作**
+#### 使用方式一
 
 ```java
 @Slf4j
@@ -333,41 +334,63 @@ public class TestEnhanceDataRedisController {
      */
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
- 
-  	@GetMapping("/test-default-template")
-    public void testDefaultRedisTemplate() {
-        // 使用默认数据源的redisTemplate操作默认数据源
-        redisTemplate.opsForValue().set("key", "value");
-    }
-}
-```
-
-**②、使用默认数据源的RedisHelper操作**
-
-```java
-@Slf4j
-@RestController("TestEncryptController.v1")
-@RequestMapping("/v1/test-enhance-redis")
-public class TestEnhanceDataRedisController {
-
-    /**
+  
+  	/**
      * 默认数据源对应的redisHelper
      */
     @Autowired
     @Qualifier("redisHelper")
     private RedisHelper redisHelper;
  
-  	@GetMapping("/test-default-redisHelper")
-    public void testDefaultRedisHelper() {
-        // 使用默认数据源的redisHelper操作默认数据源
+  	@GetMapping("/test-default")
+    public void testDefaultRedisTemplate() {
+        // 使用默认数据源的redisTemplate操作默认数据源
+        redisTemplate.opsForValue().set("key", "value");
+      	// 使用默认数据源的redisHelper操作默认数据源
         redisHelper.lstRightPop("key");
+      
+      	// 使用默认数据源的redisHelper动态切换db
+        try {
+            redisHelper.setCurrentDatabase(2);
+            redisHelper.lstRightPop("key");
+        } finally {
+            redisHelper.clearCurrentDatabase();
+        }
     }
+  
+}
+```
+
+#### 使用方式二（更优雅的使用）
+
+```java
+// 多数据源情况下，操作默认数据源并动态切换db测试
+@GetMapping("/test-100")
+public void test100() {
+    // 使用多数据源客户端操作默认数据源的指定db
+    
+    // 操作默认的数据源的1号db
+    multisourceClient.opsDbOne(DEFAULT_SOURCE).opsForValue().set(getRandomValue(), getRandomValue());
+    // 操作默认的数据源的2号db
+    multisourceClient.opsDbTwo(DEFAULT_SOURCE).opsForValue().set(getRandomValue(), getRandomValue());
+    // 操作默认的数据源的3号db
+    multisourceClient.opsDbThree(DEFAULT_SOURCE).opsForValue().set(getRandomValue(), getRandomValue());
+
+    // 使用redisHelper操作默认数据源的指定db
+    
+    // 操作默认的数据源的1号db
+    redisHelper.opsDbOne().opsForValue().get("key");
+    // 操作默认的数据源的2号db
+    redisHelper.opsDbTwo().opsForValue().get("key");
+
 }
 ```
 
 ### 4、使用指定的数据源
 
-**①、使用数据源1的RedisTemplate操作**
+#### 使用方式一
+
+**①、指定数据源名称注入指定的数据源**
 
 ```java
 @Slf4j
@@ -382,41 +405,26 @@ public class TestEnhanceDataRedisController {
     @Qualifier("source1RedisTemplate")
     private RedisTemplate<String, String> source1RedisTemplate;
   
-  	@GetMapping("/test-source1-template")
-    public void testSource1RedisTemplate() {
-        // 使用source1数据源的redisTemplate操作source1数据源
-        source1RedisTemplate.opsForValue().set("key", "value");
-    }
-}
-```
-
-**②、使用数据源1的RedisHelper操作**
-
-```java
-@Slf4j
-@RestController("TestEncryptController.v1")
-@RequestMapping("/v1/test-enhance-redis")
-public class TestEnhanceDataRedisController {
-
-    /**
+  	/**
      * source1数据源对应的redisHelper
      */
     @Autowired
     @Qualifier("source1RedisHelper")
     private RedisHelper source1RedisHelper;
   
-  	@GetMapping("/test-source1-redisHelper")
-    public void testSource1RedisHelper() {
-        // 使用source1数据源的redisHelper操作source1数据源(切换db操作)
+  	@GetMapping("/test-source1-template")
+    public void testSource1RedisTemplate() {
+        // 使用source1数据源的redisTemplate操作source1数据源
+        source1RedisTemplate.opsForValue().set("key", "value");
+      	// 使用source1数据源的redisHelper操作source1数据源(切换db操作)
          EasyRedisHelper.execute(2, () -> source1RedisHelper.lstLeftPush("key", "value"));
     }
-  
 }
 ```
 
-### 5、更简单的使用
+#### 使用方式二（更简单的使用）
 
-以上两种方式使用起来都较为复杂，不是特别友好（比如：我们需要手动的使用`@Qualifier`注解指定容器中bean的名称进行注入），这里提供一种更加友好的使用方式`RedisMultisourceClient`
+以上使用方式一使用起来都较为复杂，不是特别友好（比如：我们需要手动的使用`@Qualifier`注解指定容器中bean的名称进行注入），这里提供一种更加友好的使用方式`RedisMultisourceClient`，在`RedisMultisourceClient`中提供了丰富的易用的对于多数据源和动态切换db的操作。
 
 ```java
 @Slf4j
@@ -427,6 +435,12 @@ public class TestMultiDataSourceController {
     @Autowired
     private RedisMultisourceClient multisourceClient;
   
+   	@Autowired
+    private RedisHelper redisHelper;
+  
+  	/**
+  	 * 操作指定的数据源的指定db
+  	 */
     @GetMapping("/test-1")
     public void test01() {
         String key = "test-" + UUID.randomUUID().toString();
@@ -442,10 +456,36 @@ public class TestMultiDataSourceController {
      	  // 写入source2数据源的2号库
       	multisourceClient.opsDbOne("source2").opsForValue().set(key, value);
     }
+  
+  	/**
+     * 操作默认数据源的指定db
+     */
+    @GetMapping("/test-01")
+    public void test01() {
+        // 操作1号db
+        redisHelper.opsDbOne().opsForValue().set(getRandomValue(), getRandomValue());
+        // 操作2号db
+        redisHelper.opsDbTwo().opsForValue().set(getRandomValue(), getRandomValue());
+        // 操作3号db
+        redisHelper.opsDbThree().opsForValue().set(getRandomValue(), getRandomValue());
+        // 操作4号db
+        redisHelper.opsDbFour().opsForValue().set(getRandomValue(), getRandomValue());
+    }
+  
+  	/**
+     * 使用多数据源客户端操作默认数据源并且动态切换db
+     */
+  	@GetMapping("/test-100")
+    public void test100() {
+        // 操作默认的数据源的1号db
+        multisourceClient.opsDbOne(DEFAULT_SOURCE).opsForValue().set(getRandomValue(), getRandomValue());
+        // 操作默认的数据源的2号db
+        multisourceClient.opsDbTwo(DEFAULT_SOURCE).opsForValue().set(getRandomValue(), getRandomValue());
+        // 操作默认的数据源的3号db
+        multisourceClient.opsDbThree(DEFAULT_SOURCE).opsForValue().set(getRandomValue(), getRandomValue());
+    }
 }
 ```
-
-
 
 ## 五、发布订阅使用
 
