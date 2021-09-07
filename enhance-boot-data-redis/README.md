@@ -6,7 +6,7 @@
 - redis队列监听
 - redis发布订阅监听
 - redis多数据源操作
-- 以及一些Redis操作常用帮助器。
+- 一些Redis操作常用帮助器。
 
 ### 2、下载源码打包到自己的maven仓库
 
@@ -39,11 +39,11 @@ mvn clean install
 -->
 ```
 
-## 二、使用介绍
+## 二、动态切换db使用介绍
 
 ### 1、application.yml配置文件中开启相关功能配置
 
-> 具体功能对应的具体配置在使用示例讲解的时候会详细说明
+> 具体功能对应的具体配置在使用示例讲解的时候会详细说明！！！
 
 ```yml
 stone:
@@ -184,7 +184,41 @@ public class TestEnhanceDataRedisController {
 }
 ```
 
-### 3、redis队列消费使用
+#### ④、更优雅的用法
+
+前三种使用方式都比较麻烦，要不就是需要手动设置db要不就是使用lamda表达式，使用上不是特别友好。这里推荐使用这种方式来动态的切换db（即直接使用`redisHelper.opsXXXDb`）。
+
+```java
+@Slf4j
+@RestController("TestChangeDbController.v1")
+@RequestMapping("/v1/test-change-db")
+public class TestChangeDbController {
+
+    @Autowired
+    private RedisHelper redisHelper;
+
+    @GetMapping("/test-01")
+    public void test01() {
+        // 操作1号db
+        redisHelper.opsDbOne().opsForValue().set(getRandomValue(), getRandomValue());
+        // 操作2号db
+        redisHelper.opsDbTwo().opsForValue().set(getRandomValue(), getRandomValue());
+        // 操作3号db
+        redisHelper.opsDbThree().opsForValue().set(getRandomValue(), getRandomValue());
+        // 操作4号db
+        redisHelper.opsDbFour().opsForValue().set(getRandomValue(), getRandomValue());
+    }
+
+    private String getRandomValue() {
+        return UUID.randomUUID().toString();
+    }
+    
+}
+```
+
+==所以，这里一共提供了四种切换db的使用方式，可以选择任意一种进行使用。推荐使用第④种，最为简单直观。==
+
+## 三、redis队列消费监控使用
 
 该增强插件中也提供了对于Redis队列消息的消费增强，我们不用再写代码去手动的 pull  Redis队列的消息，而是当Redis队列中有消息时自动传递给我们。我们只需要实现指定的`接口 + 注解`标注需要监控的队列名称即可。
 
@@ -221,9 +255,9 @@ public class RedisQueueTestServiceImpl implements IQueueHandler {
 
 当`test-queue`队列中有消息时，会回调`handle`方法将`test-queue`队列中取出的值以参数的形式传递给`handle`方法。我们只需要在该方法中对获取到的消息数据做操作即可。
 
-### 4、Redis多数据源使用
+## 四、Redis多数据源使用
 
->  在项目开发中我们可能会使用到多个Redis数据源，在该项目中也做了多数据源的实现。
+>  在项目开发中我们可能会使用到多个Redis数据源，在该项目中也做了多数据源的实现，并且每个数据源都可以动态的切换db进行操作。
 
 **使用场景描述：**
 
@@ -233,7 +267,7 @@ public class RedisQueueTestServiceImpl implements IQueueHandler {
 - 所以此时在项目中就需要能够任意访问这两个数据源。
 - 当然，这只是举例，并不是实际生产情况能采用的业务方案。
 
-#### 1、应用启动类上使用注解开启多数据源使用
+### 1、应用启动类上使用注解开启多数据源使用
 
 ```java
 @SpringBootApplication
@@ -249,7 +283,7 @@ public class EnhanceDataRedisDemoApplication {
 }
 ```
 
-#### 2、application.yml配置文件中配置多数据源
+### 2、application.yml配置配置多数据源
 
 ```yml
 spring:
@@ -260,7 +294,7 @@ spring:
     host: ${SPRING_REDIS_HOST:wenpan-host}
     port: ${SPRING_REDIS_PORT:6379}
     password: ${SPRING_REDIS_PASSWORD:WenPan@123}
-    database: ${SPRING_REDIS_DATABASE:1}
+    database: ${SPRING_REDIS_DATABASE:0}
     client-type: lettuce
     lettuce:
       pool:
@@ -273,20 +307,18 @@ spring:
         host: ${SPRING_REDIS_HOST:wenpan-host}
         port: ${SPRING_REDIS_PORT:6379}
         password: ${SPRING_REDIS_PASSWORD:WenPan@123}
-        database: ${SPRING_REDIS_DATABASE:2}
+        database: ${SPRING_REDIS_DATABASE:1}
       # 第二个数据源
       source2:
-        host: ${SPRING_REDIS_HOST:wenpan-host}
+        host: ${SPRING_REDIS_HOST:yuanping-host}
         port: ${SPRING_REDIS_PORT:6379}
         password: ${SPRING_REDIS_PASSWORD:WenPan@123}
-        database: ${SPRING_REDIS_DATABASE:3}
+        database: ${SPRING_REDIS_DATABASE:2}
 ```
 
-#### 3、代码中注入想要使用的数据源
+### 3、使用默认的数据源
 
 > 这里演示使用`默认数据源`和`数据源1`做演示，其他多个数据源使用方式一样。
-
-##### a)、使用默认的数据源
 
 **①、使用默认数据源的RedisTemplate操作**
 
@@ -333,7 +365,7 @@ public class TestEnhanceDataRedisController {
 }
 ```
 
-##### b)、使用指定的数据源
+### 4、使用指定的数据源
 
 **①、使用数据源1的RedisTemplate操作**
 
@@ -382,15 +414,48 @@ public class TestEnhanceDataRedisController {
 }
 ```
 
-### 5、发布订阅使用
+### 5、更简单的使用
+
+以上两种方式使用起来都较为复杂，不是特别友好（比如：我们需要手动的使用`@Qualifier`注解指定容器中bean的名称进行注入），这里提供一种更加友好的使用方式`RedisMultisourceClient`
+
+```java
+@Slf4j
+@RestController("TestMultiDataSourceController.v1")
+@RequestMapping("/v1/test-multi-source")
+public class TestMultiDataSourceController {
+
+    @Autowired
+    private RedisMultisourceClient multisourceClient;
+  
+    @GetMapping("/test-1")
+    public void test01() {
+        String key = "test-" + UUID.randomUUID().toString();
+        String value = "value-" + UUID.randomUUID().toString();
+        log.info("key = {}, value = {}", key, value);
+      	// 写入source1数据源的1号库
+        multisourceClient.opsDbOne("source1").opsForValue().set(key, value);
+     	  // 写入source2数据源的1号库
+      	multisourceClient.opsDbOne("source2").opsForValue().set(key, value);
+      
+      	// 写入source1数据源的2号库
+        multisourceClient.opsDbOne("source1").opsForValue().set(key, value);
+     	  // 写入source2数据源的2号库
+      	multisourceClient.opsDbOne("source2").opsForValue().set(key, value);
+    }
+}
+```
+
+
+
+## 五、发布订阅使用
 
 该增强组件也实现了对于redis的发布订阅模式的使用进行了增强，但是这里在实现上指定订阅一个指定的`channel`，无法实现动态的指定多个channel的模式，所以意义不是很大。但可以作为学习参考。
 
-### 6、其他使用
+## 六、其他使用
 
 该增强组件中提供了其他的对redis的相关操作的工具类封装，可参考源代码自由使用！
 
-## 二、特点分析
+## 七、特点分析
 
 1. 该增强组件是对于每个`redis db`创建一个`redisTemplate`并缓存起来，在使用的时候通过db值来动态的选取对应的`redisTemplate`来进行调用对应的方法，不会有安全性问题。
 
@@ -406,7 +471,9 @@ public class TestEnhanceDataRedisController {
 
 7. 创建动态RedisTemplate的时候目前创建的RedisTemplate的key-value序列化器默认使用的是`stringRedisSerializer`，这里以后应该实现成用于动态可配置。
 
-## 三、实现原理
+## 八、实现原理
+
+最核心的是动态切换数据源的思路，Redis队列监控、多数据源、发布订阅监控这些思路都比较简单而且比较容易实现。所以着重介绍一下动态切换redis db的思路。
 
 ### ①、动态切换redis db
 
@@ -451,6 +518,8 @@ public class TestEnhanceDataRedisController {
 
 ### ②、Redis多数据源实现
 
+注意：该代码的实现中为了提供更加友好的使用方式，在使用方式实现上参考了`RedisTemplate` + `DefaultValueOperations`来进行实现。
+
 #### 1、原理图如下
 
 ![](images/redis多数据源原理图.png)
@@ -487,7 +556,7 @@ public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanD
 }
 ```
 
-## 四、核心源代码介绍
+## 九、核心源代码介绍
 
 [java实现redis动态切换db](https://blog.csdn.net/Hellowenpan/article/details/119643657)
 
@@ -495,7 +564,7 @@ public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanD
 
 
 
-
+==其他使用：见代码模块中的测试模块中的测试类！！！==
 
 
 

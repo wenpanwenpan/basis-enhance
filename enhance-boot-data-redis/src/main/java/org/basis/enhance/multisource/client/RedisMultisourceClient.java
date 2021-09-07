@@ -108,6 +108,14 @@ public class RedisMultisourceClient {
         return commonOpsDb(datasource).opsDbFifteen();
     }
 
+    /**
+     * 操作0~15号库以外的db
+     */
+    public RedisTemplate<String, String> opsOtherDb(String datasource, int db) {
+
+        return commonOpsDb(datasource).opsOtherDb(db);
+    }
+
     private AbstractOptionsRedisDb<String, String> commonOpsDb(String datasource) {
         // 获取该数据源对应的redisHelper
         RedisHelper redisHelper = RedisDataSourceRegister.getRedisHelper(datasource + REDIS_HELPER);

@@ -129,5 +129,12 @@ public abstract class AbstractOptionsRedisDb<T, K> {
      */
     public abstract RedisTemplate<T, K> opsDbFifteen();
 
+    /**
+     * 操作其他redis db(默认提供操作16个db的通用方法，和redis服务对应。如果还想操作除了这16个db之外的其他db，则可以使用这个方法)
+     *
+     * @param db db号
+     * @return org.springframework.data.redis.core.RedisTemplate<T, K>
+     */
+    public abstract RedisTemplate<T, K> opsOtherDb(int db);
 
 }

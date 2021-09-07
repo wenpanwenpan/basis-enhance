@@ -22,7 +22,9 @@ import org.springframework.data.redis.connection.lettuce.LettucePoolingClientCon
 import org.springframework.util.StringUtils;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Redis connection configuration using Lettuce.
@@ -52,7 +54,7 @@ class LettuceConnectionConfigure extends RedisConnectionConfiguration {
                                int database) {
         super(properties, sentinelConfigurationProvider, clusterConfigurationProvider, database);
         this.properties = properties;
-        this.builderCustomizers = builderCustomizers;
+        this.builderCustomizers = Optional.ofNullable(builderCustomizers).orElse(new ArrayList<>());
         // 每次new LettuceConnectionConfiguration 都新建一个clientResources，也可以使用容器中默认注入的
         // 参考 LettuceConnectionConfiguration
         clientResources = DefaultClientResources.create();
@@ -104,8 +106,7 @@ class LettuceConnectionConfigure extends RedisConnectionConfiguration {
     /**
      * 变更源码排序
      */
-    private void customize(
-            LettuceClientConfigurationBuilder builder) {
+    private void customize(LettuceClientConfigurationBuilder builder) {
         for (LettuceClientConfigurationBuilderCustomizer customizer : builderCustomizers) {
             customizer.customize(builder);
         }

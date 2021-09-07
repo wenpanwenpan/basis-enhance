@@ -97,6 +97,12 @@ public class DefaultOptionsRedisDb extends AbstractOptionsRedisDb<String, String
         return commonOpsDb(15);
     }
 
+    @Override
+    public RedisTemplate<String, String> opsOtherDb(int db) {
+
+        return commonOpsDb(db);
+    }
+
     /**
      * 操作db公用方法
      */
@@ -105,11 +111,11 @@ public class DefaultOptionsRedisDb extends AbstractOptionsRedisDb<String, String
         Map<Object, RedisTemplate<String, String>> redisTemplates = redisHelper.getRedisTemplates();
         // 静态redisHelper不能切换db
         if (redisTemplates == null) {
-            throw new RuntimeException("静态redisHelper不支持动态切换redis db");
+            throw new RuntimeException("静态redisHelper不支持动态切换redis db，若需要动态切换db，请开启动态配置.");
         }
 
-        // 获取到该RedisHelper的redisTemplate
-        DynamicRedisTemplate<String, String> template = (DynamicRedisTemplate<String, String>) redisHelper.getRedisTemplate();
+        // 获取到该RedisHelper的redisTemplate(一定有，在创建redisHelper的时候就赋值了)
+        DynamicRedisTemplate<String, String> dynamicRedisTemplate = (DynamicRedisTemplate<String, String>) redisHelper.getRedisTemplate();
         RedisTemplate<String, String> redisTemplate = redisTemplates.get(db);
 
         // 双重检查，这里直接使用synchronized锁，因为创建redisTemplate不会很频繁，一般整个生命周期只有几次，不会有性能问题
@@ -117,7 +123,7 @@ public class DefaultOptionsRedisDb extends AbstractOptionsRedisDb<String, String
             synchronized (DynamicRedisTemplate.class) {
                 if (null == redisTemplates.get(db)) {
                     // 创建到该db的RedisTemplate并缓存起来
-                    RedisTemplate<String, String> redisTemplateOnMissing = template.createRedisTemplateOnMissing(db);
+                    RedisTemplate<String, String> redisTemplateOnMissing = dynamicRedisTemplate.createRedisTemplateOnMissing(db);
                     redisTemplates.put(db, redisTemplateOnMissing);
                 }
             }

@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.basis.enhance.infra.constant.EnhanceRedisConstants.DefaultRedisHelperName;
 /**
  * stone-redis自动配置，必须要容器中有RedisConnectionFactory才启动该配置类
  *
@@ -104,7 +105,7 @@ public class EnhanceDataRedisAutoConfiguration {
      */
     @Primary
     @ConditionalOnStaticRedisHelper
-    @Bean(name = {"redisHelper", StoneRedisProperties.DEFAULT_REDIS, StoneRedisProperties.DEFAULT_REDIS_HELPER})
+    @Bean(name = {"redisHelper", DefaultRedisHelperName.DEFAULT, DefaultRedisHelperName.DEFAULT_REDIS_HELPER})
     public RedisHelper redisHelper(RedisTemplate<String, String> redisTemplate) {
         return new RedisHelper(redisTemplate);
     }
@@ -115,7 +116,7 @@ public class EnhanceDataRedisAutoConfiguration {
      */
     @Primary
     @ConditionalOnDynamicRedisHelper
-    @Bean(name = {"redisHelper", StoneRedisProperties.DEFAULT_REDIS, StoneRedisProperties.DEFAULT_REDIS_HELPER})
+    @Bean(name = {"redisHelper", DefaultRedisHelperName.DEFAULT, DefaultRedisHelperName.DEFAULT_REDIS_HELPER})
     public RedisHelper dynamicRedisHelper(StringRedisTemplate redisTemplate,
                                           RedisProperties redisProperties,
                                           ObjectProvider<RedisSentinelConfiguration> sentinelConfiguration,
@@ -136,7 +137,7 @@ public class EnhanceDataRedisAutoConfiguration {
         // ======================================================================================================
 
         DynamicRedisTemplate<String, String> dynamicRedisTemplate = new DynamicRedisTemplate<>(dynamicRedisTemplateFactory);
-        // 当不指定库时，默认使用的RedisTemplate来操作Redis
+        // 当不指定库时，默认使用的RedisTemplate来操作Redis(直接获取容器中的)
         dynamicRedisTemplate.setDefaultRedisTemplate(redisTemplate);
         Map<Object, RedisTemplate<String, String>> map = new HashMap<>(8);
         // 配置文件中指定使用几号db

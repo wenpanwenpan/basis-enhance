@@ -14,10 +14,6 @@ public class StoneRedisProperties {
 
     public static final String PREFIX = "stone.redis";
 
-    public static final String DEFAULT_REDIS = "default";
-
-    public static final String DEFAULT_REDIS_HELPER = DEFAULT_REDIS + "-helper";
-
     /**
      * 是否开启动态数据库切换 默认开启，如果关闭需要在yml中配置stone.redis.dynamic-database=false
      */

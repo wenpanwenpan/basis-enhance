@@ -16,6 +16,11 @@ import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
+import static org.basis.enhance.infra.constant.EnhanceRedisConstants.DefaultRedisHelperName.REDIS_HELPER;
+import static org.basis.enhance.infra.constant.EnhanceRedisConstants.DefaultRedisTemplateName.REDIS_TEMPLATE;
+import static org.basis.enhance.infra.constant.EnhanceRedisConstants.MultiSource.DEFAULT_SOURCE_HELPER;
+import static org.basis.enhance.infra.constant.EnhanceRedisConstants.MultiSource.DEFAULT_SOURCE_TEMPLATE;
+
 /**
  * Redis多数据源注册runner
  * 一个数据源对应一个RedisHelper，一个redisHelper（动态）中包含着多个RedisTemplate（每个db一个RedisTemplate）
@@ -40,13 +45,18 @@ public class RedisMultiSourceRegisterRunner implements CommandLineRunner, Enviro
             return;
         }
 
-        // 注册
+        // 注册默认数据源的redisHelper和redisTemplate(这两个bean在自动配置类中已经注入了)
+        RedisHelper defaultRedisHelper = ApplicationContextHelper.getContext().getBean(REDIS_HELPER, RedisHelper.class);
+        RedisTemplate defaultRedisTemplate = ApplicationContextHelper.getContext().getBean(REDIS_TEMPLATE, RedisTemplate.class);
+        RedisDataSourceRegister.redisterRedisHelper(DEFAULT_SOURCE_HELPER, defaultRedisHelper);
+        RedisDataSourceRegister.redisterRedisTemplate(DEFAULT_SOURCE_TEMPLATE, defaultRedisTemplate);
+
+        // 注册多数据源的RedisHelper
         dataSourceNames.forEach(name -> {
             String realTemplateName = name + EnhanceRedisConstants.MultiSource.REDIS_TEMPLATE;
             String realHelperName = name + EnhanceRedisConstants.MultiSource.REDIS_HELPER;
             // 通过数据源名称获取bean
-            RedisTemplate<String, String> redisTemplate =
-                    ApplicationContextHelper.getContext().getBean(realTemplateName, RedisTemplate.class);
+            RedisTemplate redisTemplate = ApplicationContextHelper.getContext().getBean(realTemplateName, RedisTemplate.class);
             // 如果开启动态切换db则创建动态redisHelper，反之则创建静态redisHelper
             RedisHelper redisHelper = ApplicationContextHelper.getContext().getBean(realHelperName, RedisHelper.class);
             // 注册RedisTemplate

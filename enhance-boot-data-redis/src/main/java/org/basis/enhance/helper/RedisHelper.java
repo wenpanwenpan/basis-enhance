@@ -37,18 +37,6 @@ public class RedisHelper implements InitializingBean {
     public static final String DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     /**
-     * 使用连向默认的redis实例的redisTemplate
-     */
-    private RedisTemplate<String, String> redisTemplate;
-
-    /**
-     * 这里按RedisTemplate的设计模式设计，每一个RedisHelper一个AbstractOptionsRedisDb对象
-     */
-    private AbstractOptionsRedisDb<String, String> optionsRedisDb = new DefaultOptionsRedisDb(this);
-
-    static final ObjectMapper objectMapper;
-
-    /**
      * 默认过期时长，单位：秒
      */
     public static final long DEFAULT_EXPIRE = 60 * 60 * 24L;
@@ -57,6 +45,21 @@ public class RedisHelper implements InitializingBean {
      * 不设置过期时长
      */
     public static final long NOT_EXPIRE = -1;
+
+    /**
+     * objectMapper对象
+     */
+    static final ObjectMapper objectMapper;
+
+    /**
+     * 使用连向默认的redis实例的redisTemplate
+     */
+    private RedisTemplate<String, String> redisTemplate;
+
+    /**
+     * 这里按RedisTemplate的设计模式设计，每一个RedisHelper一个AbstractOptionsRedisDb对象
+     */
+    private AbstractOptionsRedisDb<String, String> optionsRedisDb = new DefaultOptionsRedisDb(this);
 
     static {
         objectMapper = new ObjectMapper();
@@ -129,14 +132,89 @@ public class RedisHelper implements InitializingBean {
     }
 
     /**
-     * 获取RedisTemplates，静态RedisHelper中没有多个RedisTemplates，交给子类实现
+     * 获取RedisTemplates，静态RedisHelper中没有多个RedisTemplates，交给子类实现(这里适配其他功能)
      */
     public Map<Object, RedisTemplate<String, String>> getRedisTemplates() {
         return null;
     }
 
+    /**
+     * 操作redis db，获取操作对象
+     */
     public AbstractOptionsRedisDb<String, String> opsDb() {
         return optionsRedisDb;
+    }
+
+    /**
+     * 操作1号db
+     */
+    public RedisTemplate<String, String> opsDbZero() {
+        return optionsRedisDb.opsDbZero();
+    }
+
+    public RedisTemplate<String, String> opsDbOne() {
+        return optionsRedisDb.opsDbOne();
+    }
+
+    public RedisTemplate<String, String> opsDbTwo() {
+        return optionsRedisDb.opsDbTwo();
+    }
+
+    public RedisTemplate<String, String> opsDbThree() {
+        return optionsRedisDb.opsDbThree();
+    }
+
+    public RedisTemplate<String, String> opsDbFour() {
+        return optionsRedisDb.opsDbFour();
+    }
+
+    public RedisTemplate<String, String> opsDbFive() {
+        return optionsRedisDb.opsDbFive();
+    }
+
+    public RedisTemplate<String, String> opsDbSix() {
+        return optionsRedisDb.opsDbSix();
+    }
+
+    public RedisTemplate<String, String> opsDbSeven() {
+        return optionsRedisDb.opsDbSeven();
+    }
+
+    public RedisTemplate<String, String> opsDbEight() {
+        return optionsRedisDb.opsDbEight();
+    }
+
+    public RedisTemplate<String, String> opsDbNine() {
+        return optionsRedisDb.opsDbNine();
+    }
+
+    public RedisTemplate<String, String> opsDbTen() {
+        return optionsRedisDb.opsDbTen();
+    }
+
+    public RedisTemplate<String, String> opsDbEleven() {
+        return optionsRedisDb.opsDbEleven();
+    }
+
+    public RedisTemplate<String, String> opsDbTwelve() {
+        return optionsRedisDb.opsDbTwelve();
+    }
+
+    public RedisTemplate<String, String> opsDbThirteen() {
+        return optionsRedisDb.opsDbThirteen();
+    }
+
+    public RedisTemplate<String, String> opsDbFourteen() {
+        return optionsRedisDb.opsDbFourteen();
+    }
+
+    public RedisTemplate<String, String> opsDbFifteen() {
+        return optionsRedisDb.opsDbFifteen();
+    }
+
+    public RedisTemplate<String, String> opsOtherDb(int db) {
+
+        return optionsRedisDb.opsOtherDb(db);
     }
 
     /**
