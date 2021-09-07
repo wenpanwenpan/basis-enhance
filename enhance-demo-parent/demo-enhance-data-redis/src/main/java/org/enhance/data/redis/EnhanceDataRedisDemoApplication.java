@@ -1,6 +1,6 @@
 package org.enhance.data.redis;
 
-import org.basis.enhance.multisource.EnableRedisMultiDataSource;
+import org.basis.enhance.redis.multisource.EnableRedisMultiDataSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

@@ -1,8 +1,8 @@
 package org.enhance.data.redis.app.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
-import org.basis.enhance.handler.IQueueHandler;
-import org.basis.enhance.handler.QueueHandler;
+import org.basis.enhance.redis.handler.IQueueHandler;
+import org.basis.enhance.redis.handler.QueueHandler;
 
 /**
  * redis队列测试service实现
