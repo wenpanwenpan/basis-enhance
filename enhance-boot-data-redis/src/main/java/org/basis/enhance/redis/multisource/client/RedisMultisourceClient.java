@@ -6,6 +6,8 @@ import org.basis.enhance.redis.multisource.register.RedisDataSourceRegister;
 import org.basis.enhance.redis.options.AbstractOptionsRedisDb;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import static org.basis.enhance.redis.infra.constant.EnhanceRedisConstants.MultiSource.DEFAULT_SOURCE;
+
 /**
  * Redis多数据源操作客户端
  *
@@ -25,6 +27,93 @@ public class RedisMultisourceClient {
             throw new RuntimeException("没有该数据源，请确认传入的redis数据源名称是否正确.");
         }
         return redisTemplate;
+    }
+
+    public RedisTemplate<String, String> opsDbZeroWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbZero();
+    }
+
+    public RedisTemplate<String, String> opsDbOneWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbOne();
+    }
+
+    public RedisTemplate<String, String> opsDbTwoWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbTwo();
+    }
+
+    public RedisTemplate<String, String> opsDbThreeWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbThree();
+    }
+
+    public RedisTemplate<String, String> opsDbFourWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbFour();
+    }
+
+    public RedisTemplate<String, String> opsDbFiveWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbFive();
+    }
+
+    public RedisTemplate<String, String> opsDbSixWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbSix();
+    }
+
+    public RedisTemplate<String, String> opsDbSevenWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbSeven();
+    }
+
+    public RedisTemplate<String, String> opsDbEightWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbEight();
+    }
+
+    public RedisTemplate<String, String> opsDbNineWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbNine();
+    }
+
+    public RedisTemplate<String, String> opsDbTenWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbTen();
+    }
+
+    public RedisTemplate<String, String> opsDbElevenWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbEleven();
+    }
+
+    public RedisTemplate<String, String> opsDbTwelveWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbTwelve();
+    }
+
+    public RedisTemplate<String, String> opsDbThirteenWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbThirteen();
+    }
+
+    public RedisTemplate<String, String> opsDbFourteenWithDefaultSource() {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsDbFourteen();
+    }
+
+    public RedisTemplate<String, String> opsDbFifteenWithDefaultSource() {
+        return commonOpsDb(DEFAULT_SOURCE).opsDbFifteen();
+    }
+
+    /**
+     * 使用默认数据源，操作0~15号库以外的db
+     */
+    public RedisTemplate<String, String> opsOtherDbWithDefaultSource(int db) {
+
+        return commonOpsDb(DEFAULT_SOURCE).opsOtherDb(db);
     }
 
     public RedisTemplate<String, String> opsDbZero(String datasource) {
