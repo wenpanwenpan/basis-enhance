@@ -1,0 +1,1 @@
+redis.call('set', "hello-nihao", "hello");

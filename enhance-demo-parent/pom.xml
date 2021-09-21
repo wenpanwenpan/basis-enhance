@@ -13,6 +13,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>demo-enhance-data-redis</module>
+        <module>demo-enhance-distribute-executor</module>
     </modules>
 
 </project>
