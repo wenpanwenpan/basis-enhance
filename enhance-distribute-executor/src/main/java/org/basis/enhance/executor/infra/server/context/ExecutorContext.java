@@ -3,7 +3,6 @@ package org.basis.enhance.executor.infra.server.context;
 import lombok.Data;
 import org.basis.enhance.executor.config.property.ExecutorProperties;
 import org.basis.enhance.executor.domain.entity.Task;
-import org.basis.enhance.executor.domain.repository.TaskDataRepository;
 import org.basis.enhance.executor.domain.repository.TaskRedisRepository;
 import org.basis.enhance.executor.domain.repository.TaskRepository;
 import org.basis.enhance.executor.infra.server.acceptor.TaskAcceptor;
@@ -54,11 +53,6 @@ public class ExecutorContext implements DisposableBean {
     private final TaskRepository taskRepository;
 
     /**
-     * 任务数据管理知识库
-     */
-    private final TaskDataRepository taskDataRepository;
-
-    /**
      * 空闲的任务线程数
      */
     private volatile AtomicInteger freeTaskCounter;
@@ -91,12 +85,10 @@ public class ExecutorContext implements DisposableBean {
 
     public ExecutorContext(ExecutorProperties properties,
                            TaskRepository taskRepository,
-                           TaskDataRepository taskDataRepository,
                            ApplicationContext applicationContext,
                            TaskRedisRepository taskRedisRepository) {
         this.properties = properties;
         this.taskRepository = taskRepository;
-        this.taskDataRepository = taskDataRepository;
         this.applicationContext = applicationContext;
         this.taskRedisRepository = taskRedisRepository;
         freeTaskCounter = new AtomicInteger(this.properties.getMaxTaskCount());
@@ -127,7 +119,7 @@ public class ExecutorContext implements DisposableBean {
         taskAccepter.accept();
     }
 
-    // 门面模式代码设计 + 迪米特法则，整合taskRedisRepository + taskDataRepository + taskRepository三个子系统
+    // 门面模式代码设计 + 迪米特法则，整合taskRedisRepository + taskRepository三个子系统
 
     public void doWork(ZSetOperations.TypedTuple<String> taskWithScore) {
         taskWorker.doWork(taskWithScore);
@@ -143,14 +135,6 @@ public class ExecutorContext implements DisposableBean {
 
     public void taskFailed(String group, String subTaskId) {
         taskRedisRepository.taskFailed(group, subTaskId);
-    }
-
-    public String save(Task task) {
-        return taskDataRepository.save(task);
-    }
-
-    public Object read(Task task) {
-        return taskDataRepository.read(task);
     }
 
     /**
@@ -199,4 +183,5 @@ public class ExecutorContext implements DisposableBean {
     public TaskHandler<Serializable> newInstance(String taskHandlerBeanId) {
         return taskHandlerFactory.newInstance(taskHandlerBeanId);
     }
+
 }

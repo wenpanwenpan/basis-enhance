@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  *
  * @author Mr_wenpan@163.com 2021/08/19 16:37
  */
-
 @Slf4j
 @RestController("StoneMongoTestController.v1")
 @RequestMapping("/v1/test-mongo")

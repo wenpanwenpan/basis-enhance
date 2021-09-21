@@ -1,14 +1,12 @@
 package org.basis.enhance.executor.config;
 
 import org.basis.enhance.executor.config.property.ExecutorProperties;
-import org.basis.enhance.executor.domain.repository.TaskDataRepository;
 import org.basis.enhance.executor.domain.repository.TaskRedisRepository;
 import org.basis.enhance.executor.domain.repository.TaskRepository;
 import org.basis.enhance.executor.handler.DefaultRetryWarnHandler;
 import org.basis.enhance.executor.handler.RetryWarnHandler;
 import org.basis.enhance.executor.helper.ExecutorApplicationContextHelper;
 import org.basis.enhance.executor.infra.client.TaskClient;
-import org.basis.enhance.executor.infra.repository.impl.TaskDataRepositoryImpl;
 import org.basis.enhance.executor.infra.repository.impl.TaskRedisRepositoryImpl;
 import org.basis.enhance.executor.infra.repository.impl.TaskRepositoryImpl;
 import org.basis.enhance.executor.infra.server.context.ExecutorContext;
@@ -58,29 +56,21 @@ public class DistributeExecutorAutoConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(TaskDataRepository.class)
-    public TaskDataRepository taskDataRepository(ExecutorProperties properties) {
-
-        return new TaskDataRepositoryImpl(properties);
-    }
-
-    @Bean
     public TaskClient taskClient(TaskRepository taskRepository,
-                                 TaskDataRepository taskDataRepository,
-                                 TaskRedisRepository taskRedisRepository) {
+                                 TaskRedisRepository taskRedisRepository,
+                                 ExecutorProperties executorProperties) {
 
-        return new TaskClient(taskRepository, taskDataRepository, taskRedisRepository);
+        return new TaskClient(executorProperties, taskRepository, taskRedisRepository);
     }
 
     @Bean
     @ConditionalOnProperty(prefix = "stone.executor", name = {"group"})
     public ExecutorContext executorContext(ExecutorProperties properties,
                                            TaskRepository taskRepository,
-                                           TaskDataRepository taskDataRepository,
                                            ApplicationContext applicationContext,
                                            TaskRedisRepository taskRedisRepository) {
 
-        return new ExecutorContext(properties, taskRepository, taskDataRepository, applicationContext, taskRedisRepository);
+        return new ExecutorContext(properties, taskRepository, applicationContext, taskRedisRepository);
     }
 
     @Bean

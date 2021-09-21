@@ -1,6 +1,6 @@
 package org.basis.enhance.executor.infra.client;
 
-import org.basis.enhance.executor.domain.repository.TaskDataRepository;
+import org.basis.enhance.executor.config.property.ExecutorProperties;
 import org.basis.enhance.executor.domain.repository.TaskRedisRepository;
 import org.basis.enhance.executor.domain.repository.TaskRepository;
 import org.basis.enhance.executor.infra.util.UUIDUtil;
@@ -13,15 +13,17 @@ import org.basis.enhance.executor.infra.util.UUIDUtil;
 public class TaskClient {
 
     private final TaskRepository taskRepository;
-    private final TaskDataRepository taskDataRepository;
+
     private final TaskRedisRepository taskRedisRepository;
 
-    public TaskClient(TaskRepository taskRepository,
-                      TaskDataRepository taskDataRepository,
+    private final ExecutorProperties executorProperties;
+
+    public TaskClient(ExecutorProperties executorProperties,
+                      TaskRepository taskRepository,
                       TaskRedisRepository taskRedisRepository) {
         this.taskRepository = taskRepository;
-        this.taskDataRepository = taskDataRepository;
         this.taskRedisRepository = taskRedisRepository;
+        this.executorProperties = executorProperties;
     }
 
     /**
@@ -32,7 +34,7 @@ public class TaskClient {
     public MainTask createMainTask() {
         String uuid = UUIDUtil.generateUUID();
         System.out.println("主任务UUID = " + uuid);
-        return new MainTask(uuid, taskRepository, taskDataRepository, taskRedisRepository);
+        return new MainTask(uuid, executorProperties, taskRepository, taskRedisRepository);
     }
 
 }

@@ -165,7 +165,7 @@ public class TaskWorker {
                 // 任务执行前
                 taskRunning();
                 // 读取任务数据
-                Serializable data = (Serializable) executorContext.read(task);
+                Serializable data = task.getData();
                 // 执行逻辑
                 taskHandler.handler(data);
                 // 任务完成记录信息

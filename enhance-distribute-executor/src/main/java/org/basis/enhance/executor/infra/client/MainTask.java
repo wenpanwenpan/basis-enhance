@@ -2,9 +2,8 @@ package org.basis.enhance.executor.infra.client;
 
 import lombok.Data;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
+import org.basis.enhance.executor.config.property.ExecutorProperties;
 import org.basis.enhance.executor.domain.entity.Task;
-import org.basis.enhance.executor.domain.repository.TaskDataRepository;
 import org.basis.enhance.executor.domain.repository.TaskRedisRepository;
 import org.basis.enhance.executor.domain.repository.TaskRepository;
 import org.basis.enhance.executor.infra.constants.StoneExecutorConstants;
@@ -31,18 +30,18 @@ public class MainTask {
     private final List<Task> subTasks;
 
     private final TaskRepository taskRepository;
-    private final TaskDataRepository taskDataRepository;
+
     private final TaskRedisRepository taskRedisRepository;
 
-    MainTask(String mainTaskId,
-             TaskRepository taskRepository,
-             TaskDataRepository taskDataRepository,
-             TaskRedisRepository taskRedisRepository) {
+    private final ExecutorProperties executorProperties;
+
+    MainTask(String mainTaskId, ExecutorProperties executorProperties,
+             TaskRepository taskRepository, TaskRedisRepository taskRedisRepository) {
         subTasks = new ArrayList<>();
         this.mainTaskId = mainTaskId;
         this.taskRepository = taskRepository;
-        this.taskDataRepository = taskDataRepository;
         this.taskRedisRepository = taskRedisRepository;
+        this.executorProperties = executorProperties;
     }
 
     /**
@@ -67,17 +66,11 @@ public class MainTask {
             Map<String, String> taskWithGroup = new LinkedHashMap<>();
             Date creationDate = new Date();
             for (Task task : subTasks) {
+                task.setGroup(executorProperties.getGroup());
                 task.setId(UUIDUtil.generateUUID());
                 task.setMainTaskId(mainTaskId);
                 task.setCreationDate(creationDate);
                 task.setModifyDate(creationDate);
-                // 将任务数据保存起来，方便执行任务的时候取用
-                String dataUrl = taskDataRepository.save(task);
-                if (!StringUtils.equals(dataUrl, StoneExecutorConstants.TaskDataUrl.NO_DATA_URL)) {
-                    // 清空任务数据（即任务数据存放在文件系统中，而不用存放在MongoDB里）
-                    task.setData(null);
-                }
-                task.setDataStore(dataUrl);
                 task.setOrganizationId(organizationId);
                 // 子任务ID为key，子任务所属的组为value
                 taskWithGroup.put(task.getId(), task.getGroup());
@@ -85,7 +78,6 @@ public class MainTask {
 
             // 出入条目到mongo
             taskRepository.insert(subTasks);
-
             // 任务提交到redis任务池
             taskRedisRepository.createTasks(mainTaskId, taskWithGroup);
         }

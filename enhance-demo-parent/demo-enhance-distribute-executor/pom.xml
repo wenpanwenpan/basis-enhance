@@ -73,12 +73,6 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-        <!-- 连接fastdfs文件系统 -->
-        <dependency>
-            <groupId>com.luhuiguo</groupId>
-            <artifactId>fastdfs-spring-boot-starter</artifactId>
-            <version>0.2.0</version>
-        </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>

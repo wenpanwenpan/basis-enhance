@@ -20,7 +20,7 @@ server:
 
 spring:
   application:
-    name: stone-executor-test
+    name: enhance-executor-test
   redis:
     host: ${SPRING_REDIS_HOST:wenpan-host}
     port: ${SPRING_REDIS_PORT:6379}
@@ -38,11 +38,7 @@ spring:
         # 当资源池连接用尽后，调用者的最大等待时间(单位为毫秒)
         # 默认 -1 表示永不超时，设置5秒
         max-wait: ${SPRING_REDIS_POOL_MAX_WAIT:5000}
-    jedis:
-      pool:
-        max-active: ${SPRING_REDIS_POOL_MAX_ACTIVE:16}
-        max-idle: ${SPRING_REDIS_POOL_MAX_IDLE:16}
-        max-wait: ${SPRING_REDIS_POOL_MAX_WAIT:5000}
+
   # 文件上传大小限制
   servlet:
     multipart:
@@ -59,15 +55,6 @@ spring:
     mongodb:
       uri: ${MONGODB_DEFAULT_URL:mongodb://localhost:27017/admin}
 
-fdfs:
-  # 连接Tracker服务器超时时间
-  connect-timeout: 10000
-  # storage服务器响应的超时时间
-  so-timeout: 3000
-  #  trakcer服务器的数量
-  tracker-list:
-    - wenpan-host:22122
-
 stone:
   executor:
     enable: true
@@ -82,12 +69,4 @@ mybatis:
   mapperLocations: classpath*:/mapper/*.xml
   configuration:
     mapUnderscoreToCamelCase: true
-
-logging:
-  level:
-    org.apache.ibatis: ${LOG_LEVEL:info}
-    com.monster: ${LOG_LEVEL:info}
-    com.netflix: ${LOG_LEVEL:warn}
-    com.monster.customer.console.infra.mapper: debug
-
 
