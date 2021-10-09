@@ -160,4 +160,33 @@ public class EasyRedisHelper {
         return result;
     }
 
+    /**
+     * 有返回值 Redis 操作
+     *
+     * @param db       Redis db
+     * @param executor Redis 操作
+     * @param <T>      返回类型
+     * @return Redis 操作返回值
+     * @since 1.7
+     */
+    public static <T> T execute(int db, WithResultExecutor<T> executor) {
+        try {
+            redisHelper.setCurrentDatabase(db);
+            return executor.get(redisHelper);
+        } finally {
+            redisHelper.clearCurrentDatabase();
+        }
+    }
+
+    @FunctionalInterface
+    public interface NoneResultExecutor {
+        void accept(RedisHelper helper);
+    }
+
+    @FunctionalInterface
+    public interface WithResultExecutor<T> {
+        T get(RedisHelper helper);
+    }
+
+
 }
