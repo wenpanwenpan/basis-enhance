@@ -56,6 +56,7 @@
 
 **详细使用介绍链接**：[mybatis主键ID使用自定义算法生成增强介绍](./enhance-boot-mybatis/README.md)
 
+***
 
 #### 5、异常增强
 
@@ -63,10 +64,13 @@
 
 **详细使用介绍链接**：[enhance-boot-exception 以友好的方式返回异常信息给前台](./enhance-boot-exception/README.md)
 
+***
 
 #### 6、并发功能增强
 
 待整理
+
+***
 
 #### 7、jdk相关功能封装和增强
 
