@@ -52,7 +52,7 @@ public interface IMessageSource {
         Message message = new Message();
         String desc = null;
         try {
-            // 从classpath下通过code获取desc
+            // 从classpath下的多语言文件通过code获取desc
             desc = parentMessageSource.getMessage(code, null, locale);
         } catch (NoSuchMessageException e) {
             LOGGER.warn("resolveMessage not found message for code={}", code);
@@ -63,6 +63,8 @@ public interface IMessageSource {
         }
         // 如果有desc并且有args，则使用MessageFormat来格式化输出（即替换 {} 占位符为具体的值）
         if (StringUtils.isNotBlank(desc) && ArrayUtils.isNotEmpty(args)) {
+            // 这里是我们自己使用MessageFormat来格式化消息，可以使用spring提供的（继承AbstractMessageSource类，
+            // 使用createMessageFormat方法来格式化，效果一样）
             desc = new MessageFormat(desc, locale).format(args);
         }
         // 如果到这里了desc仍然是空的，那么直接code赋值给desc

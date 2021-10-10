@@ -2,8 +2,6 @@ package org.basis.enhance.exception.message;
 
 import com.google.common.collect.ImmutableList;
 import org.apache.commons.lang3.ArrayUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
@@ -17,14 +15,13 @@ import java.util.Locale;
  */
 public class MessageAccessor {
 
-    static Logger LOGGER = LoggerFactory.getLogger(MessageAccessor.class);
-
     /**
      * 消息源
      */
     private static final IMessageSource REDIS_MESSAGE_SOURCE;
     /**
-     * spring加载多语言资源所需要的消息源类
+     * 父消息源，spring加载多语言资源所需要的消息源类，提供了定时刷新功能，允许在不重启系统的情况下，更新资源的信息
+     * 作用就是用于访问多语言文件的内容
      */
     private static final ReloadableResourceBundleMessageSource PARENT_MESSAGE_SOURCE;
 
@@ -39,19 +36,20 @@ public class MessageAccessor {
             "classpath:messages/messages_ext"
     );
 
+    // 初始化消息源和父消息源
     static {
         PARENT_MESSAGE_SOURCE = new ReloadableResourceBundleMessageSource();
         PARENT_MESSAGE_SOURCE.setBasenames(getBasenames());
         PARENT_MESSAGE_SOURCE.setDefaultEncoding("UTF-8");
 
-        // todo 这里先直接使用从本地classpath下的多语言文件，从Redis缓存中加载的方式后面补上
-        IMessageSource redisMessageSource = null;
-//        if(null == redisMessageSource){
-//            // 优先加载Redis消息源
-//        redisMessageSource = xxx;
-//        }
-        // 如果加载Redis消息源失败了，则加载默认消息源（从本地多语言文件中取消息）
-        if (null == redisMessageSource) {
+        Class clazz;
+        IMessageSource redisMessageSource;
+        try {
+            // 优先加载Redis消息源，从Redis中取消息
+            clazz = Class.forName("org.basis.enhance.exception.message.RedisMessageSource");
+            redisMessageSource = (IMessageSource) clazz.newInstance();
+        } catch (Exception e) {
+            // 如果加载Redis消息源失败了，则加载默认消息源（从本地多语言文件中取消息）
             redisMessageSource = new IMessageSource() {
                 @Override
                 public void setParent(MessageSource messageSource) {
@@ -59,6 +57,7 @@ public class MessageAccessor {
             };
         }
 
+        // 设置父消息源，为什么要设置？（因为RedisMessageSource继承了spring的AbstractMessageSource）
         redisMessageSource.setParent(PARENT_MESSAGE_SOURCE);
         REDIS_MESSAGE_SOURCE = redisMessageSource;
     }
@@ -95,7 +94,24 @@ public class MessageAccessor {
     /**
      * 先从缓存获取多语言消息，没有则从本地消息文件获取多语言消息
      */
+    public static Message getMessage(String code, Object[] args, String defaultMessage, Locale locale) {
+
+        return REDIS_MESSAGE_SOURCE.resolveMessage(PARENT_MESSAGE_SOURCE, code, args, defaultMessage, locale);
+    }
+
+    /**
+     * 先从缓存获取多语言消息，没有则从本地消息文件获取多语言消息
+     */
+    public static Message getMessage(String code, Object[] args, Locale locale) {
+
+        return REDIS_MESSAGE_SOURCE.resolveMessage(PARENT_MESSAGE_SOURCE, code, args, locale);
+    }
+
+    /**
+     * 先从缓存获取多语言消息，没有则从本地消息文件获取多语言消息
+     */
     public static Message getMessage(String code, Object[] args) {
+
         return REDIS_MESSAGE_SOURCE.resolveMessage(PARENT_MESSAGE_SOURCE, code, args, LanguageHelper.locale());
     }
 
@@ -103,6 +119,7 @@ public class MessageAccessor {
      * 先从缓存获取多语言消息，没有则从本地消息文件获取多语言消息
      */
     public static Message getMessage(String code) {
+
         return REDIS_MESSAGE_SOURCE.resolveMessage(PARENT_MESSAGE_SOURCE, code, null, LanguageHelper.locale());
     }
 

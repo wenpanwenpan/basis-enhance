@@ -42,7 +42,22 @@ public class ExceptionResponse {
     public ExceptionResponse(String code) {
         failed = true;
         this.code = code;
+        // 格式化消息
         Message message = MessageAccessor.getMessage(code);
+        this.message = message.desc();
+        type = message.type();
+    }
+
+    /**
+     * 根据code自动获取描述信息、消息类型并格式化消息desc
+     *
+     * @param code 消息编码
+     */
+    public ExceptionResponse(String code, Object[] args) {
+        failed = true;
+        this.code = code;
+        // 格式化消息
+        Message message = MessageAccessor.getMessage(code, args);
         this.message = message.desc();
         type = message.type();
     }

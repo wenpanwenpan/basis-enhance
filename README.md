@@ -57,12 +57,18 @@
 **详细使用介绍链接**：[mybatis主键ID使用自定义算法生成增强介绍](./enhance-boot-mybatis/README.md)
 
 
-#### 5、spring相关功能封装和增强
+#### 5、异常增强
 
-factoryBean实现
+主要是利用spring的@ControllerAdvice对常见异常进行捕获，然后结合多语言和 `异常描述 + 参数格式化`以友好的方式返回给前端
+
+**详细使用介绍链接**：[enhance-boot-exception 以友好的方式返回异常信息给前台](./enhance-boot-exception/README.md)
 
 
-#### 6、jdk相关功能封装和增强
+#### 6、并发功能增强
+
+待整理
+
+#### 7、jdk相关功能封装和增强
 
 动态可调整线程池增强（待实现）
 

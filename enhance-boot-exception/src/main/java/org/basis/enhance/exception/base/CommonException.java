@@ -50,7 +50,6 @@ public class CommonException extends RuntimeException {
         parameters = new Object[]{};
     }
 
-
     public CommonException(Throwable cause, Object... parameters) {
         super(cause);
         this.parameters = parameters;
@@ -64,6 +63,11 @@ public class CommonException extends RuntimeException {
         return code;
     }
 
+    /**
+     * 获取异常堆栈
+     *
+     * @return java.lang.String
+     */
     public String getTrace() {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = null;

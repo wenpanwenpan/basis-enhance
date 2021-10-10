@@ -30,7 +30,7 @@
         </dependency>
         <dependency>
             <groupId>org.basis.enhance</groupId>
-            <artifactId>enhance-exception</artifactId>
+            <artifactId>enhance-boot-exception</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
