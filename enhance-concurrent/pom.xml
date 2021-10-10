@@ -9,12 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>enhance-demo-parent</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>demo-enhance-data-redis</module>
-        <module>demo-enhance-distribute-executor</module>
-        <module>demo-enhance-exception</module>
-    </modules>
+    <artifactId>enhance-concurrent</artifactId>
+
 
 </project>

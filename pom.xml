@@ -21,6 +21,8 @@
         <module>enhance-spring</module>
         <module>enhance-jdk</module>
         <module>enhance-distribute-executor</module>
+        <module>enhance-exception</module>
+        <module>enhance-concurrent</module>
     </modules>
 
     <properties>

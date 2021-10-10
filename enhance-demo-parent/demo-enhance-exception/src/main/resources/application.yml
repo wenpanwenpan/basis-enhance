@@ -1,0 +1,6 @@
+server:
+  port: 20004
+spring:
+  application:
+    name: enhance-exception
+
