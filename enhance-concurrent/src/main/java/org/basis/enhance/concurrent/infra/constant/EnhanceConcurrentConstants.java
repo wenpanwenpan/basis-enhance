@@ -1,11 +1,11 @@
-package org.basis.enhance.spring.infra.constant;
+package org.basis.enhance.concurrent.infra.constant;
 
 /**
  * 基础常量类
  *
  * @author Mr_wenpan@163.com 2021/10/09 15:12
  */
-public interface EnhanceSpringBaseConstants {
+public interface EnhanceConcurrentConstants {
 
     interface ErrorCode {
         /**

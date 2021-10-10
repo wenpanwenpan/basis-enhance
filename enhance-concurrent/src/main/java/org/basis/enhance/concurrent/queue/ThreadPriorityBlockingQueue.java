@@ -1,4 +1,4 @@
-package org.basis.enhance.spring.queue;
+package org.basis.enhance.concurrent.queue;
 
 import org.springframework.lang.NonNull;
 

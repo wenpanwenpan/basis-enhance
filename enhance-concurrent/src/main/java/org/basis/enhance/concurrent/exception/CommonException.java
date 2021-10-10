@@ -1,4 +1,4 @@
-package org.basis.enhance.spring.exception;
+package org.basis.enhance.concurrent.exception;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

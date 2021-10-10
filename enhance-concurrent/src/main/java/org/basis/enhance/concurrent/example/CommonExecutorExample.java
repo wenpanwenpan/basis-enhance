@@ -1,7 +1,9 @@
-package org.basis.enhance.spring.concurrent;
+package org.basis.enhance.concurrent.example;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.basis.enhance.concurrent.executor.AsyncTask;
+import org.basis.enhance.concurrent.executor.CommonExecutor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,9 +21,9 @@ import java.util.concurrent.TimeUnit;
 public class CommonExecutorExample {
 
     public static void main(String[] args) {
-//        testCommonExecutor();
+        testCommonExecutor();
 
-        testThrowable();
+//        testThrowable();
 
     }
 

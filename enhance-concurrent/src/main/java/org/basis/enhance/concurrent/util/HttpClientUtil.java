@@ -1,4 +1,4 @@
-package org.basis.enhance.spring.util;
+package org.basis.enhance.concurrent.util;
 
 import com.alibaba.fastjson.JSON;
 import lombok.SneakyThrows;

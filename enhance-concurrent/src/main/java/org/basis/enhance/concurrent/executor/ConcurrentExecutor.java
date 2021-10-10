@@ -1,8 +1,8 @@
-package org.basis.enhance.spring.concurrent;
+package org.basis.enhance.concurrent.executor;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.basis.enhance.spring.helper.ApplicationContextHelper;
-import org.basis.enhance.spring.util.ListSplitUtil;
+import org.basis.enhance.concurrent.helper.ApplicationContextHelper;
+import org.basis.enhance.concurrent.util.ListSplitUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.SchedulingTaskExecutor;

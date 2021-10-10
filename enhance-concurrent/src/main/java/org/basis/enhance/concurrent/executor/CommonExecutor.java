@@ -1,10 +1,10 @@
-package org.basis.enhance.spring.concurrent;
+package org.basis.enhance.concurrent.executor;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.apache.commons.collections4.CollectionUtils;
-import org.basis.enhance.spring.exception.CommonException;
-import org.basis.enhance.spring.infra.constant.EnhanceSpringBaseConstants;
-import org.basis.enhance.spring.queue.ThreadPriorityBlockingQueue;
+import org.basis.enhance.concurrent.exception.CommonException;
+import org.basis.enhance.concurrent.infra.constant.EnhanceConcurrentConstants;
+import org.basis.enhance.concurrent.queue.ThreadPriorityBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.lang.NonNull;
@@ -203,7 +203,7 @@ public class CommonExecutor {
                 } else {
                     cancelTask(futures);
                     LOGGER.error("[>>Executor<<] Async task [{}] - [{}] execute timeout, then cancel other tasks.", taskName, i);
-                    throw new CommonException(EnhanceSpringBaseConstants.ErrorCode.TIMEOUT);
+                    throw new CommonException(EnhanceConcurrentConstants.ErrorCode.TIMEOUT);
                 }
                 // ExecutionException在线程任务被抢占或线程任务发生异常时抛出
             } catch (ExecutionException e) {
@@ -222,7 +222,7 @@ public class CommonExecutor {
                 // 重置中断标识
                 Thread.currentThread().interrupt();
                 LOGGER.error("[>>Executor<<] Async task [{}] - [{}] were interrupted.", taskName, i);
-                throw new CommonException(EnhanceSpringBaseConstants.ErrorCode.ERROR);
+                throw new CommonException(EnhanceConcurrentConstants.ErrorCode.ERROR);
             }
         }
 

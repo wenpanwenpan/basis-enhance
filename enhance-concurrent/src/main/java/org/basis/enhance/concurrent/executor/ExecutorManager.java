@@ -1,4 +1,4 @@
-package org.basis.enhance.spring.concurrent;
+package org.basis.enhance.concurrent.executor;
 
 import com.google.common.collect.ImmutableMap;
 import org.apache.commons.lang3.RandomUtils;

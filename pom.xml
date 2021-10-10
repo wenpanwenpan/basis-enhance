@@ -18,7 +18,6 @@
         <module>enhance-boot-data-redis</module>
         <module>enhance-demo-parent</module>
         <module>enhance-boot-mybatis</module>
-        <module>enhance-spring</module>
         <module>enhance-jdk</module>
         <module>enhance-distribute-executor</module>
         <module>enhance-exception</module>
