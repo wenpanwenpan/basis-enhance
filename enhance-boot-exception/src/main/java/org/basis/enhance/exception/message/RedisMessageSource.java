@@ -9,6 +9,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 
 import java.text.MessageFormat;
 import java.util.Locale;
+import java.util.Objects;
 
 /**
  * 基于Redis的消息源
@@ -37,7 +38,7 @@ public class RedisMessageSource extends AbstractMessageSource implements IMessag
         } else {
             try {
                 // 从父数据源通过code获取desc（一般是从本地多语言文件）
-                desc = getParentMessageSource().getMessage(code, null, locale);
+                desc = Objects.requireNonNull(getParentMessageSource()).getMessage(code, null, locale);
             } catch (NoSuchMessageException e) {
                 // 当通过code从本地多语言文件中没有获取到desc的时候，就抛出NoSuchMessageException
                 LOGGER.warn("resolveMessage not found message for code={}", code);
@@ -74,7 +75,7 @@ public class RedisMessageSource extends AbstractMessageSource implements IMessag
         if (message != null) {
             msg = message.desc();
         } else {
-            // 如果没有获取到code的desc，则desc = 从父消息源去获取
+            // 如果没有获取到code的desc，则desc = 从父消息源去本地多语言文件获取
             try {
                 // 使用parent的消息源来获取code对应的desc
                 msg = getParentMessageSource().getMessage(code, null, locale);

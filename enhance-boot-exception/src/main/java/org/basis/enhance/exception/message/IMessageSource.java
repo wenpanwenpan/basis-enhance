@@ -22,6 +22,11 @@ public interface IMessageSource {
 
     Logger LOGGER = LoggerFactory.getLogger(IMessageSource.class);
 
+    /**
+     * 设置父消息源（结合spring使用）
+     *
+     * @param messageSource 消息源
+     */
     default void setParent(MessageSource messageSource) {
     }
 
@@ -52,7 +57,7 @@ public interface IMessageSource {
         Message message = new Message();
         String desc = null;
         try {
-            // 从classpath下的多语言文件通过code获取desc
+            // 从classpath下的多语言文件通过code获取desc(这里传入参数为null所以不会格式化desc)
             desc = parentMessageSource.getMessage(code, null, locale);
         } catch (NoSuchMessageException e) {
             LOGGER.warn("resolveMessage not found message for code={}", code);

@@ -35,27 +35,19 @@ public class ConcurrentExecutor<T> {
 
     public ConcurrentExecutor(List<T> processDataList) {
         this(DEFAULT_TASK_COUNT, DEFAULT_BATCH_SIZE, processDataList,
-                ApplicationContextHelper.getContext().getBean("o2ThreadPool", ThreadPoolTaskExecutor.class)
-        );
+                ApplicationContextHelper.getContext().getBean("o2ThreadPool", ThreadPoolTaskExecutor.class));
     }
 
-    public ConcurrentExecutor(int taskCount,
-                              List<T> processDataList) {
+    public ConcurrentExecutor(int taskCount, List<T> processDataList) {
         this(taskCount, DEFAULT_BATCH_SIZE, processDataList,
-                ApplicationContextHelper.getContext().getBean("o2ThreadPool", ThreadPoolTaskExecutor.class)
-        );
+                ApplicationContextHelper.getContext().getBean("o2ThreadPool", ThreadPoolTaskExecutor.class));
     }
 
-    public ConcurrentExecutor(int taskCount,
-                              List<T> processDataList,
-                              SchedulingTaskExecutor taskExecutor) {
+    public ConcurrentExecutor(int taskCount, List<T> processDataList, SchedulingTaskExecutor taskExecutor) {
         this(taskCount, DEFAULT_BATCH_SIZE, processDataList, taskExecutor);
     }
 
-    public ConcurrentExecutor(long taskCount,
-                              long batchSize,
-                              List<T> processDataList,
-                              SchedulingTaskExecutor taskExecutor) {
+    public ConcurrentExecutor(long taskCount, long batchSize, List<T> processDataList, SchedulingTaskExecutor taskExecutor) {
         this.taskCount = taskCount;
         this.batchSize = batchSize;
         this.processDataList = processDataList;
@@ -73,7 +65,7 @@ public class ConcurrentExecutor<T> {
             return;
         }
 
-        // 分发任务int
+        // 分发任务
         List<Future<String>> results = new ArrayList<>();
         List<List<T>> subPendingLists = ListSplitUtil.splitList(processDataList, (int) batchSize);
         for (List<T> currentBatchProcess : subPendingLists) {

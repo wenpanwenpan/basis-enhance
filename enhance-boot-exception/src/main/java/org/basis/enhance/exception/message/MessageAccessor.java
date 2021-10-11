@@ -149,6 +149,7 @@ public class MessageAccessor {
      */
     public static Message getMessageLocal(String code, Object[] args) {
 
+        //  PARENT_MESSAGE_SOURCE.getMessage(code, null, LanguageHelper.locale())会自动格式化消息desc
         return new Message(code, PARENT_MESSAGE_SOURCE.getMessage(code, args, LanguageHelper.locale()));
     }
 
