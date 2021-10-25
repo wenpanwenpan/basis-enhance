@@ -27,7 +27,7 @@ public class EnhanceExceptionTestController {
             final int i = 1 / 0;
         } catch (Throwable throwable) {
             // 抛出自定义异常，由异常拦截器拦截并格式化异常信息输出，统一异常格式返回
-            throw new CommonException("出错啦，你知道吗？{0}", throwable, "wenpan");
+            throw new CommonException("出错啦，你知道吗？{0}", "wenpan");
         }
     }
 

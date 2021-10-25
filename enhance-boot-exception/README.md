@@ -52,7 +52,16 @@ public class EnhanceExceptionTestController {
 
 }
 ```
-
+客户端返回如下
+```json
+{
+    "failed":true,
+    "code":"出错啦，你知道吗？{0}",
+    "message":"出错啦，你知道吗？wenpan",
+    "type":"warn",
+    "exception":"出错啦，你知道吗？{0}"
+}
+```
 
 
 #### 三、其他

@@ -28,7 +28,8 @@ public class RedisMessageSource extends AbstractMessageSource implements IMessag
     }
 
     @Override
-    public Message resolveMessage(ReloadableResourceBundleMessageSource parentMessageSource, String code, Object[] args, String defaultMessage, Locale locale) {
+    public Message resolveMessage(ReloadableResourceBundleMessageSource parentMessageSource,
+                                  String code, Object[] args, String defaultMessage, Locale locale) {
         // 先通过code从Redis数据源获取该code对应的desc，并封装为Message
         Message message = getMessageObject(code, locale);
 
@@ -54,6 +55,14 @@ public class RedisMessageSource extends AbstractMessageSource implements IMessag
         }
         if (StringUtils.isBlank(desc)) {
             desc = code;
+            // 处理直接throw异常而code不记录在多语言文件的的情况
+            if (ArrayUtils.isNotEmpty(args)) {
+                try {
+                    desc = new MessageFormat(desc, locale).format(args);
+                } catch (Exception ex) {
+                    LOGGER.error("format desc error, desc = {}", desc);
+                }
+            }
         }
 
         message = new Message(code, desc);
