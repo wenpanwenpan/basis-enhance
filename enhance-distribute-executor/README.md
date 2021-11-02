@@ -1,3 +1,7 @@
+**csdn博客：**[https://blog.csdn.net/Hellowenpan?spm=1000.2115.3001.5343](https://blog.csdn.net/Hellowenpan?spm=1000.2115.3001.5343)
+**个人博客**：[http://www.bad-guy.cn](http://www.bad-guy.cn)
+
+
 ## 一、分布式任务设计架构图
 
 ![](images/分布式任务设计架构图.png)

@@ -1,3 +1,6 @@
+**csdn博客：**[https://blog.csdn.net/Hellowenpan?spm=1000.2115.3001.5343](https://blog.csdn.net/Hellowenpan?spm=1000.2115.3001.5343)
+**个人博客**：[http://www.bad-guy.cn](http://www.bad-guy.cn)
+
 ## 异常功能增强
 ### 一、说明
 - 主要是通过spring提供的`@ControllerAdvice`注解来实现
