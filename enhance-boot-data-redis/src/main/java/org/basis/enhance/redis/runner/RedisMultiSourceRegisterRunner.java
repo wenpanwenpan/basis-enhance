@@ -2,8 +2,8 @@ package org.basis.enhance.redis.runner;
 
 import org.basis.enhance.redis.helper.ApplicationContextHelper;
 import org.basis.enhance.redis.helper.RedisHelper;
-import org.basis.enhance.redis.infra.EnvironmentUtil;
 import org.basis.enhance.redis.infra.constant.EnhanceRedisConstants;
+import org.basis.enhance.redis.infra.util.EnvironmentUtil;
 import org.basis.enhance.redis.multisource.register.RedisDataSourceRegister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

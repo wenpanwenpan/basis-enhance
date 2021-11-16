@@ -1,4 +1,4 @@
-package org.basis.enhance.redis.infra;
+package org.basis.enhance.redis.infra.util;
 
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;

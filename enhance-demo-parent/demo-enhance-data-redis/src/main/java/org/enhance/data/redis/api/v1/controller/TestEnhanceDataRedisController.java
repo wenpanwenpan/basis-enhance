@@ -115,7 +115,7 @@ public class TestEnhanceDataRedisController {
     @GetMapping("/test-6")
     public void testChangeDb6() {
         // 指定操作库，不带返回值的操作，使用redisTemplate原生api
-        EasyRedisHelper.execute(1, (redisTemplate) -> redisTemplate.opsForList().leftPush("key", "value"));
+//        EasyRedisHelper.execute(1, (redisTemplate) -> redisTemplate.opsForList().leftPush("key", "value"));
         // 指定操作库，带返回值的操作，使用redisTemplate原生api
         String result = EasyRedisHelper.executeWithResult(1, (redisTemplate) -> redisTemplate.opsForList().leftPop("queue"));
     }

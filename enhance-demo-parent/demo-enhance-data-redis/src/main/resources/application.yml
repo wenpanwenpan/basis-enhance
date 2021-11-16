@@ -8,7 +8,7 @@ spring:
     host: ${SPRING_REDIS_HOST:wenpan-host}
     port: ${SPRING_REDIS_PORT:6379}
     password: ${SPRING_REDIS_PASSWORD:WenPan@123}
-    database: ${SPRING_REDIS_DATABASE:0}
+    database: ${SPRING_REDIS_DATABASE:8}
     # 集群环境打开下面注释，单机不需要打开(单机只需要用上面的配置即可)
     #cluster:
     #nodes: xxx.xxx.xxx.xxx:xxxx,xxx.xxx.xxx.xxx:xxxx,xxx.xxx.xxx.xxx:xxxx
@@ -63,3 +63,6 @@ stone:
     # redis队列监控的默认db
     queue-db: 1
 
+    # 开启基于Redis的延时队列
+    delay-queue:
+      enable: true
