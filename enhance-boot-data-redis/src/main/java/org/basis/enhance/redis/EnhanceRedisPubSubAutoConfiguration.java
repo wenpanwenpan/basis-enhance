@@ -65,10 +65,32 @@ public class EnhanceRedisPubSubAutoConfiguration {
                                                    @Qualifier("stone-queue-adapter") MessageListenerAdapter listenerAdapter) {
         RedisMessageListenerContainer container = new RedisMessageListenerContainer();
         container.setConnectionFactory(connectionFactory);
-        // 订阅通道stone-redis-queue，这里只能订阅一个通道
+        // todo 这里还需要设置redisSubscriptionExecutor和线程池，否则当大量发布消息到达时可能出现线程问题：
+        //      参考 https://www.cnblogs.com/aoeiuv/p/9565617.html
+        // 订阅通道stone-redis-queue，这里只订阅一个通道(可以传入list集合订阅多个channel)
         container.addMessageListener(listenerAdapter, new PatternTopic(PubSubListener.CHANNEL));
         return container;
     }
+
+//    @Bean("stone-queue-container")
+//    public RedisMessageListenerContainer containerx(RedisConnectionFactory connectionFactory,
+//                                                    @Qualifier("stone-queue-adapter") MessageListenerAdapter listenerAdapter,
+//                                                    ObjectProvider<Executor> redisSubscriptionExecutor,
+//                                                    ObjectProvider<Executor> redisTaskExecutor) {
+//        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
+//        container.setConnectionFactory(connectionFactory);
+//        Executor subscriptionExecutor = redisSubscriptionExecutor.getIfAvailable();
+//        Executor taskExecutor = redisTaskExecutor.getIfAvailable();
+//        if (Objects.nonNull(subscriptionExecutor)) {
+//            container.setSubscriptionExecutor(subscriptionExecutor);
+//        }
+//        if (Objects.nonNull(taskExecutor)) {
+//            container.setTaskExecutor(taskExecutor);
+//        }
+//        // 订阅通道stone-redis-queue，这里只订阅一个通道(可以传入list集合订阅多个channel)
+//        container.addMessageListener(listenerAdapter, new PatternTopic(PubSubListener.CHANNEL));
+//        return container;
+//    }
 
     @Bean
     @ConditionalOnMissingBean(PubSubExecutor.class)

@@ -11,7 +11,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * redis延时队列管理器
+ * redis延时队列管理器，统一管理每个延时队列 + 延时队列所用的线程池。后期可做队列监控和线程池监控
  *
  * @author Mr_wenpan@163.com 2021/11/15 21:03
  */
@@ -22,14 +22,14 @@ public class RedisDelayQueueManager {
     private static final Map<String, ExecutorService> REDIS_DELAY_EXECUTOR_MAP = new ConcurrentHashMap<>(16);
 
     /**
-     * 注册延时队列
+     * 注册延时队列对应的线程池
      */
     public static void register(String delayQueueName, ExecutorService threadPoolExecutor) {
         REDIS_DELAY_EXECUTOR_MAP.putIfAbsent(delayQueueName, threadPoolExecutor);
     }
 
     /**
-     * 批量注册延时队列
+     * 批量注册延时队列对应的线程池
      */
     public static void batchregister(Map<String, ThreadPoolExecutor> redisDelayExecutorMap) {
         if (MapUtils.isEmpty(redisDelayExecutorMap)) {
@@ -66,7 +66,7 @@ public class RedisDelayQueueManager {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Serializable> Boolean add(String delayQueueName, T data) {
+    public static <T extends Serializable> Boolean offer(String delayQueueName, T data) {
         RedisDelayQueue<T> redisDelayQueue = REDIS_DELAY_QUEUE_MAP.get(delayQueueName);
         if (Objects.isNull(redisDelayQueue)) {
             throw new RuntimeException(String.format("add to delay queue [%s] not exists ，please check delay queue name!", delayQueueName));
@@ -75,7 +75,7 @@ public class RedisDelayQueueManager {
     }
 
     @SuppressWarnings("unchecked")
-    public static <T extends Serializable> Boolean add(String delayQueueName, T data, int delayed, TimeUnit timeUnit) {
+    public static <T extends Serializable> Boolean offer(String delayQueueName, T data, int delayed, TimeUnit timeUnit) {
         RedisDelayQueue<T> redisDelayQueue = REDIS_DELAY_QUEUE_MAP.get(delayQueueName);
         if (Objects.isNull(redisDelayQueue)) {
             throw new RuntimeException(String.format("add to delay queue [%s] not exists ，please check delay queue name!", delayQueueName));
@@ -83,6 +83,14 @@ public class RedisDelayQueueManager {
         return redisDelayQueue.offer(data, delayed, timeUnit);
     }
 
+    /**
+     * 从延时队列删除元素
+     *
+     * @param delayQueueName 延时队列名称
+     * @param data           数据
+     * @return java.lang.Boolean true / false
+     * @author Mr_wenpan@163.com 2021/11/16 10:42 下午
+     */
     @SuppressWarnings("unchecked")
     public static <T extends Serializable> Boolean remove(String delayQueueName, T data) {
         RedisDelayQueue<T> redisDelayQueue = REDIS_DELAY_QUEUE_MAP.get(delayQueueName);

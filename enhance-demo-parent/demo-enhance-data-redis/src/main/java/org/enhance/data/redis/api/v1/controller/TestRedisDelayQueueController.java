@@ -2,6 +2,7 @@ package org.enhance.data.redis.api.v1.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import org.basis.enhance.redis.delayqueue.RedisDelayQueueManager;
+import org.enhance.data.redis.domain.entity.Customer;
 import org.enhance.data.redis.domain.entity.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,15 +24,15 @@ public class TestRedisDelayQueueController {
     public ResponseEntity<?> addWithTime(@RequestParam("queue") String queue,
                                          @RequestParam("delayed") Integer delayed,
                                          @RequestBody Order data) {
-        RedisDelayQueueManager.add(queue, data, delayed, TimeUnit.SECONDS);
+        RedisDelayQueueManager.offer(queue, data, delayed, TimeUnit.SECONDS);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/add-with-time1")
     public ResponseEntity<?> addWithTime1(@RequestParam("queue") String queue,
                                           @RequestParam("delayed") Integer delayed,
-                                          @RequestBody Order data) {
-        RedisDelayQueueManager.add(queue, data, delayed, TimeUnit.SECONDS);
+                                          @RequestBody Customer data) {
+        RedisDelayQueueManager.offer(queue, data, delayed, TimeUnit.SECONDS);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -40,7 +41,7 @@ public class TestRedisDelayQueueController {
                                           @RequestParam("delayed") Integer delayed,
                                           @RequestBody Order data) {
         // 按字符串存储到Redis
-        RedisDelayQueueManager.add(queue, JSONObject.toJSONString(data), delayed, TimeUnit.SECONDS);
+        RedisDelayQueueManager.offer(queue, JSONObject.toJSONString(data), delayed, TimeUnit.SECONDS);
         return new ResponseEntity<>(HttpStatus.OK);
     }
 }

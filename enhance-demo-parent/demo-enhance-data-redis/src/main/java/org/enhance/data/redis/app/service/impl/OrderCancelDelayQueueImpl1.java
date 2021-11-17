@@ -2,7 +2,7 @@ package org.enhance.data.redis.app.service.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.basis.enhance.redis.delayqueue.RedisDelayQueue;
-import org.enhance.data.redis.domain.entity.Order;
+import org.enhance.data.redis.domain.entity.Customer;
 import org.springframework.stereotype.Service;
 
 /**
@@ -12,16 +12,16 @@ import org.springframework.stereotype.Service;
  */
 @Slf4j
 @Service
-public class OrderCancelDelayQueueImpl1 extends RedisDelayQueue<Order> {
+public class OrderCancelDelayQueueImpl1 extends RedisDelayQueue<Customer> {
 
     @Override
-    protected void doConsume(Order data) {
+    protected void doConsume(Customer data) {
         log.info("收到消息，消息为：{}", data);
     }
 
     @Override
     public String queue() {
-        return "order-cancel-1";
+        return "customer-add-point";
     }
 
 }

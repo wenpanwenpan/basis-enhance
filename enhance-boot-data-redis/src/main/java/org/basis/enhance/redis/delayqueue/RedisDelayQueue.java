@@ -129,7 +129,6 @@ public abstract class RedisDelayQueue<T extends Serializable> implements Initial
 
     @Override
     public final void afterPropertiesSet() throws Exception {
-        Assert.notNull(redissonClient, "require redissonClient not null");
         String queue = queue();
         Assert.isTrue(StringUtils.hasText(queue), "delayedQueue require queue not null");
         blockingDeque = redissonClient.getBlockingDeque(queue);

@@ -47,9 +47,11 @@ public class RedisDelayQueueRunner implements CommandLineRunner {
             executor = new ThreadPoolExecutor(beansOfType.size(), beansOfType.size(), 60, TimeUnit.SECONDS,
                     new LinkedBlockingQueue<>(1), threadFactory, (r, executor1) -> log.error("线程池已满，任务被拒绝"));
             RedisDelayQueueManager.batchRegister(beansOfType);
-            beansOfType.forEach((queueName, redisDelayQueue) -> {
+            for (RedisDelayQueue<?> redisDelayQueue : beansOfType.values()) {
+                // 每次重启后先添加一条空数据，避免服务重启后延迟队列take数据阻塞不执行bug（redisson的bug）
+                redisDelayQueue.offer(null, 0, TimeUnit.SECONDS);
                 executor.submit(redisDelayQueue::consume);
-            });
+            }
         }
     }
 
