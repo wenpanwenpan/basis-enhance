@@ -23,6 +23,7 @@ import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.core.type.AnnotationMetadata;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.lang.NonNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +45,7 @@ public class RedisMultiDataSourceRegistrar implements EnvironmentAware, ImportBe
     private Environment environment;
 
     @Override
-    public void setEnvironment(Environment environment) {
+    public void setEnvironment(@NonNull Environment environment) {
         this.environment = environment;
     }
 

@@ -61,48 +61,41 @@ public final class TaskAcceptor {
         Thread thread = Executors.defaultThreadFactory().newThread(() -> {
             while (!shutdownFlag) {
                 try {
-
                     // todo 有任务就一直抢，没任务则休眠
                     // 如果没有空闲线程则休眠一会儿
-                    if (executorContext.getFreeTaskCounter().get() > 0) {
-                        Set<ZSetOperations.TypedTuple<String>> tasks = taskRepository.scanTask(taskGroup);
-                        LOG.info("扫描得到的任务数量：{}", tasks == null ? 0 : tasks.size());
-                        boolean success = true;
-                        if (CollectionUtils.isNotEmpty(tasks)) {
-                            // 遍历子任务
-                            for (ZSetOperations.TypedTuple<String> taskWithScore : tasks) {
-                                // 获取子任务ID
-                                String task = taskWithScore.getValue();
-                                // 抢占任务
-                                if (taskRepository.occupyTask(taskGroup, task, executorContext.getNode(),
-                                        properties.getTaskLockExpireSeconds())) {
-
-                                    // 抢占成功判断停机标志, 停机释放抢占的任务
-                                    if (shutdownFlag) {
-                                        taskRepository.releaseTask(taskGroup, task);
-                                        break;
-                                    }
-
-                                    LOG.info("抢占任务成功，任务信息：{}", task);
-
-                                    success = false;
-                                    // 执行任务
-                                    executorContext.doWork(taskWithScore);
-                                    break;
-                                }
-                            }
-                            // 如果一轮抢下来都没有抢到，那就睡一会儿
-                            if (success) {
-                                TimeUnit.MILLISECONDS.sleep(pollingFrequencyMillis);
-                            }
-
-                        } else {
-                            // 如果此次没有扫描到任务，休眠一会儿
-                            TimeUnit.MILLISECONDS.sleep(pollingFrequencyMillis);
-                        }
-                    } else {
-                        // 此时没有空闲线程，休眠一会儿
+                    if (executorContext.getFreeTaskCounter().get() <= 0) {
                         TimeUnit.MILLISECONDS.sleep(1);
+                        continue;
+                    }
+                    Set<ZSetOperations.TypedTuple<String>> tasks = taskRepository.scanTask(taskGroup);
+                    LOG.info("扫描得到的任务数量：{}", tasks == null ? 0 : tasks.size());
+                    boolean success = true;
+                    if (CollectionUtils.isEmpty(tasks)) {
+                        // 如果此次没有扫描到任务，休眠一会儿
+                        TimeUnit.MILLISECONDS.sleep(pollingFrequencyMillis);
+                        continue;
+                    }
+                    // 遍历子任务
+                    for (ZSetOperations.TypedTuple<String> taskWithScore : tasks) {
+                        // 获取子任务ID
+                        String task = taskWithScore.getValue();
+                        // 抢占任务
+                        if (taskRepository.occupyTask(taskGroup, task, executorContext.getNode(), properties.getTaskLockExpireSeconds())) {
+                            // 抢占成功判断停机标志, 停机释放抢占的任务
+                            if (shutdownFlag) {
+                                taskRepository.releaseTask(taskGroup, task);
+                                break;
+                            }
+                            LOG.info("抢占任务成功，任务信息：{}", task);
+                            success = false;
+                            // 执行任务
+                            executorContext.doWork(taskWithScore);
+                            break;
+                        }
+                    }
+                    // 如果一轮抢下来都没有抢到，那就睡一会儿
+                    if (success) {
+                        TimeUnit.MILLISECONDS.sleep(pollingFrequencyMillis);
                     }
 
                 } catch (Exception e) {

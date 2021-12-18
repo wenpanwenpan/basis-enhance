@@ -15,6 +15,7 @@
         <module>demo-enhance-data-redis</module>
         <module>demo-enhance-distribute-executor</module>
         <module>demo-enhance-exception</module>
+        <module>demo-enhance-mongo</module>
     </modules>
 
 </project>

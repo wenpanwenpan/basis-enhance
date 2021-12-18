@@ -40,12 +40,17 @@ public class RedisDelayQueueRunner implements CommandLineRunner {
             ThreadFactory threadFactory = new ThreadFactoryBuilder()
                     .setNameFormat("thread-pool-name" + "-%d")
                     .setUncaughtExceptionHandler((Thread thread, Throwable throwable) -> {
-                        log.error("线程池已满，任务被拒绝");
+                        log.error("The thread pool was full. The task was rejected");
                     })
                     .build();
             // 使用线程池执行任务保证任务不会被用户任务异常终止，每个延时队列对应线程池中一个线程
-            executor = new ThreadPoolExecutor(beansOfType.size(), beansOfType.size(), 60, TimeUnit.SECONDS,
-                    new LinkedBlockingQueue<>(1), threadFactory, (r, executor1) -> log.error("线程池已满，任务被拒绝"));
+            executor = new ThreadPoolExecutor(
+                    beansOfType.size(),
+                    beansOfType.size(), 60,
+                    TimeUnit.SECONDS,
+                    new LinkedBlockingQueue<>(1),
+                    threadFactory,
+                    (r, executor1) -> log.error("The thread pool was full. The task was rejected"));
             RedisDelayQueueManager.batchRegister(beansOfType);
             for (RedisDelayQueue<?> redisDelayQueue : beansOfType.values()) {
                 // 每次重启后先添加一条空数据，避免服务重启后延迟队列take数据阻塞不执行bug（redisson的bug）

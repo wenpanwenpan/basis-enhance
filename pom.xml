@@ -23,6 +23,7 @@
         <module>enhance-boot-exception</module>
         <module>enhance-concurrent</module>
         <module>enhance-core</module>
+        <module>enhance-boot-mongo</module>
     </modules>
 
     <properties>
