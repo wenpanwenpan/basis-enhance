@@ -1,5 +1,6 @@
 package org.enhance.mongo.demo;
 
+import org.basis.enhance.mongo.annotation.EnableMongoMultiSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -8,6 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  *
  * @author Mr_wenpan@163.com 2021/12/17 11:06
  */
+@EnableMongoMultiSource
 @SpringBootApplication
 public class EnhanceMongoDemoApplication {
 

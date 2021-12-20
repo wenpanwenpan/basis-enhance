@@ -1,14 +1,16 @@
 package org.basis.enhance.mongo.multisource.runner;
 
 import com.mongodb.MongoClientSettings;
+import org.apache.commons.collections4.MapUtils;
+import org.basis.enhance.mongo.config.properties.EnhanceMongoProperties;
 import org.basis.enhance.mongo.config.properties.MongoDataSourceProperties;
+import org.basis.enhance.mongo.infra.constant.EnhanceMongoConstant;
 import org.basis.enhance.mongo.multisource.context.MongoDataSourceContext;
 import org.basis.enhance.mongo.multisource.creator.MongoClientCreator;
 import org.basis.enhance.mongo.multisource.factory.DynamicMongoTemplateFactory;
 import org.basis.enhance.mongo.multisource.register.MongoDataSourceRegister;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.autoconfigure.mongo.MongoClientSettingsBuilderCustomizer;
 import org.springframework.boot.autoconfigure.mongo.MongoProperties;
@@ -35,28 +37,63 @@ public class MongoMultiSourceRegisterRunner implements CommandLineRunner, Enviro
 
     private Environment environment;
 
-    @Autowired
     private MongoDataSourceContext mongoDataSourceContext;
 
-    @Autowired
     private ApplicationContext applicationContext;
 
-    @Autowired
-    private MongoTemplate mongoTemplate;
+    final String mongoTemplate = "mongoTemplate";
+
+    public MongoMultiSourceRegisterRunner(ApplicationContext applicationContext,
+                                          MongoDataSourceContext mongoDataSourceContext) {
+        this.applicationContext = applicationContext;
+        this.mongoDataSourceContext = mongoDataSourceContext;
+    }
 
     @Override
     public void run(String... args) throws Exception {
         // 获取所有数据源名称（注意：只包含spring.data.mongodb.datasource下的数据源）
-        MongoDataSourceProperties sourceProperties = applicationContext.getBean(MongoDataSourceProperties.class);
-        Map<String, MongoProperties> datasource = sourceProperties.getDatasource();
-
+        Map<String, EnhanceMongoProperties> datasource = applicationContext.getBean(MongoDataSourceProperties.class).getDatasource();
         if (datasource.size() < 1) {
-            logger.error("no mongodb multi datasource config, register multi datasource failed. please check config.");
+            logger.error("No mongodb multi datasource config, register multi datasource failed. please check config.");
+            return;
+        }
+        // 注册多数据源的mongoTemplate
+        registMultiSourceFromContainer(datasource);
+    }
+
+    /**
+     * 从容器中获取多个MongoDB数据源，并且注入到MongoDataSourceRegister统一管理
+     */
+    private void registMultiSourceFromContainer(Map<String, EnhanceMongoProperties> dataSources) {
+        // 注册默认数据源对应的MongoTemplate
+        MongoTemplate defaultMongoTemplate = applicationContext.getBean(mongoTemplate, MongoTemplate.class);
+        MongoDataSourceRegister.registerMongoTemplate(EnhanceMongoConstant.MultiSource.DEFAULT_SOURCE_TEMPLATE, defaultMongoTemplate);
+
+        if (MapUtils.isEmpty(dataSources)) {
+            logger.warn("No available mongo multi-data source was found.");
             return;
         }
 
+        // 注册其余数据源对应的MongoTemplate
+        for (String dataSourceName : dataSources.keySet()) {
+            String name = dataSourceName + EnhanceMongoConstant.MultiSource.MONGO_TEMPLATE;
+            MongoTemplate mongoTemplate = applicationContext.getBean(name, MongoTemplate.class);
+            MongoDataSourceRegister.registerMongoTemplate(name, mongoTemplate);
+            logger.info("Data source registered successfully, the datasource name is {}.", name);
+        }
+    }
+
+    /**
+     * 创建多MongoTemplate实例，并注册到MongoDataSourceRegister中（但不注册到容器）
+     */
+    @Deprecated
+    private void createMultiMongoTemplate(Map<String, MongoProperties> dataSources) {
+        if (MapUtils.isEmpty(dataSources)) {
+            logger.warn("No available mongo multi-data source was found.");
+            return;
+        }
         // 注册多数据源的mongoTemplate
-        datasource.forEach((k, v) -> {
+        dataSources.forEach((k, v) -> {
             MongoClientSettingsBuilderCustomizer builderCustomizers = MongoClientCreator.createMongoPropertiesCustomizer(v, environment);
             MongoClientSettings mongoClientSettings = MongoClientCreator.createMongoClientSettings();
             DynamicMongoTemplateFactory dynamicMongoTemplateFactory = mongoDataSourceContext
@@ -65,14 +102,11 @@ public class MongoMultiSourceRegisterRunner implements CommandLineRunner, Enviro
                 MongoTemplate mongoTemplate = dynamicMongoTemplateFactory.createMongoTemplate();
                 // 由于这里没有注入spring容器，需要手动设置上applicationContext
                 mongoTemplate.setApplicationContext(applicationContext);
-                MongoDataSourceRegister.redisterMongoTemplate(k, mongoTemplate);
+                MongoDataSourceRegister.registerMongoTemplate(k, mongoTemplate);
             } catch (ClassNotFoundException e) {
-                throw new RuntimeException("create dynamic mongoTemplate failed, the monogo source name is " + k);
+                throw new RuntimeException("Create dynamic mongoTemplate failed, the monogo source name is " + k);
             }
         });
-
-        System.out.println("mongo多数据源注册完毕");
-
     }
 
     @Override

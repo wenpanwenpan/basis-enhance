@@ -7,9 +7,6 @@ package org.basis.enhance.mongo.infra.constant;
  */
 public interface EnhanceMongoConstant {
 
-    String PRIMARY_MONGO_TEMPLATE = "primaryMongoTemplate";
-    String SECOND_MONGO_TEMPLATE = "secondMongoTemplate";
-
     /**
      * 多数据源相关常量
      */

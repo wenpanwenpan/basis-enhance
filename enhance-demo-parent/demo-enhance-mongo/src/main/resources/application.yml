@@ -3,10 +3,13 @@ spring:
     mongodb:
       uri: ${MONGODB_DEFAULT_URL:mongodb://root:root@47.97.106.38:27017/admin}
       # mongodb://root:bi4uLbLqG4jSW5qq@dds-bp101b66184bb7e41.mongodb.rds.aliyuncs.com:3717/admin
+      enable-sharding: true
       datasource:
         datasource1:
+          order: 1
           uri: ${MONGODB_DEFAULT_URL:mongodb://root:root@47.97.106.38:27017/admin}
         datasource2:
+          order: 2
           uri: ${MONGODB_DEFAULT_URL:mongodb://omsuat:qOwtYub!RQzm@114.67.212.174:27017/admin}
   application:
     name: demo-enhance-mongo

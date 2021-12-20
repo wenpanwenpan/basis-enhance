@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.basis.enhance.mongo.multisource.register.MongoDataSourceRegister;
 import org.enhance.mongo.demo.entity.EnhanceDeliveryConfirm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -28,6 +29,15 @@ public class TestMongoMutilSourceController {
 
     @Autowired
     private MongoTemplate mongoTemplate;
+
+    @Qualifier("datasource1MongoTemplate")
+    @Autowired(required = false)
+    private MongoTemplate datasource1MongoTemplate;
+
+
+    @Qualifier("datasource2MongoTemplate")
+    @Autowired(required = false)
+    private MongoTemplate datasource2MongoTemplate;
 
     /**
      * 默认数据源切换db测试
@@ -76,6 +86,16 @@ public class TestMongoMutilSourceController {
         List<EnhanceDeliveryConfirm> list1 = datasource1.find(query, EnhanceDeliveryConfirm.class);
         List<EnhanceDeliveryConfirm> list2 = datasource2.find(query, EnhanceDeliveryConfirm.class);
 
+        log.info("list1 = {}", list1);
+        log.info("list2 = {}", list2);
+    }
+
+    @GetMapping("/inject")
+    public void testInject() {
+        Query query = new Query();
+        query.addCriteria(Criteria.where(EnhanceDeliveryConfirm.FIELD_CARRIER_NAME).is("wenpan"));
+        List<EnhanceDeliveryConfirm> list1 = datasource1MongoTemplate.find(query, EnhanceDeliveryConfirm.class);
+        List<EnhanceDeliveryConfirm> list2 = datasource2MongoTemplate.find(query, EnhanceDeliveryConfirm.class);
         log.info("list1 = {}", list1);
         log.info("list2 = {}", list2);
     }

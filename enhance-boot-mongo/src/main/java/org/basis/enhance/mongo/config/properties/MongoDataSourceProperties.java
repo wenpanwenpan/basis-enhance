@@ -1,6 +1,5 @@
 package org.basis.enhance.mongo.config.properties;
 
-import org.springframework.boot.autoconfigure.mongo.MongoProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.HashMap;
@@ -14,18 +13,36 @@ import java.util.Map;
 @ConfigurationProperties(prefix = MongoDataSourceProperties.PREFIX)
 public class MongoDataSourceProperties {
 
-    static final String PREFIX = "spring.data.mongodb";
+    public static final String PREFIX = "spring.data.mongodb";
 
     /**
      * 数据源配置集合（key: 数据源名称， value: 数据源对应的Mongo配置）
      */
-    private Map<String, MongoProperties> datasource = new HashMap<>();
+    private Map<String, EnhanceMongoProperties> datasource;
 
-    public Map<String, MongoProperties> getDatasource() {
+    /**
+     * 是否开启多数据源分片（默认不开启）
+     */
+    private Boolean enableSharding;
+
+    public MongoDataSourceProperties() {
+        enableSharding = Boolean.FALSE;
+        datasource = new HashMap<>();
+    }
+
+    public Boolean getEnableSharding() {
+        return enableSharding;
+    }
+
+    public void setEnableSharding(Boolean enableSharding) {
+        this.enableSharding = enableSharding;
+    }
+
+    public Map<String, EnhanceMongoProperties> getDatasource() {
         return datasource;
     }
 
-    public void setDatasource(Map<String, MongoProperties> datasource) {
+    public void setDatasource(Map<String, EnhanceMongoProperties> datasource) {
         this.datasource = datasource;
     }
 
