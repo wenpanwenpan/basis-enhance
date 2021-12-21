@@ -68,13 +68,24 @@
 
 ***
 
-#### 6、并发功能增强
+#### 6、MongoDB多数据源增强
+
+- 支持一个springboot应用程序中配置多个MongoDB数据源
+- 使用注解`@EnableMongoMultiSource`开启MongoDB多数据源功能启用与禁用，实现了动态可插拔功能。
+- 提供`MongoMultiSourceClient`来获取并操作某个指定的数据源
+- 对应每个MongoDB集合都支持自定义分片算法
+- 提供默认的一致性hash算法实现，解决使用一致性hash分片算法时可能存在的多数据源数据倾斜问题
+- 提供默认的一致性hash分片算法实现，对于MongoDB集合可以采用一致性hash算法来动态选取存放数据的数据源。
+
+**详细使用介绍链接**：[增强MongoDB多数据源实现](./enhance-boot-mongo/README.md)
+
+#### 7、并发功能增强
 
 待整理
 
 ***
 
-#### 7、jdk相关功能封装和增强
+#### 8、jdk相关功能封装和增强
 
 动态可调整线程池增强（待实现）
 

@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
  * @author Mr_wenpan@163.com 2021/12/19 19:49
  */
 @Component
-public class DefaultShardingAlgorithm implements ShardingAlgorithm {
+public class ExampleShardingAlgorithm implements ShardingAlgorithm {
 
     @Override
     public String getTargetInstanceByValue(Object value) {
-        return "datasource1";
+        return "datasource1MongoTemplate";
     }
 
     @Override
@@ -23,6 +23,6 @@ public class DefaultShardingAlgorithm implements ShardingAlgorithm {
 
     @Override
     public String collectionName() {
-        return "default";
+        return "enhance_delivery_confirm";
     }
 }

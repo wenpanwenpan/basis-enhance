@@ -1,9 +1,11 @@
 spring:
   data:
     mongodb:
+      # 默认数据源
       uri: ${MONGODB_DEFAULT_URL:mongodb://root:root@47.97.106.38:27017/admin}
-      # mongodb://root:bi4uLbLqG4jSW5qq@dds-bp101b66184bb7e41.mongodb.rds.aliyuncs.com:3717/admin
+      # 开启多数据源分片
       enable-sharding: true
+      # 多数据源配置
       datasource:
         datasource1:
           order: 1

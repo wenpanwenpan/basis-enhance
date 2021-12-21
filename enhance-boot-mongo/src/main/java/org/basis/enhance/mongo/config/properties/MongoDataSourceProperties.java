@@ -16,18 +16,24 @@ public class MongoDataSourceProperties {
     public static final String PREFIX = "spring.data.mongodb";
 
     /**
-     * 数据源配置集合（key: 数据源名称， value: 数据源对应的Mongo配置）
-     */
-    private Map<String, EnhanceMongoProperties> datasource;
-
-    /**
      * 是否开启多数据源分片（默认不开启）
      */
     private Boolean enableSharding;
 
+    /**
+     * 一致性hash算法每个数据源节点个数
+     */
+    private Integer numberOfReplicas;
+
+    /**
+     * 数据源配置集合（key: 数据源名称， value: 数据源对应的Mongo配置）
+     */
+    private Map<String, EnhanceMongoProperties> datasource;
+
     public MongoDataSourceProperties() {
         enableSharding = Boolean.FALSE;
         datasource = new HashMap<>();
+        numberOfReplicas = 1024;
     }
 
     public Boolean getEnableSharding() {
@@ -46,4 +52,11 @@ public class MongoDataSourceProperties {
         this.datasource = datasource;
     }
 
+    public Integer getNumberOfReplicas() {
+        return numberOfReplicas;
+    }
+
+    public void setNumberOfReplicas(Integer numberOfReplicas) {
+        this.numberOfReplicas = numberOfReplicas;
+    }
 }

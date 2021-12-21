@@ -58,13 +58,13 @@ public class MongoMultiSourceRegisterRunner implements CommandLineRunner, Enviro
             return;
         }
         // 注册多数据源的mongoTemplate
-        registMultiSourceFromContainer(datasource);
+        registerMultiSourceFromContainer(datasource);
     }
 
     /**
      * 从容器中获取多个MongoDB数据源，并且注入到MongoDataSourceRegister统一管理
      */
-    private void registMultiSourceFromContainer(Map<String, EnhanceMongoProperties> dataSources) {
+    private void registerMultiSourceFromContainer(Map<String, EnhanceMongoProperties> dataSources) {
         // 注册默认数据源对应的MongoTemplate
         MongoTemplate defaultMongoTemplate = applicationContext.getBean(mongoTemplate, MongoTemplate.class);
         MongoDataSourceRegister.registerMongoTemplate(EnhanceMongoConstant.MultiSource.DEFAULT_SOURCE_TEMPLATE, defaultMongoTemplate);

@@ -1,9 +1,12 @@
 package org.basis.enhance.mongo.multisource.client;
 
 import org.basis.enhance.mongo.config.properties.MongoDataSourceProperties;
+import org.basis.enhance.mongo.multisource.algorithm.ConsistentHash;
 import org.basis.enhance.mongo.multisource.algorithm.ShardingAlgorithm;
 import org.basis.enhance.mongo.multisource.register.MongoDataSourceRegister;
 import org.basis.enhance.mongo.multisource.register.ShardingAlgorithmRegister;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +22,27 @@ public class MongoMultiSourceClient {
 
     private MongoDataSourceProperties mongoDataSourceProperties;
 
-    public MongoMultiSourceClient(MongoDataSourceProperties mongoDataSourceProperties) {
+    private ConsistentHash<MongoTemplate> consistentHash;
+
+    public MongoMultiSourceClient(MongoDataSourceProperties mongoDataSourceProperties,
+                                  @Autowired(required = false) @Qualifier("mongoTemplateConsistentHash") ConsistentHash<MongoTemplate> consistentHash) {
         this.mongoDataSourceProperties = mongoDataSourceProperties;
+        this.consistentHash = consistentHash;
+    }
+
+    /**
+     * 将value通过一致性hash算法计算获取对应的MongoTemplate
+     *
+     * @param value value
+     * @return org.springframework.data.mongodb.core.MongoTemplate
+     * @author Mr_wenpan@163.com 2021/12/20 11:29 上午
+     */
+    public MongoTemplate getMongoTemplateByHash(Object value) {
+        // 没有开启分片则返回默认数据源
+        if (!mongoDataSourceProperties.getEnableSharding()) {
+            return getDefaultMongoTemplate();
+        }
+        return consistentHash.get(value);
     }
 
     /**
@@ -32,8 +54,8 @@ public class MongoMultiSourceClient {
      */
     public MongoTemplate getMongoTemplate(String collectionName, Object value) {
         // 没有开启分片则返回默认数据源
-        if (!mongoDataSourceProperties.getEnableSharding() || isSharding(collectionName)) {
-            return MongoDataSourceRegister.getDefaultMongoTemplate();
+        if (!mongoDataSourceProperties.getEnableSharding() || !isSharding(collectionName)) {
+            return getDefaultMongoTemplate();
         }
         ShardingAlgorithm algorithm = ShardingAlgorithmRegister.getShardingAlgorithm(collectionName);
         String dataSourceName = algorithm.getTargetInstanceByValue(value);
