@@ -18,7 +18,11 @@
 
 ### 1、基础配置
 
-#### ①、项目中引入插件依赖
+#### ①、下载项目并打包到自己的maven仓库
+
+下载源码，然后`mvn install`到自己的maven仓库。
+
+#### ②、项目中引入插件依赖
 
 ```xml
 <dependency>
@@ -28,7 +32,7 @@
 </dependency>
 ```
 
-#### ②、application.yml配置
+#### ③、application.yml配置
 
 ```yml
 spring:
@@ -48,7 +52,7 @@ spring:
           uri: ${MONGODB_DEFAULT_URL:mongodb://用户名:密码@ip:端口/库名}
 ```
 
-#### ③、启动类上开启MongoDB多数据源
+#### ④、启动类上开启MongoDB多数据源
 
 ```java
 // 使用@EnableMongoMultiSource注解开启MongoDB多数据源
