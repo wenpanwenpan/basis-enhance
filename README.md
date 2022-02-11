@@ -6,6 +6,10 @@
 ### 项目功能说明
 该工程（basis-enhance）主要是对一些常用的组件的一个增强，实现可插拔，尽量做到开箱即用！
 
+基于netty手写RPC项目
+
+- [基于netty + springboot + nacos实现简单rpc](https://gitee.com/mr_wenpan/basis-simple-rpc)
+
 ### 已增强的组件
 
 ***
