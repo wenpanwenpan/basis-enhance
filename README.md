@@ -6,9 +6,13 @@
 ### 项目功能说明
 该工程（basis-enhance）主要是对一些常用的组件的一个增强，实现可插拔，尽量做到开箱即用！
 
-基于netty手写RPC项目
+### 基于netty实现简单RPC
+
+***
 
 - [基于netty + springboot + nacos实现简单rpc](https://gitee.com/mr_wenpan/basis-simple-rpc)
+
+***
 
 ### 已增强的组件
 
@@ -84,6 +88,8 @@
 - 提供默认的一致性hash分片算法实现，对于MongoDB集合可以采用一致性hash算法来动态选取存放数据的数据源。
 
 **详细使用介绍链接**：[增强MongoDB多数据源实现](./enhance-boot-mongo/README.md)
+
+***
 
 #### 7、并发功能增强
 
