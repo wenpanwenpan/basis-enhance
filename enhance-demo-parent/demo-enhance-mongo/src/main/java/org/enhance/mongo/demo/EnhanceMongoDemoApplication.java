@@ -1,6 +1,6 @@
 package org.enhance.mongo.demo;
 
-import org.basis.enhance.mongo.annotation.EnableMongoMultiSource;
+import com.doterra.mongo.annotation.EnableMongoMultiSource;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 

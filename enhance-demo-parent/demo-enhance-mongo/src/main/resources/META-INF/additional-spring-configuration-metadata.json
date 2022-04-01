@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "spring.data.mongodb.enable-sharding",
+      "type": "java.lang.String",
+      "description": "Description for spring.data.mongodb.enable-sharding."
+    }
+  ]
+}

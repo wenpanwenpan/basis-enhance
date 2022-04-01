@@ -12,6 +12,7 @@ import org.springframework.context.EnvironmentAware;
 import org.springframework.core.env.AbstractEnvironment;
 import org.springframework.core.env.Environment;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;
@@ -63,7 +64,7 @@ public class RedisMultiSourceRegisterRunner implements CommandLineRunner, Enviro
     }
 
     @Override
-    public void setEnvironment(Environment environment) {
+    public void setEnvironment(@NonNull Environment environment) {
         this.environment = environment;
     }
 }

@@ -1,9 +1,9 @@
 package org.enhance.mongo.demo.controller;
 
+import com.doterra.mongo.multisource.algorithm.ConsistentHash;
+import com.doterra.mongo.multisource.client.MongoMultiSourceClient;
+import com.doterra.mongo.multisource.register.MongoDataSourceRegister;
 import lombok.extern.slf4j.Slf4j;
-import org.basis.enhance.mongo.multisource.algorithm.ConsistentHash;
-import org.basis.enhance.mongo.multisource.client.MongoMultiSourceClient;
-import org.basis.enhance.mongo.multisource.register.MongoDataSourceRegister;
 import org.enhance.mongo.demo.entity.EnhanceDeliveryConfirm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -40,20 +40,19 @@ public class TestMongoMutilSourceController {
     @Autowired(required = false)
     private MongoTemplate datasource2MongoTemplate;
 
-    @Autowired
+    @Autowired(required = false)
     private MongoMultiSourceClient mongoMultiSourceClient;
 
-    @Autowired
+    @Autowired(required = false)
     ConsistentHash<MongoTemplate> mongoTemplateConsistentHash;
 
     /**
      * 默认数据源切换db测试
      */
     @GetMapping("/insert")
-
     public void insertTest() {
-        MongoTemplate datasource1 = MongoDataSourceRegister.getMongoTemplate("datasource1");
-        MongoTemplate datasource2 = MongoDataSourceRegister.getMongoTemplate("datasource2");
+        MongoTemplate datasource1 = MongoDataSourceRegister.getMongoTemplate("datasource1MongoTemplate");
+        MongoTemplate datasource2 = MongoDataSourceRegister.getMongoTemplate("datasource2MongoTemplate");
         EnhanceDeliveryConfirm enhanceDeliveryConfirm = new EnhanceDeliveryConfirm();
         enhanceDeliveryConfirm.setCarrierName("wenpan");
         enhanceDeliveryConfirm.setCreatedDate(new Date());
@@ -86,8 +85,8 @@ public class TestMongoMutilSourceController {
 
     @GetMapping("/query")
     public void query() {
-        MongoTemplate datasource1 = MongoDataSourceRegister.getMongoTemplate("datasource1");
-        MongoTemplate datasource2 = MongoDataSourceRegister.getMongoTemplate("datasource2");
+        MongoTemplate datasource1 = MongoDataSourceRegister.getMongoTemplate("datasource1MongoTemplate");
+        MongoTemplate datasource2 = MongoDataSourceRegister.getMongoTemplate("datasource1MongoTemplate");
         Query query = new Query();
         query.addCriteria(Criteria.where(EnhanceDeliveryConfirm.FIELD_CARRIER_NAME).is("wenpan"));
         query.with(PageRequest.of(0, 10));

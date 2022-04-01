@@ -75,7 +75,7 @@ public final class MonogoMultiDataSourceRegistrar implements EnvironmentAware, I
 
         // 通过构建器获取bean的定义信息
         BeanDefinition beanDefinition = builder.getBeanDefinition();
-        // 设置该bean为public
+        // 设置主要的注入的对象
         beanDefinition.setPrimary(false);
 
         String beanName = alias + EnhanceMongoConstant.MultiSource.MONGO_TEMPLATE;

@@ -3,54 +3,41 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.8</version>
+        <artifactId>basis-enhance</artifactId>
+        <groupId>org.basis.enhance</groupId>
+        <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.basis.enhance</groupId>
-    <artifactId>basis-enhance</artifactId>
-    <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>enhance-boot-datasource</artifactId>
 
-    <modules>
-        <module>enhance-boot-data-redis</module>
-        <module>enhance-demo-parent</module>
-        <module>enhance-boot-mybatis</module>
-        <module>enhance-jdk</module>
-        <module>enhance-distribute-executor</module>
-        <module>enhance-boot-exception</module>
-        <module>enhance-concurrent</module>
-        <module>enhance-core</module>
-        <module>enhance-boot-mongo</module>
-        <module>enhance-boot-datasource</module>
-        <module>basis-enhance-message-event</module>
-    </modules>
-
-    <properties>
-        <java.version>1.8</java.version>
-        <build.encoding>UTF-8</build.encoding>
-        <fastjson.version>1.2.70</fastjson.version>
-        <cglib-nodep>3.1</cglib-nodep>
-        <lombok.version>1.18.10</lombok.version>
-        <!-- redisson -->
-        <redisson.version>3.10.2</redisson.version>
-        <collections4.version>4.2</collections4.version>
-        <collections3.version>3.11</collections3.version>
-        <mybatis.starter.version>2.1.4</mybatis.starter.version>
-        <org.springframework.version>5.0.10.RELEASE</org.springframework.version>
-        <spring-boot-autoconfigure.version>2.4.8</spring-boot-autoconfigure.version>
-        <spring-boot-configuration-processor.version>2.4.8</spring-boot-configuration-processor.version>
-        <spring-boot-starter-test.version>2.4.8</spring-boot-starter-test.version>
-        <spring-boot-starter.version>2.4.8</spring-boot-starter.version>
-
-        <maven.javadoc.skip>false</maven.javadoc.skip>
-        <maven.springboot.skip>true</maven.springboot.skip>
-        <maven.java.doc.skip>true</maven.java.doc.skip>
-        <jdk.version>1.8</jdk.version>
-        <build.encoding>UTF-8</build.encoding>
-    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <!--排除自带的Tomcat-->
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <!--使用undertow做容器-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-undertow</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>${fastjson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+        </dependency>
+    </dependencies>
 
     <!--构建打包相关-->
     <build>

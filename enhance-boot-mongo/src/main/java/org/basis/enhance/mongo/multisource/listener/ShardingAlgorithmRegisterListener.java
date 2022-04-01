@@ -11,6 +11,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.lang.NonNull;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 分片算法注册监听器
@@ -19,9 +20,12 @@ import java.util.Map;
  */
 public class ShardingAlgorithmRegisterListener implements ApplicationListener<ContextRefreshedEvent> {
 
-    private ApplicationContext applicationContext;
-
     private final Logger logger = LoggerFactory.getLogger(getClass());
+
+    private final ApplicationContext applicationContext;
+
+    private final AtomicBoolean initFlag = new AtomicBoolean(Boolean.FALSE);
+
 
     public ShardingAlgorithmRegisterListener(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
@@ -29,6 +33,10 @@ public class ShardingAlgorithmRegisterListener implements ApplicationListener<Co
 
     @Override
     public void onApplicationEvent(@NonNull ContextRefreshedEvent event) {
+        if (!initFlag.compareAndSet(Boolean.FALSE, Boolean.TRUE)) {
+            logger.warn("ShardingAlgorithmRegisterListener has been init.");
+            return;
+        }
         Map<String, ShardingAlgorithm> beansOfType = applicationContext.getBeansOfType(ShardingAlgorithm.class);
         if (MapUtils.isEmpty(beansOfType)) {
             logger.warn("Note that the sharding algorithm is empty.");

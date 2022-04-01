@@ -87,7 +87,7 @@ public class RedisMultiDataSourceRegistrar implements EnvironmentAware, ImportBe
 
         // 通过构建器获取bean的定义信息
         BeanDefinition beanDefinition = builder.getBeanDefinition();
-        // 设置该bean为public
+        // 设置主要的注入的对象
         beanDefinition.setPrimary(false);
 
         String beanName = alias + EnhanceRedisConstants.MultiSource.REDIS_TEMPLATE;
@@ -123,10 +123,10 @@ public class RedisMultiDataSourceRegistrar implements EnvironmentAware, ImportBe
     /**
      * 创建 RedisHelper 的 FactoryBean
      */
+    @SuppressWarnings("all")
     protected class RedisHelperFactoryBean extends RedisDataSourceContext implements FactoryBean<Object> {
 
         private final Logger logger = LoggerFactory.getLogger(getClass());
-
         @Override
         public Object getObject() throws Exception {
             // 获取配置文件中的参数，通过判断是否开启动态切换db来创建redisHelper
