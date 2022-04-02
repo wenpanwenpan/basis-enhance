@@ -16,6 +16,7 @@
         <module>demo-enhance-distribute-executor</module>
         <module>demo-enhance-exception</module>
         <module>demo-enhance-mongo</module>
+        <module>demo-enhance-message-event</module>
     </modules>
 
 </project>

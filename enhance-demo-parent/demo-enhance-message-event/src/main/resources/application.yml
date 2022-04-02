@@ -1,0 +1,4 @@
+basis:
+  message:
+    executor:
+      core-pool-size: 3

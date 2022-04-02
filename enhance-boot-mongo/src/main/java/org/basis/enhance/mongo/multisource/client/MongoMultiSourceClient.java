@@ -33,7 +33,7 @@ public class MongoMultiSourceClient {
     /**
      * 将value通过一致性hash算法计算获取对应的MongoTemplate
      *
-     * @param value value
+     * @param value value（注意：value必须覆写toString方法）
      * @return org.springframework.data.mongodb.core.MongoTemplate
      * @author Mr_wenpan@163.com 2021/12/20 11:29 上午
      */
