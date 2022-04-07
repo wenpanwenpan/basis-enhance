@@ -25,8 +25,7 @@
         <module>enhance-core</module>
         <module>enhance-boot-mongo</module>
         <module>enhance-boot-datasource</module>
-        <module>basis-enhance-message-event</module>
-        <module>demo-enhance-message-event</module>
+        <module>enhance-boot-message-event</module>
     </modules>
 
     <properties>

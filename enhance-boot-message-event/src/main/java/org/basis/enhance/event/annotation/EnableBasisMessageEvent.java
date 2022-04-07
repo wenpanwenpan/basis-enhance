@@ -1,5 +1,6 @@
 package org.basis.enhance.event.annotation;
 
+import org.basis.enhance.event.config.MessageEventAnnotationConfig;
 import org.basis.enhance.event.config.MessageEventAutoConfiguration;
 import org.springframework.context.annotation.Import;
 
@@ -13,7 +14,7 @@ import java.lang.annotation.*;
 @Documented
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
-@Import(MessageEventAutoConfiguration.class)
+@Import(MessageEventAnnotationConfig.class)
 public @interface EnableBasisMessageEvent {
 
 }

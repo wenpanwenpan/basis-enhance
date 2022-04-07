@@ -8,6 +8,7 @@ import org.basis.enhance.event.publisher.DefaultEventPublisher;
 import org.basis.enhance.event.publisher.EventPublisher;
 import org.basis.enhance.event.registrar.ApplicationEventMulticaster;
 import org.basis.enhance.event.registrar.impl.DefaultApplicationEventMulticaster;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -19,10 +20,12 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 消息事件自动配置
+ * ConditionalOnBean 必须要有MessageEventAnnotationConfig bean时才通过自动配置导入MessageEventAutoConfiguration类
  *
  * @author Mr_wenpan@163.com 2022/04/01 18:03
  */
 @Configuration
+@ConditionalOnBean(MessageEventAnnotationConfig.class)
 @EnableConfigurationProperties({MessageEventTaskExecutorProperties.class})
 public class MessageEventAutoConfiguration {
 
