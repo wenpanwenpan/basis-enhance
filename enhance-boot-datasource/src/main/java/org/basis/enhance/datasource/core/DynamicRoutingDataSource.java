@@ -2,6 +2,7 @@ package org.basis.enhance.datasource.core;
 
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.basis.enhance.datasource.exception.DynamicDataSourceException;
 import org.basis.enhance.datasource.provider.DynamicDataSourceProvider;
 
 import javax.sql.DataSource;
@@ -27,10 +28,16 @@ public class DynamicRoutingDataSource extends AbstractRoutingDataSource {
 
     @Override
     public DataSource determineDataSource() {
-
-        return dataSourceMap.get(DynamicDataSourceContextHolder.getDataSourceLookupKey());
+        DataSource dataSource = dataSourceMap.get(DynamicDataSourceContextHolder.getDataSourceLookupKey());
+        return dataSource == null ? determinePrimaryDataSource() : dataSource;
     }
 
+    /**
+     * 获取默认数据源
+     *
+     * @return javax.sql.DataSource 默认数据源
+     * @author Mr_wenpan@163.com 2022/4/7 6:02 下午
+     */
     public DataSource determinePrimaryDataSource() {
 
         return dataSourceMap.get(primary);
@@ -68,7 +75,7 @@ public class DynamicRoutingDataSource extends AbstractRoutingDataSource {
         if (dataSourceMap.containsKey(primary)) {
             log.info("当前的默认数据源是单数据源，数据源名为 {}", primary);
         } else {
-            throw new RuntimeException("请检查primary默认数据库设置");
+            throw new DynamicDataSourceException("请检查primary默认数据库设置");
         }
     }
 

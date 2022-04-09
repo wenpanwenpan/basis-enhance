@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.basis.enhance.datasource.config.properties.DataSourceProperty;
 import org.basis.enhance.datasource.config.properties.HikariCpConfig;
+import org.basis.enhance.datasource.exception.DynamicDataSourceException;
 
 import javax.sql.DataSource;
 
@@ -69,14 +70,14 @@ public class DynamicDataSourceCreator {
             } else if (druidExists) {
                 return createDruidDataSource(dataSourceProperty);
             } else {
-                throw new RuntimeException("create datasource occur error.");
+                throw new DynamicDataSourceException("create datasource occur error, please check the data source dependencies.");
             }
         } else if (DRUID_DATASOURCE.equals(type.getName())) {
             return createDruidDataSource(dataSourceProperty);
         } else if (HIKARI_DATASOURCE.equals(type.getName())) {
             return createHikariDataSource(dataSourceProperty);
         } else {
-            throw new RuntimeException("create datasource occur error.");
+            throw new DynamicDataSourceException("create datasource occur error, unsupported data source type.");
         }
     }
 
