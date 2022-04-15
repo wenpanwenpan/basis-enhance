@@ -1,9 +1,7 @@
 package org.enhance.datasource.demo.mapper;
 
-import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.enhance.datasource.demo.entity.Product;
-import org.enhance.datasource.demo.page.PageInfo;
 
 import java.util.List;
 
@@ -25,10 +23,4 @@ public interface ProductMapper {
      */
     @Select("select * from product")
     List<Product> findAllProductFromSlave();
-
-    /**
-     * 从从库查询所有商品
-     */
-    @Select("select * from product")
-    List<Product> pageHelperTest(@Param("pageInfo") PageInfo pageInfo, @Param("number") String number);
 }

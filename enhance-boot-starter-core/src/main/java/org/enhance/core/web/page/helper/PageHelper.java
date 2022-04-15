@@ -1,5 +1,9 @@
-package org.enhance.datasource.demo.page;
+package org.enhance.core.web.page.helper;
 
+import org.enhance.core.web.page.Page;
+import org.enhance.core.web.page.PageInfo;
+import org.enhance.core.web.page.inf.Select;
+import org.enhance.core.web.page.inf.SelectCount;
 import org.springframework.lang.NonNull;
 import org.springframework.util.CollectionUtils;
 

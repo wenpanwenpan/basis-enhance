@@ -1,4 +1,4 @@
-package org.enhance.datasource.demo.page;
+package org.enhance.core.web.page;
 
 import java.io.Serializable;
 
@@ -24,8 +24,8 @@ public class PageInfo implements Serializable {
     /**
      * 分页信息类构造函数
      *
-     * @param page  page
-     * @param size  size
+     * @param page page
+     * @param size size
      */
     public PageInfo(int page, int size) {
         this.page = page;

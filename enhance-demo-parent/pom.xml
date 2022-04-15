@@ -18,6 +18,7 @@
         <module>demo-enhance-mongo</module>
         <module>demo-enhance-message-event</module>
         <module>demo-enhance-datasource</module>
+        <module>demo-enhance-starter-core</module>
     </modules>
 
 </project>

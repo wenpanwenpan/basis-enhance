@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: enhance-boot-core
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://wenpan-host:3306/product_master?useUnicode=true&characterEncoding=UTF-8&useSSL=false}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:wenpan}
+
+mybatis:
+  mapperLocations: classpath*:/mapper/*.xml
+  configuration:
+    mapUnderscoreToCamelCase: true
+
+# 调整日志级别
+logging:
+  level:
+    org.enhance.datasource.demo.mapper: debug
