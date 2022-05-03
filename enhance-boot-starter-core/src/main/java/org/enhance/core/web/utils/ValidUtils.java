@@ -1,6 +1,7 @@
 package org.enhance.core.web.utils;
 
 import org.apache.commons.lang3.time.DateUtils;
+import org.basis.enhance.exception.base.CommonException;
 import org.springframework.util.CollectionUtils;
 
 import javax.validation.ConstraintViolation;
@@ -147,6 +148,9 @@ public class ValidUtils {
         }
     }
 
+    /**
+     * 验证结果
+     */
     public interface ValidationResult {
         /**
          * 批量验证结果处理接口，默认打印日志，抛出异常
@@ -161,7 +165,7 @@ public class ValidUtils {
                         value.stream().map(item -> item.getPropertyPath().toString() + " " + item.getMessage())
                                 .collect(Collectors.toList()).toString())
                         .append(";\n"));
-                throw new RuntimeException(sb.toString());
+                throw new CommonException(sb.toString());
             }
         }
 
@@ -173,7 +177,7 @@ public class ValidUtils {
          */
         default <T> void process(Set<ConstraintViolation<T>> resultSet) {
             if (!CollectionUtils.isEmpty(resultSet)) {
-                throw new RuntimeException(resultSet
+                throw new CommonException(resultSet
                         .stream()
                         .map(item -> item.getPropertyPath().toString() + " " + item.getMessage() + "; ")
                         .collect(Collectors.toList())

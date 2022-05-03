@@ -1,8 +1,11 @@
 package org.basis.enhance.exception.base;
 
+import org.basis.enhance.exception.handler.BaseExceptionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.method.HandlerMethod;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
@@ -22,8 +25,15 @@ public class CommonException extends RuntimeException {
 
     private static final long serialVersionUID = 5044938065901970022L;
 
+    /**
+     * 暂存message中需要的parameters，在全局异常拦截器格式化异常消息的时候用
+     * {@link BaseExceptionHandler#process(HttpServletRequest, HandlerMethod, CommonException)}
+     */
     private final transient Object[] parameters;
 
+    /**
+     * 暂存code
+     */
     private String code;
 
     /**

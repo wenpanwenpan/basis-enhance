@@ -15,4 +15,4 @@ mybatis:
 # 调整日志级别
 logging:
   level:
-    org.enhance.datasource.demo.mapper: debug
+    org.enhance.core.demo.infra.mapper: debug

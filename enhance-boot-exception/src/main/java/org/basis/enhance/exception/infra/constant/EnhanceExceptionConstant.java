@@ -21,6 +21,10 @@ public interface EnhanceExceptionConstant {
          * 程序出现错误，请联系管理员
          */
         String ERROR = "error.error";
+        /**
+         * 参数校验异常
+         */
+        String PARAM_CHECK_ERROR = "error.param.check";
     }
 
 }

@@ -19,6 +19,8 @@
         <module>demo-enhance-message-event</module>
         <module>demo-enhance-datasource</module>
         <module>demo-enhance-starter-core</module>
+        <module>demo-thread-pool</module>
+        <module>demo-clean-code</module>
     </modules>
 
 </project>

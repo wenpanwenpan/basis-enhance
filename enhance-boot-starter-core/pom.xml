@@ -12,6 +12,29 @@
     <artifactId>enhance-boot-starter-core</artifactId>
 
     <dependencies>
+        <!--分页插件-->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>5.3.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis.spring.boot</groupId>
+            <artifactId>mybatis-spring-boot-starter</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+        <!-- JSR 310 -->
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-typehandlers-jsr310</artifactId>
+            <version>1.0.1</version>
+        </dependency>
+        <!--全局异常统一捕获模块-->
+        <dependency>
+            <groupId>org.basis.enhance</groupId>
+            <artifactId>enhance-boot-exception</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
         <!--引入springboot校验starter（包括jsr303）-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
