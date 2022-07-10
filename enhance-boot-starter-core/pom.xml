@@ -12,6 +12,16 @@
     <artifactId>enhance-boot-starter-core</artifactId>
 
     <dependencies>
+        <!--jackson工具包-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <!--这是jackson对Java8的LocalDateTime等时间API的转换支持-->
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+        </dependency>
         <!--分页插件-->
         <dependency>
             <groupId>com.github.pagehelper</groupId>

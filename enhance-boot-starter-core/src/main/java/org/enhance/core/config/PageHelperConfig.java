@@ -12,7 +12,7 @@ import java.util.Properties;
 
 /**
  * pageHelper配置类
- * {参考 https://pagehelper.github.io/docs/howtouse/#2-%E9%85%8D%E7%BD%AE%E6%8B%A6%E6%88%AA%E5%99%A8%E6%8F%92%E4%BB%B6}
+ * {参考 <a>https://pagehelper.github.io/docs/howtouse/#2-%E9%85%8D%E7%BD%AE%E6%8B%A6%E6%88%AA%E5%99%A8%E6%8F%92%E4%BB%B6</a>}
  *
  * @author Mr_wenpan@163.com 2022/05/03 19:24
  */

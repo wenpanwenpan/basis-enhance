@@ -3,12 +3,12 @@ package org.enhance.core.demo.api.controller;
 import org.enhance.core.demo.api.dto.ProductQueryDTO;
 import org.enhance.core.demo.infra.validgroup.AValidGroup;
 import org.enhance.core.web.controller.BaseController;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.Enumeration;
 import java.util.List;
 
 /**
@@ -21,6 +21,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/test-base-controller")
 public class TestBaseController extends BaseController {
+
+    @Autowired
+    private HttpServletRequest httpServletRequest;
 
     /**
      * 测试普通对象校验
@@ -49,5 +52,19 @@ public class TestBaseController extends BaseController {
         System.out.println("请求进来了，list = " + list);
         super.validList(list);
         return "hello testList";
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        String requestURI = httpServletRequest.getRequestURI();
+        Enumeration<String> headerNames = httpServletRequest.getHeaderNames();
+        System.out.println(requestURI);
+        while (headerNames.hasMoreElements()) {
+            System.out.println(headerNames.nextElement());
+        }
+        System.out.println("=======================================================");
+
+
+        return "success";
     }
 }
