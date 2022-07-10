@@ -1,9 +1,12 @@
 package org.clean.code.test.fastjson;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.TypeReference;
+import com.alibaba.fastjson.annotation.JSONField;
 import com.alibaba.fastjson.serializer.NameFilter;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import lombok.Data;
 import org.clean.code.fastjson.vo.HouseVO;
 import org.clean.code.fastjson.vo.PersonVO;
 import org.clean.code.fastjson.vo.ResultVO;
@@ -14,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * fastjson测试
@@ -21,6 +25,56 @@ import java.util.List;
  * @author Mr_wenpan@163.com 2022/05/04 16:26
  */
 public class FastJsonTest {
+
+    /**
+     * 序列化测试
+     */
+    @Test
+    public void test() {
+        PersonVO personVO = JSON.parseObject("{\"name\":\"wenpanfeng\",\"age\":\"12\"}", PersonVO.class);
+        System.out.println(personVO);
+
+        JSONObject jsonObject = JSON.parseObject("{\n" +
+                "    \"code\":200,\n" +
+                "    \"success\":true,\n" +
+                "    \"message\":\"success\",\n" +
+                "    \"data\":\"{\\\"ruleHitDetailList\\\":[{\\\"taskCode\\\":\\\"2205300056250\\\",\\\"taskType\\\":10,\\\"taskTypeName\\\":\\\"退货初审\\\",\\\"ruleCode\\\":\\\"b_3\\\",\\\"reason\\\":\\\"报案时间异常\\\",\\\"ruleName\\\":\\\"签单时间_命中\\\",\\\"ruleLevel\\\":\\\"M\\\",\\\"measure\\\":\\\"NORMAL\\\",\\\"measureAdvise\\\":\\\"无\\\",\\\"checkResult\\\":null,\\\"remark\\\":null,\\\"time\\\":\\\"2022-05-30 16:13:52\\\"}],\\\"smartAuditInfo\\\":[{\\\"businessRiskClassify\\\":\\\"未分类\\\",\\\"customerRiskStratificationFlag\\\":\\\"黑\\\",\\\"insuranceLiabilityDetermine\\\":\\\"符合\\\",\\\"pictureConsistency\\\":\\\"0.0\\\",\\\"prospectAndProductImageFlag\\\":null,\\\"prospectConclusion\\\":null,\\\"prospectConclusionFlag\\\":null,\\\"returnGoodsAndProductImageFlag\\\":\\\"Y\\\",\\\"smartAuditConclusion\\\":\\\"拒绝\\\"}]}\"\n" +
+                "}");
+        System.out.println(jsonObject);
+        Object data = jsonObject.get("data");
+        JSONObject jsonObject1 = JSON.parseObject(Objects.toString(jsonObject.get("data")));
+        System.out.println(jsonObject1.get("smartAuditInfo"));
+
+
+        A a = new A();
+        B b = new B();
+        a.setB(b);
+        a.setName("wenpan");
+        b.setA(a);
+        b.setAge("122");
+
+        String sa = JSON.toJSONString(a);
+        String sb = JSON.toJSONString(b);
+
+        System.out.println(sa);
+        System.out.println(sb);
+
+    }
+
+    @Data
+    class A {
+        String name;
+        @JSONField(serialzeFeatures = {SerializerFeature.DisableCircularReferenceDetect})
+        B b;
+    }
+
+    @Data
+    class B {
+        String age;
+        @JSONField(serialzeFeatures = {SerializerFeature.DisableCircularReferenceDetect})
+        A a;
+    }
+
 
     /**
      * 序列化测试

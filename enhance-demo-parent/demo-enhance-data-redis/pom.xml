@@ -42,10 +42,10 @@
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <!-- 使用jedis客户端时需要引入Jedis客户端依赖，并排除lettuce依赖 -->
-        <dependency>
-            <groupId>redis.clients</groupId>
-            <artifactId>jedis</artifactId>
-        </dependency>
+        <!--        <dependency>-->
+        <!--            <groupId>redis.clients</groupId>-->
+        <!--            <artifactId>jedis</artifactId>-->
+        <!--        </dependency>-->
         <!--redisson依赖，主要用于测试项目中的分布式延时队列-->
         <dependency>
             <groupId>org.redisson</groupId>
@@ -60,6 +60,15 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
     </dependencies>
 

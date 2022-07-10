@@ -27,6 +27,7 @@
         <module>enhance-boot-datasource</module>
         <module>enhance-boot-message-event</module>
         <module>enhance-boot-starter-core</module>
+        <module>enhance-boot-limiting</module>
     </modules>
 
     <properties>

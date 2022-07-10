@@ -4,16 +4,10 @@ spring:
   application:
     name: enhance-data-redis-demo
   redis:
-    # 默认数据源
     host: ${SPRING_REDIS_HOST:wenpan-host}
     port: ${SPRING_REDIS_PORT:6379}
     password: ${SPRING_REDIS_PASSWORD:WenPan@123}
     database: ${SPRING_REDIS_DATABASE:8}
-    # 集群环境打开下面注释，单机不需要打开(单机只需要用上面的配置即可)
-    #cluster:
-    #nodes: xxx.xxx.xxx.xxx:xxxx,xxx.xxx.xxx.xxx:xxxx,xxx.xxx.xxx.xxx:xxxx
-    # 默认值是5 一般当此值设置过大时，容易报：Too many Cluster redirections
-    #maxRedirects: 3
     client-type: lettuce
     lettuce:
       pool:
@@ -37,36 +31,3 @@ spring:
         # 当资源池连接用尽后，调用者的最大等待时间(单位为毫秒)
         # 默认 -1 表示永不超时，设置5秒
         max-wait: ${SPRING_REDIS_POOL_MAX_WAIT:5000}
-    # 这里使用一台Redis的多个db来模拟多数据源
-    datasource:
-      # 第一个数据源
-      source1:
-        host: ${SPRING_REDIS_HOST:wenpan-host}
-        port: ${SPRING_REDIS_PORT:6379}
-        password: ${SPRING_REDIS_PASSWORD:WenPan@123}
-        database: ${SPRING_REDIS_DATABASE:1}
-      # 第二个数据源
-      source2:
-        host: ${SPRING_REDIS_HOST:yuanping-host}
-        port: ${SPRING_REDIS_PORT:6379}
-        #        password: ${SPRING_REDIS_PASSWORD:WenPan@123}
-        database: ${SPRING_REDIS_DATABASE:2}
-
-stone:
-  redis:
-    # 是否开启动态db切换
-    dynamic-database: true
-    # 是否开启redis队列监控
-    redis-queue: false
-    # 是否开启发布订阅监控
-    redis-pub-sub: true
-    # redis队列监控的默认db
-    queue-db: 1
-
-    # 开启基于Redis的延时队列
-    delay-queue:
-      enable: true
-
-io:
-  netty:
-    maxDirectMemory:1000M

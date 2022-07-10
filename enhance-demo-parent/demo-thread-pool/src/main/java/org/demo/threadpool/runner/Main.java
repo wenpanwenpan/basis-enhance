@@ -1,7 +1,9 @@
 package org.demo.threadpool.runner;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 /**
  * main
@@ -10,7 +12,14 @@ import java.util.TreeMap;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
+
+
+        LocalDateTime now = LocalDateTime.now();
+        TimeUnit.SECONDS.sleep(1);
+        LocalDateTime time = LocalDateTime.now();
+        int i = now.compareTo(time);
+        System.out.println(i);
 
         TreeMap<Integer, String> map = new TreeMap<>();
         map.put(1, "xxx");
