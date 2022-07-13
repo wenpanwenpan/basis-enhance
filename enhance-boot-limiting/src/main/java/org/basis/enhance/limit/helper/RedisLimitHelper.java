@@ -1,6 +1,8 @@
 package org.basis.enhance.limit.helper;
 
 import com.google.common.collect.Lists;
+import org.apache.commons.lang3.StringUtils;
+import org.basis.enhance.limit.exception.EnhanceRedisLimitException;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 import org.springframework.scripting.support.ResourceScriptSource;
@@ -67,6 +69,18 @@ public class RedisLimitHelper {
      * @author wenpan 2022/7/5 9:39 下午
      */
     public Boolean tokenLimit(String limitKey, int capacity, int permits, double rate) {
+        if (StringUtils.isBlank(limitKey)) {
+            throw new EnhanceRedisLimitException("limitKey can not be null, please check param.");
+        }
+        if (capacity <= 0) {
+            throw new EnhanceRedisLimitException("capacity must be greater than 0, please check param.");
+        }
+        if (permits <= 0) {
+            throw new EnhanceRedisLimitException("permits must be greater than 0, please check param.");
+        }
+        if (rate <= 0) {
+            throw new EnhanceRedisLimitException("rate must be greater than 0, please check param.");
+        }
         // 令牌桶名称
         List<String> keys = Lists.newArrayListWithCapacity(1);
         String bucket = BUCKET_LIMIT_KEY_PREFIX + limitKey;
@@ -93,6 +107,15 @@ public class RedisLimitHelper {
      * @author wenpanfeng 2022/7/4 21:22
      */
     public Boolean windowLimit(String limitKey, int maxRequest, int windowLength) {
+        if (StringUtils.isBlank(limitKey)) {
+            throw new EnhanceRedisLimitException("limitKey can not be null, please check param.");
+        }
+        if (maxRequest <= 0) {
+            throw new EnhanceRedisLimitException("maxRequest must be greater than 0, please check param.");
+        }
+        if (windowLength <= 0) {
+            throw new EnhanceRedisLimitException("windowLength must be greater than 0, please check param.");
+        }
         // 获取key名，一个时间窗口开始时间(限流开始时间)和一个时间窗口内请求的数量累计(限流累计请求数)
         List<String> keys = new ArrayList<>();
         keys.add(LIMIT_TIME_PREFIX + limitKey);

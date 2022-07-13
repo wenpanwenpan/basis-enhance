@@ -1,6 +1,7 @@
 package org.enhance.limiting.demo.api.v1.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.basis.enhance.limit.annotation.TokenBucketLimit;
 import org.basis.enhance.limit.helper.RedisLimitHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,6 +40,16 @@ public class TestTokenBucketLimitController {
                 log.error("[{}] can not pass.", i);
             }
         }
+        return "success";
+    }
+
+    /**
+     * 使用注解进行令牌桶限流
+     */
+    @TokenBucketLimit
+    @GetMapping("/test-annotation")
+    public String testAnnotation() {
+        log.info("请求没有被限流...");
         return "success";
     }
 }

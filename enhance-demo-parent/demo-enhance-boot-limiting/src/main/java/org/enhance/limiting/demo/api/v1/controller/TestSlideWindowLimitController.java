@@ -1,6 +1,7 @@
 package org.enhance.limiting.demo.api.v1.controller;
 
 import lombok.extern.slf4j.Slf4j;
+import org.basis.enhance.limit.annotation.SlideWindowLimit;
 import org.basis.enhance.limit.helper.RedisLimitHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +23,9 @@ public class TestSlideWindowLimitController {
     @Autowired
     private RedisLimitHelper redisLimitHelper;
 
+    /**
+     * 使用redisLimitHelper进行滑动时间窗限流
+     */
     @GetMapping("/test-01")
     public String test01(String limitKey, Integer maxRequest, Integer windowLength, Integer loop, Integer sleepTime) throws InterruptedException {
         for (int i = 0; i < loop; i++) {
@@ -33,6 +37,16 @@ public class TestSlideWindowLimitController {
                 log.error("[{}] window not pass.", i);
             }
         }
+        return "success";
+    }
+
+    /**
+     * 使用注解进行滑动时间窗限流
+     */
+    @SlideWindowLimit
+    @GetMapping("/test-annotation")
+    public String testAnnotation() {
+        log.info("请求没有被限流...");
         return "success";
     }
 }
