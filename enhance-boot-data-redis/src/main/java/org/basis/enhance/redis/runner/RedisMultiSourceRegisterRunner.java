@@ -44,8 +44,8 @@ public class RedisMultiSourceRegisterRunner implements CommandLineRunner, Enviro
         // 注册默认数据源的redisHelper和redisTemplate(这两个bean在自动配置类中已经注入了)
         RedisHelper defaultRedisHelper = ApplicationContextHelper.getContext().getBean(EnhanceRedisConstants.DefaultRedisHelperName.REDIS_HELPER, RedisHelper.class);
         RedisTemplate defaultRedisTemplate = ApplicationContextHelper.getContext().getBean(EnhanceRedisConstants.DefaultRedisTemplateName.REDIS_TEMPLATE, RedisTemplate.class);
-        RedisDataSourceRegister.redisterRedisHelper(EnhanceRedisConstants.MultiSource.DEFAULT_SOURCE_HELPER, defaultRedisHelper);
-        RedisDataSourceRegister.redisterRedisTemplate(EnhanceRedisConstants.MultiSource.DEFAULT_SOURCE_TEMPLATE, defaultRedisTemplate);
+        RedisDataSourceRegister.registerRedisHelper(EnhanceRedisConstants.MultiSource.DEFAULT_SOURCE_HELPER, defaultRedisHelper);
+        RedisDataSourceRegister.registerRedisTemplate(EnhanceRedisConstants.MultiSource.DEFAULT_SOURCE_TEMPLATE, defaultRedisTemplate);
 
         // 注册多数据源的RedisHelper
         dataSourceNames.forEach(name -> {
@@ -56,9 +56,9 @@ public class RedisMultiSourceRegisterRunner implements CommandLineRunner, Enviro
             // 如果开启动态切换db则创建动态redisHelper，反之则创建静态redisHelper
             RedisHelper redisHelper = ApplicationContextHelper.getContext().getBean(realHelperName, RedisHelper.class);
             // 注册RedisTemplate
-            RedisDataSourceRegister.redisterRedisTemplate(realTemplateName, redisTemplate);
+            RedisDataSourceRegister.registerRedisTemplate(realTemplateName, redisTemplate);
             // 注册RedisHelper
-            RedisDataSourceRegister.redisterRedisHelper(realHelperName, redisHelper);
+            RedisDataSourceRegister.registerRedisHelper(realHelperName, redisHelper);
         });
 
     }

@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Mr_wenpan@163.com 2021/11/15 21:03
  */
+@SuppressWarnings("rawtypes")
 public class RedisDelayQueueManager {
 
     private static final Map<String, RedisDelayQueue> REDIS_DELAY_QUEUE_MAP = new ConcurrentHashMap<>(16);
@@ -31,7 +32,7 @@ public class RedisDelayQueueManager {
     /**
      * 批量注册延时队列对应的线程池
      */
-    public static void batchregister(Map<String, ThreadPoolExecutor> redisDelayExecutorMap) {
+    public static void batchregist(Map<String, ThreadPoolExecutor> redisDelayExecutorMap) {
         if (MapUtils.isEmpty(redisDelayExecutorMap)) {
             return;
         }

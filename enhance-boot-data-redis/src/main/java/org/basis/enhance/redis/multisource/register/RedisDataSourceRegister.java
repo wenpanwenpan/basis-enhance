@@ -30,7 +30,7 @@ public class RedisDataSourceRegister {
     /**
      * 注册RedisTemplate
      */
-    public static void redisterRedisTemplate(String name, RedisTemplate<String, String> redisTemplate) {
+    public static void registerRedisTemplate(String name, RedisTemplate<String, String> redisTemplate) {
         if (redisTemplate == null || name == null) {
             return;
         }
@@ -40,7 +40,7 @@ public class RedisDataSourceRegister {
     /**
      * 注册RedisHelper
      */
-    public static void redisterRedisHelper(String name, RedisHelper redisHelper) {
+    public static void registerRedisHelper(String name, RedisHelper redisHelper) {
         if (redisHelper == null || name == null) {
             return;
         }
