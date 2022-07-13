@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Mr_wenpan@163.com 2021/11/15 21:01
  */
+@SuppressWarnings("rawtypes")
 public class RedisDelayQueueRunner implements CommandLineRunner {
 
     private static final Logger log = LoggerFactory.getLogger(RedisDelayQueueRunner.class);
