@@ -53,7 +53,8 @@ public class RedisMultiDataSourceRegistrar implements EnvironmentAware, ImportBe
      * 为每个redis数据源注入BeanDefinition
      */
     @Override
-    public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanDefinitionRegistry registry) {
+    public void registerBeanDefinitions(@NonNull AnnotationMetadata annotationMetadata,
+                                        @NonNull BeanDefinitionRegistry registry) {
 
         Set<String> names = EnvironmentUtil.loadRedisDataSourceName((AbstractEnvironment) environment);
 

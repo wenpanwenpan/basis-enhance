@@ -23,6 +23,7 @@
         <module>demo-clean-code</module>
         <module>demo-springboot-cache</module>
         <module>demo-enhance-boot-limiting</module>
+        <module>demo-common-algorithm</module>
     </modules>
 
 </project>
