@@ -21,6 +21,7 @@
         <module>demo-enhance-starter-core</module>
         <module>demo-thread-pool</module>
         <module>demo-clean-code</module>
+        <module>demo-hystrix</module>
         <module>demo-springboot-cache</module>
         <module>demo-enhance-boot-limiting</module>
         <module>demo-common-algorithm</module>
