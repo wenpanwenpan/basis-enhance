@@ -8,7 +8,6 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -19,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @author Mr_wenpan@163.com 2022/04/16 19:28
  */
 @Slf4j
-@Component
+//@Component
 public class ThreadPoolTestRunner implements ApplicationRunner, DisposableBean {
 
     @Autowired
@@ -85,7 +84,8 @@ public class ThreadPoolTestRunner implements ApplicationRunner, DisposableBean {
     }
 
     /**
-     * 添加钩子
+     * 添加钩子，idea可以强制关闭应用，类似于kill -9这样的暴力命令，所以在idea中测试时会发现钩子函数有时不能执行完
+     * 接收到操作系统的关闭信号时（非强制关闭信号），会先吊起钩子，然后进行关闭，在spring中钩子函数吊起时，spring中的bean还没有被销毁
      */
     private static void addHook() {
         // 通过添加钩子函数来阻塞JVM关闭过程，以便于打印出JVM关闭时线程池的状态

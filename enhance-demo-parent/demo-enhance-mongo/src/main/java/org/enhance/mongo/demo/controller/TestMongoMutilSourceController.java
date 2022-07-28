@@ -1,9 +1,9 @@
 package org.enhance.mongo.demo.controller;
 
-import com.doterra.mongo.multisource.algorithm.ConsistentHash;
-import com.doterra.mongo.multisource.client.MongoMultiSourceClient;
-import com.doterra.mongo.multisource.register.MongoDataSourceRegister;
 import lombok.extern.slf4j.Slf4j;
+import org.basis.enhance.mongo.multisource.algorithm.ConsistentHash;
+import org.basis.enhance.mongo.multisource.client.MongoMultiSourceClient;
+import org.basis.enhance.mongo.multisource.register.MongoDataSourceRegister;
 import org.enhance.mongo.demo.entity.EnhanceDeliveryConfirm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
