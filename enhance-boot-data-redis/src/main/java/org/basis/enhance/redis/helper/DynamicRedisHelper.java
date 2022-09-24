@@ -23,8 +23,9 @@ public class DynamicRedisHelper extends RedisHelper {
     }
 
     /**
-     * 获取RedisTemplate对象
      * <p>
+     * 获取RedisTemplate对象
+     * </p>
      * redisTemplate
      */
     @Override

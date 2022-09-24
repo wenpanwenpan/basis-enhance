@@ -2,7 +2,7 @@ package org.enhance.data.redis.api.v1.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.basis.enhance.redis.helper.RedisHelper;
-import org.basis.enhance.redis.multisource.client.RedisMultisourceClient;
+import org.basis.enhance.redis.multisource.client.RedisMultiSourceClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -26,7 +26,7 @@ public class TestChangeDbController {
     private RedisHelper redisHelper;
 
     @Autowired(required = false)
-    private RedisMultisourceClient multisourceClient;
+    private RedisMultiSourceClient multisourceClient;
 
     /**
      * 默认数据源切换db测试

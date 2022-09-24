@@ -1,6 +1,6 @@
 package org.basis.enhance.redis.multisource;
 
-import org.basis.enhance.redis.multisource.client.RedisMultisourceClient;
+import org.basis.enhance.redis.multisource.client.RedisMultiSourceClient;
 import org.basis.enhance.redis.runner.RedisMultiSourceRegisterRunner;
 import org.springframework.context.annotation.Import;
 
@@ -16,7 +16,7 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target({ElementType.TYPE})
 @Documented
-@Import({RedisMultiDataSourceRegistrar.class, RedisMultiSourceRegisterRunner.class, RedisMultisourceClient.class})
+@Import({RedisMultiDataSourceRegistrar.class, RedisMultiSourceRegisterRunner.class, RedisMultiSourceClient.class})
 public @interface EnableRedisMultiDataSource {
 
 }

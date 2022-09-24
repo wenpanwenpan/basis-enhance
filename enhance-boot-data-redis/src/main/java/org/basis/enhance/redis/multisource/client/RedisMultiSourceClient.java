@@ -13,7 +13,7 @@ import static org.basis.enhance.redis.infra.constant.EnhanceRedisConstants.Multi
  *
  * @author Mr_wenpan@163.com 2021/09/06 11:10
  */
-public class RedisMultisourceClient {
+public class RedisMultiSourceClient {
 
     /**
      * 操作指定数据源的默认db

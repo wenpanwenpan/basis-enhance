@@ -6,6 +6,8 @@ import org.basis.enhance.redis.config.properties.StoneRedisProperties;
 import org.basis.enhance.redis.helper.*;
 import org.basis.enhance.redis.infra.condition.ConditionalOnExistingProperty;
 import org.basis.enhance.redis.infra.condition.ConditionalOnMissingProperty;
+import org.basis.enhance.redis.multisource.RedisMultiDataSourceRegistrar;
+import org.basis.enhance.redis.multisource.client.RedisMultiSourceClient;
 import org.basis.enhance.redis.template.DynamicRedisTemplate;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.autoconfigure.condition.*;
@@ -14,6 +16,7 @@ import org.springframework.boot.autoconfigure.data.redis.LettuceClientConfigurat
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.*;
+import org.springframework.core.env.Environment;
 import org.springframework.data.redis.connection.RedisClusterConfiguration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
@@ -98,6 +101,23 @@ public class EnhanceDataRedisAutoConfiguration {
     }
 
     /**
+     * <p>
+     * 注入RedisMultiDataSourceRegistrar，必须要有{@link RedisMultiSourceClient 时才注入}
+     * 注意：{@link org.basis.enhance.redis.multisource.EnableRedisMultiDataSource} 中虽然有使用@Import注解向容器中导入
+     * {@link RedisMultiDataSourceRegistrar} 类，但是由于 RedisMultiDataSourceRegistrar 实现了
+     * {@link ImportBeanDefinitionRegistrar} 接口导致spring并不会将 RedisMultiDataSourceRegistrar 注入容器，所以需要在这里手动注入
+     * </p>
+     */
+    @Bean
+    @ConditionalOnBean(value = {RedisMultiSourceClient.class})
+    @ConditionalOnMissingBean(value = RedisMultiDataSourceRegistrar.class)
+    public RedisMultiDataSourceRegistrar redisMultiDataSourceRegistrar(Environment environment) {
+        RedisMultiDataSourceRegistrar redisMultiDataSourceRegistrar = new RedisMultiDataSourceRegistrar();
+        redisMultiDataSourceRegistrar.setEnvironment(environment);
+        return redisMultiDataSourceRegistrar;
+    }
+
+    /**
      * 默认数据源的普通 RedisHelper，关闭动态数据库切换或集群模式下时才注入（redis官方要求集群模式下不能切换db只有db0）
      */
     @Primary
@@ -123,8 +143,10 @@ public class EnhanceDataRedisAutoConfiguration {
 
         // 构建动态RedisTemplate工厂
         DynamicRedisTemplateFactory<String, String> dynamicRedisTemplateFactory =
-                new DynamicRedisTemplateFactory<>(redisProperties, sentinelConfiguration.getIfAvailable(),
-                        clusterConfiguration.getIfAvailable(), jedisBuilderCustomizers.getIfAvailable(),
+                new DynamicRedisTemplateFactory<>(redisProperties,
+                        sentinelConfiguration.getIfAvailable(),
+                        clusterConfiguration.getIfAvailable(),
+                        jedisBuilderCustomizers.getIfAvailable(),
                         builderCustomizers.getIfAvailable());
         // ======================================================================================================
         // 这里在注入的时候默认值注入一个默认的redisTemplate，以及将这个redisTemplate放入到map中，该redisTemplate

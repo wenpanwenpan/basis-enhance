@@ -9,6 +9,7 @@ import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.data.redis.core.script.ScriptExecutor;
 import org.springframework.data.redis.core.types.RedisClientInfo;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.lang.NonNull;
 
 import java.io.Closeable;
 import java.util.*;
@@ -104,12 +105,12 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
     // ====================以下都是继承自父类的方法，RedisTemplate中的方法执行时会调用下面的方法=====================
 
     @Override
-    public <T> T execute(RedisCallback<T> action) {
+    public <T> T execute(@NonNull RedisCallback<T> action) {
         return determineTargetRedisTemplate().execute(action);
     }
 
     @Override
-    public <T> T execute(RedisCallback<T> action, boolean exposeConnection) {
+    public <T> T execute(@NonNull RedisCallback<T> action, boolean exposeConnection) {
         return determineTargetRedisTemplate().execute(action, exposeConnection);
     }
 
@@ -123,34 +124,40 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
         return determineTargetRedisTemplate().execute(session);
     }
 
+    @NonNull
     @Override
-    public List<Object> executePipelined(SessionCallback<?> session) {
+    public List<Object> executePipelined(@NonNull SessionCallback<?> session) {
         return determineTargetRedisTemplate().executePipelined(session);
     }
 
+    @NonNull
     @Override
     public List<Object> executePipelined(SessionCallback<?> session, RedisSerializer<?> resultSerializer) {
         return determineTargetRedisTemplate().executePipelined(session, resultSerializer);
     }
 
+    @NonNull
     @Override
-    public List<Object> executePipelined(RedisCallback<?> action) {
+    public List<Object> executePipelined(@NonNull RedisCallback<?> action) {
         return determineTargetRedisTemplate().executePipelined(action);
     }
 
+    @NonNull
     @Override
     public List<Object> executePipelined(RedisCallback<?> action, RedisSerializer<?> resultSerializer) {
         return determineTargetRedisTemplate().executePipelined(action, resultSerializer);
     }
 
     @Override
-    public <T> T execute(RedisScript<T> script, List<K> keys, Object... args) {
+    public <T> T execute(@NonNull RedisScript<T> script, @NonNull List<K> keys, @NonNull Object... args) {
         return determineTargetRedisTemplate().execute(script, keys, args);
     }
 
     @Override
-    public <T> T execute(RedisScript<T> script, RedisSerializer<?> argsSerializer,
-                         RedisSerializer<T> resultSerializer, List<K> keys, Object... args) {
+    public <T> T execute(@NonNull RedisScript<T> script,
+                         @NonNull RedisSerializer<?> argsSerializer,
+                         @NonNull RedisSerializer<T> resultSerializer,
+                         @NonNull List<K> keys, @NonNull Object... args) {
         return determineTargetRedisTemplate().execute(script, argsSerializer, resultSerializer, keys, args);
     }
 
@@ -185,72 +192,79 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
     }
 
     @Override
-    public void setDefaultSerializer(RedisSerializer<?> serializer) {
+    public void setDefaultSerializer(@NonNull RedisSerializer<?> serializer) {
         determineTargetRedisTemplate().setDefaultSerializer(serializer);
     }
 
     @Override
-    public void setKeySerializer(RedisSerializer<?> serializer) {
+    public void setKeySerializer(@NonNull RedisSerializer<?> serializer) {
         determineTargetRedisTemplate().setKeySerializer(serializer);
     }
 
+    @NonNull
     @Override
     public RedisSerializer<?> getKeySerializer() {
         return determineTargetRedisTemplate().getKeySerializer();
     }
 
     @Override
-    public void setValueSerializer(RedisSerializer<?> serializer) {
+    public void setValueSerializer(@NonNull RedisSerializer<?> serializer) {
         determineTargetRedisTemplate().setValueSerializer(serializer);
     }
 
+    @NonNull
     @Override
     public RedisSerializer<?> getValueSerializer() {
         return determineTargetRedisTemplate().getValueSerializer();
     }
 
+    @NonNull
     @Override
     public RedisSerializer<?> getHashKeySerializer() {
         return determineTargetRedisTemplate().getHashKeySerializer();
     }
 
     @Override
-    public void setHashKeySerializer(RedisSerializer<?> hashKeySerializer) {
+    public void setHashKeySerializer(@NonNull RedisSerializer<?> hashKeySerializer) {
         determineTargetRedisTemplate().setHashKeySerializer(hashKeySerializer);
     }
 
+    @NonNull
     @Override
     public RedisSerializer<?> getHashValueSerializer() {
         return determineTargetRedisTemplate().getHashValueSerializer();
     }
 
     @Override
-    public void setHashValueSerializer(RedisSerializer<?> hashValueSerializer) {
+    public void setHashValueSerializer(@NonNull RedisSerializer<?> hashValueSerializer) {
         determineTargetRedisTemplate().setHashValueSerializer(hashValueSerializer);
     }
 
+    @NonNull
     @Override
     public RedisSerializer<String> getStringSerializer() {
         return determineTargetRedisTemplate().getStringSerializer();
     }
 
     @Override
-    public void setStringSerializer(RedisSerializer<String> stringSerializer) {
+    public void setStringSerializer(@NonNull RedisSerializer<String> stringSerializer) {
         determineTargetRedisTemplate().setStringSerializer(stringSerializer);
     }
 
     @Override
-    public void setScriptExecutor(ScriptExecutor<K> scriptExecutor) {
+    public void setScriptExecutor(@NonNull ScriptExecutor<K> scriptExecutor) {
         determineTargetRedisTemplate().setScriptExecutor(scriptExecutor);
     }
 
+    @NonNull
     @Override
     public List<Object> exec() {
         return determineTargetRedisTemplate().exec();
     }
 
+    @NonNull
     @Override
-    public List<Object> exec(RedisSerializer<?> valueSerializer) {
+    public List<Object> exec(@NonNull RedisSerializer<?> valueSerializer) {
         return determineTargetRedisTemplate().exec(valueSerializer);
     }
 
@@ -260,7 +274,7 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
     }
 
     @Override
-    public Long delete(Collection<K> keys) {
+    public Long delete(@NonNull Collection<K> keys) {
         return determineTargetRedisTemplate().delete(keys);
     }
 
@@ -280,7 +294,7 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
     }
 
     @Override
-    public void convertAndSend(String channel, Object message) {
+    public void convertAndSend(@NonNull String channel, @NonNull Object message) {
         determineTargetRedisTemplate().convertAndSend(channel, message);
     }
 
@@ -290,7 +304,7 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
     }
 
     @Override
-    public Long getExpire(K key, TimeUnit timeUnit) {
+    public Long getExpire(K key, @NonNull TimeUnit timeUnit) {
         return determineTargetRedisTemplate().getExpire(key, timeUnit);
     }
 
@@ -335,7 +349,7 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
     }
 
     @Override
-    public void restore(K key, byte[] value, long timeToLive, TimeUnit unit) {
+    public void restore(@NonNull K key, @NonNull byte[] value, long timeToLive, @NonNull TimeUnit unit) {
         determineTargetRedisTemplate().restore(key, value, timeToLive, unit);
     }
 
@@ -365,7 +379,7 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
     }
 
     @Override
-    public List<V> sort(SortQuery<K> query) {
+    public List<V> sort(@NonNull SortQuery<K> query) {
         return determineTargetRedisTemplate().sort(query);
     }
 
@@ -375,12 +389,14 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
     }
 
     @Override
-    public <T> List<T> sort(SortQuery<K> query, BulkMapper<T, V> bulkMapper) {
+    public <T> List<T> sort(@NonNull SortQuery<K> query, @NonNull BulkMapper<T, V> bulkMapper) {
         return determineTargetRedisTemplate().sort(query, bulkMapper);
     }
 
     @Override
-    public <T, S> List<T> sort(SortQuery<K> query, BulkMapper<T, S> bulkMapper, RedisSerializer<S> resultSerializer) {
+    public <T, S> List<T> sort(@NonNull SortQuery<K> query,
+                               @NonNull BulkMapper<T, S> bulkMapper,
+                               RedisSerializer<S> resultSerializer) {
         return determineTargetRedisTemplate().sort(query, bulkMapper, resultSerializer);
     }
 
@@ -389,78 +405,92 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
         return determineTargetRedisTemplate().sort(query, storeKey);
     }
 
+    @NonNull
     @Override
-    public BoundValueOperations<K, V> boundValueOps(K key) {
+    public BoundValueOperations<K, V> boundValueOps(@NonNull K key) {
         return determineTargetRedisTemplate().boundValueOps(key);
     }
 
+    @NonNull
     @Override
     public ValueOperations<K, V> opsForValue() {
         return determineTargetRedisTemplate().opsForValue();
     }
 
+    @NonNull
     @Override
     public ListOperations<K, V> opsForList() {
         return determineTargetRedisTemplate().opsForList();
     }
 
+    @NonNull
     @Override
-    public BoundListOperations<K, V> boundListOps(K key) {
+    public BoundListOperations<K, V> boundListOps(@NonNull K key) {
         return determineTargetRedisTemplate().boundListOps(key);
     }
 
+    @NonNull
     @Override
-    public BoundSetOperations<K, V> boundSetOps(K key) {
+    public BoundSetOperations<K, V> boundSetOps(@NonNull K key) {
         return determineTargetRedisTemplate().boundSetOps(key);
     }
 
+    @NonNull
     @Override
     public SetOperations<K, V> opsForSet() {
         return determineTargetRedisTemplate().opsForSet();
     }
 
+    @NonNull
     @Override
-    public BoundZSetOperations<K, V> boundZSetOps(K key) {
+    public BoundZSetOperations<K, V> boundZSetOps(@NonNull K key) {
         return determineTargetRedisTemplate().boundZSetOps(key);
     }
 
+    @NonNull
     @Override
     public ZSetOperations<K, V> opsForZSet() {
         return determineTargetRedisTemplate().opsForZSet();
     }
 
+    @NonNull
     @Override
     public GeoOperations<K, V> opsForGeo() {
         return determineTargetRedisTemplate().opsForGeo();
     }
 
+    @NonNull
     @Override
-    public BoundGeoOperations<K, V> boundGeoOps(K key) {
+    public BoundGeoOperations<K, V> boundGeoOps(@NonNull K key) {
         return determineTargetRedisTemplate().boundGeoOps(key);
     }
 
+    @NonNull
     @Override
     public HyperLogLogOperations<K, V> opsForHyperLogLog() {
         return determineTargetRedisTemplate().opsForHyperLogLog();
     }
 
+    @NonNull
     @Override
-    public <HK, HV> BoundHashOperations<K, HK, HV> boundHashOps(K key) {
+    public <HK, HV> BoundHashOperations<K, HK, HV> boundHashOps(@NonNull K key) {
         return determineTargetRedisTemplate().boundHashOps(key);
     }
 
+    @NonNull
     @Override
     public <HK, HV> HashOperations<K, HK, HV> opsForHash() {
         return determineTargetRedisTemplate().opsForHash();
     }
 
+    @NonNull
     @Override
     public ClusterOperations<K, V> opsForCluster() {
         return determineTargetRedisTemplate().opsForCluster();
     }
 
     @Override
-    public void killClient(String host, int port) {
+    public void killClient(@NonNull String host, int port) {
         determineTargetRedisTemplate().killClient(host, port);
     }
 
@@ -470,7 +500,7 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
     }
 
     @Override
-    public void slaveOf(String host, int port) {
+    public void slaveOf(@NonNull String host, int port) {
         determineTargetRedisTemplate().slaveOf(host, port);
     }
 
@@ -485,7 +515,7 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
     }
 
     @Override
-    public void setBeanClassLoader(ClassLoader classLoader) {
+    public void setBeanClassLoader(@NonNull ClassLoader classLoader) {
         determineTargetRedisTemplate().setBeanClassLoader(classLoader);
     }
 
@@ -495,7 +525,7 @@ public abstract class AbstractRoutingRedisTemplate<K, V> extends RedisTemplate<K
     }
 
     @Override
-    public void setConnectionFactory(RedisConnectionFactory connectionFactory) {
+    public void setConnectionFactory(@NonNull RedisConnectionFactory connectionFactory) {
         determineTargetRedisTemplate().setConnectionFactory(connectionFactory);
     }
 
