@@ -309,11 +309,7 @@ public class RedisHelper implements InitializingBean {
      * @param keys 待删除的keys
      */
     public void delKeys(Collection<String> keys) {
-        Set<String> hs = new HashSet<>();
-        for (String key : keys) {
-            hs.add(key);
-        }
-        redisTemplate.delete(hs);
+        redisTemplate.delete(new HashSet<>(keys));
     }
 
     /**
@@ -850,7 +846,8 @@ public class RedisHelper implements InitializingBean {
         RedisSerializer<String> redisSerializer = redisTemplate.getStringSerializer();
         return redisTemplate.execute((RedisCallback<byte[]>) connection -> {
             try {
-                return connection.hGet(redisSerializer.serialize(key), redisSerializer.serialize(hashKey));
+                return connection.hGet(Objects.requireNonNull(redisSerializer.serialize(key)),
+                        Objects.requireNonNull(redisSerializer.serialize(hashKey)));
             } catch (Exception e) {
                 logger.error("获取HASH对象序列失败", e);
             }
@@ -869,7 +866,8 @@ public class RedisHelper implements InitializingBean {
         RedisSerializer<String> redisSerializer = redisTemplate.getStringSerializer();
         return redisTemplate.execute((RedisCallback<Boolean>) connection -> {
             try {
-                return connection.hSet(redisSerializer.serialize(key), redisSerializer.serialize(hashKey),
+                return connection.hSet(Objects.requireNonNull(redisSerializer.serialize(key)),
+                        Objects.requireNonNull(redisSerializer.serialize(hashKey)),
                         value);
             } catch (Exception e) {
                 logger.error("插入HASH对象序列失败", e);
@@ -1012,12 +1010,12 @@ public class RedisHelper implements InitializingBean {
     /**
      * JSON数据，转成Object
      */
-    public static <T> T fromJson(String json, TypeReference valueTypeRef) {
+    public static <T> T fromJson(String json, TypeReference<T> valueTypeRef) {
         if (StringUtils.isBlank(json) || valueTypeRef == null) {
             return null;
         }
         try {
-            return (T) objectMapper.readValue(json, valueTypeRef);
+            return objectMapper.readValue(json, valueTypeRef);
         } catch (Exception e) {
             if (logger.isErrorEnabled()) {
                 logger.error(e.getMessage(), e);

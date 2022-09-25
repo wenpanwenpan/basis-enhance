@@ -4,7 +4,9 @@
 
 
 ## 一、功能介绍及如何引入
+
 ### 1、功能简介
+
 该模块是基于spring-boot-starter-data-redis（spring-boot-starter-parent版本2.4.8），并且对spring-boot-starter-data-redis模块部分功能增强。
 
 - 提供动态切换redis db功能
@@ -26,7 +28,7 @@ mvn clean install
 ```xml
 <dependency>
   <groupId>org.basis.enhance</groupId>
-	<artifactId>enhance-boot-data-redis</artifactId>
+   <artifactId>enhance-boot-data-redis</artifactId>
   <!-- 排除lettuce依赖，data-redis默认选择lettuce -->
   <!--<exclusions>-->
   <!--  <exclusion>-->
@@ -55,7 +57,7 @@ mvn clean install
 ```yml
 stone:
   redis:
-  	# 开启动态切换redis db【可选,默认不开启】
+   # 开启动态切换redis db【可选,默认不开启】
     dynamic-database: true
 ```
 
@@ -83,7 +85,7 @@ spring:
         max-wait: ${SPRING_REDIS_POOL_MAX_WAIT:5000}
 stone:
   redis:
-  	# 开启动态切换redis db
+   # 开启动态切换redis db
     dynamic-database: true
 ```
 
@@ -176,7 +178,7 @@ public class TestEnhanceDataRedisController {
     
     @GetMapping("/test-7")
     public void testChangeDb7() {
-      	// 指定操作库，不带返回值的操作，使用redisTemplate原生api
+       // 指定操作库，不带返回值的操作，使用redisTemplate原生api
         EasyRedisHelper.execute(1, (redisTemplate) -> redisTemplate.opsForList().leftPush("key", "value"));
         // 指定操作库，带返回值的操作，使用redisTemplate原生api
         String result = EasyRedisHelper.executeWithResult(1, 
@@ -318,7 +320,7 @@ spring:
         
 stone:
   redis:
-  	# 开启多数据源动态切换redis db
+   # 开启多数据源动态切换redis db
     dynamic-database: true
 ```
 
@@ -340,21 +342,21 @@ public class TestEnhanceDataRedisController {
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
   
-  	/**
+   /**
      * 默认数据源对应的redisHelper
      */
     @Autowired
     @Qualifier("redisHelper")
     private RedisHelper redisHelper;
  
-  	@GetMapping("/test-default")
+   @GetMapping("/test-default")
     public void testDefaultRedisTemplate() {
         // 使用默认数据源的redisTemplate操作默认数据源
         redisTemplate.opsForValue().set("key", "value");
-      	// 使用默认数据源的redisHelper操作默认数据源
+       // 使用默认数据源的redisHelper操作默认数据源
         redisHelper.lstRightPop("key");
       
-      	// 使用默认数据源的redisHelper动态切换db
+       // 使用默认数据源的redisHelper动态切换db
         try {
             redisHelper.setCurrentDatabase(2);
             redisHelper.lstRightPop("key");
@@ -403,25 +405,25 @@ public void test100() {
 @RequestMapping("/v1/test-enhance-redis")
 public class TestEnhanceDataRedisController {
 
-  	/**
+   /**
      * 注入第一个数据源
      */
     @Autowired
     @Qualifier("source1RedisTemplate")
     private RedisTemplate<String, String> source1RedisTemplate;
   
-  	/**
+   /**
      * source1数据源对应的redisHelper
      */
     @Autowired
     @Qualifier("source1RedisHelper")
     private RedisHelper source1RedisHelper;
   
-  	@GetMapping("/test-source1-template")
+   @GetMapping("/test-source1-template")
     public void testSource1RedisTemplate() {
         // 使用source1数据源的redisTemplate操作source1数据源
         source1RedisTemplate.opsForValue().set("key", "value");
-      	// 使用source1数据源的redisHelper操作source1数据源(切换db操作)
+       // 使用source1数据源的redisHelper操作source1数据源(切换db操作)
          EasyRedisHelper.execute(2, () -> source1RedisHelper.lstLeftPush("key", "value"));
     }
 }
@@ -440,29 +442,29 @@ public class TestMultiDataSourceController {
     @Autowired
     private RedisMultisourceClient multisourceClient;
   
-   	@Autowired
+       @Autowired
     private RedisHelper redisHelper;
   
-  	/**
-  	 * 操作指定的数据源的指定db
-  	 */
+   /**
+    * 操作指定的数据源的指定db
+    */
     @GetMapping("/test-1")
     public void test01() {
         String key = "test-" + UUID.randomUUID().toString();
         String value = "value-" + UUID.randomUUID().toString();
         log.info("key = {}, value = {}", key, value);
-      	// 写入source1数据源的1号库
+       // 写入source1数据源的1号库
         multisourceClient.opsDbOne("source1").opsForValue().set(key, value);
-     	  // 写入source2数据源的1号库
-      	multisourceClient.opsDbOne("source2").opsForValue().set(key, value);
+         // 写入source2数据源的1号库
+       multisourceClient.opsDbOne("source2").opsForValue().set(key, value);
       
-      	// 写入source1数据源的2号库
+       // 写入source1数据源的2号库
         multisourceClient.opsDbOne("source1").opsForValue().set(key, value);
-     	  // 写入source2数据源的2号库
-      	multisourceClient.opsDbOne("source2").opsForValue().set(key, value);
+         // 写入source2数据源的2号库
+       multisourceClient.opsDbOne("source2").opsForValue().set(key, value);
     }
   
-  	/**
+   /**
      * 操作默认数据源的指定db
      */
     @GetMapping("/test-01")
@@ -477,10 +479,10 @@ public class TestMultiDataSourceController {
         redisHelper.opsDbFour().opsForValue().set(getRandomValue(), getRandomValue());
     }
   
-  	/**
+   /**
      * 使用多数据源客户端操作默认数据源并且动态切换db
      */
-  	@GetMapping("/test-100")
+   @GetMapping("/test-100")
     public void test100() {
         // 操作默认的数据源的1号db
         multisourceClient.opsDbOne(DEFAULT_SOURCE).opsForValue().set(getRandomValue(), getRandomValue());
@@ -491,6 +493,10 @@ public class TestMultiDataSourceController {
     }
 }
 ```
+
+### 5、扩展
+
+- 如果想在spring容器启动完成后动态新增Redis数据源（比如：通过配置中心新增了一台Redis配置，此时需要应用程序创建对该新增的Redis的连接）可以通过{@link org.basis.enhance.redis.multisource.RedisMultiDataSourceRegistrarExtension} 进行动态扩展，新增的Redis数据源和之前的数据源一样，可以使用 `RedisMultiSourceClient` 方便的操作。
 
 ## 五、发布订阅使用
 
@@ -590,7 +596,7 @@ public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanD
 
     logger.info("register redis datasource: {}", names);
 
-  	// 为每个redis数据源注入BeanDefinition
+   // 为每个redis数据源注入BeanDefinition
     for (String name : names) {
         // 注册 RedisTemplate BeanDefinition
         registerRedisTemplateBeanDefinition(name, RedisTemplateFactoryBean.class, registry);
@@ -610,8 +616,3 @@ public void registerBeanDefinitions(AnnotationMetadata annotationMetadata, BeanD
 
 
 ==其他使用：见代码模块中的测试模块中的测试类！！！==
-
-
-
-
-

@@ -28,6 +28,7 @@
         <module>enhance-boot-message-event</module>
         <module>enhance-boot-starter-core</module>
         <module>enhance-boot-limiting</module>
+        <module>enhance-boot-groovy-engine</module>
     </modules>
 
     <properties>
