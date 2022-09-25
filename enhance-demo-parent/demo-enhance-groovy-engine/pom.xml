@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>enhance-demo-parent</artifactId>
+        <groupId>org.basis.enhance</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>demo-enhance-groovy-engine</artifactId>
+
+    <dependencies>
+        <!--web依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!--核心依赖-->
+        <dependency>
+            <artifactId>enhance-groovy-engine-core</artifactId>
+            <groupId>org.basis.enhance</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!--加载Redis下的groovy脚本loader依赖-->
+        <dependency>
+            <artifactId>enhance-groovy-redis-loader</artifactId>
+            <groupId>org.basis.enhance</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!--加载classpath下的groovy脚本loader依赖-->
+        <dependency>
+            <artifactId>enhance-groovy-classpath-loader</artifactId>
+            <groupId>org.basis.enhance</groupId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <!--redis核心依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <!--Apache的 common-pool2(至少是2.2)提供连接池,供redis客户端使用-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+    </dependencies>
+
+</project>

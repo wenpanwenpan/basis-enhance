@@ -59,6 +59,18 @@ public class EngineExecutorResult {
      * @author wenpan 2022/9/18 12:55 下午
      */
     public static EngineExecutorResult success(Object context) {
-        return new EngineExecutorResult(ExecutionStatus.SUCCESS, context);
+        return success(ExecutionStatus.SUCCESS, context);
+    }
+
+    /**
+     * 执行成功
+     *
+     * @param context 内容
+     * @param status  执行状态
+     * @return org.basis.enhance.groovy.entity.EngineExecutorResult<java.lang.Object>
+     * @author wenpan 2022/9/18 12:55 下午
+     */
+    public static EngineExecutorResult success(ExecutionStatus status, Object context) {
+        return new EngineExecutorResult(status, context);
     }
 }

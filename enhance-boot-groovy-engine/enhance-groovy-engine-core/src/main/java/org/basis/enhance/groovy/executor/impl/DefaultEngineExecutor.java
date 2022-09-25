@@ -2,6 +2,7 @@ package org.basis.enhance.groovy.executor.impl;
 
 import groovy.lang.Binding;
 import groovy.lang.Script;
+import org.basis.enhance.groovy.constants.ExecutionStatus;
 import org.basis.enhance.groovy.constants.GroovyEngineConstants;
 import org.basis.enhance.groovy.entity.EngineExecutorResult;
 import org.basis.enhance.groovy.entity.ExecuteParams;
@@ -36,10 +37,14 @@ public class DefaultEngineExecutor implements EngineExecutor {
 
     @Override
     public EngineExecutorResult execute(ScriptEntry scriptEntry, ExecuteParams executeParams) {
+        // 没有脚本，则直接返回NO_SCRIPT，响应content为null
+        if (Objects.isNull(scriptEntry)) {
+            return EngineExecutorResult.success(ExecutionStatus.NO_SCRIPT, null);
+        }
         // 构建binding入参
         Binding binding = buildBinding(executeParams);
 
-        // 创建脚本
+        // 创建脚本（可以看到这里就是基于Class去new一个script对象）
         Script script = InvokerHelper.createScript(scriptEntry.getClazz(), binding);
         Object result;
         try {

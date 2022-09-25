@@ -18,7 +18,11 @@ public enum ExecutionStatus {
     /**
      * 执行成功
      */
-    SUCCESS("200", "执行成功");
+    SUCCESS("200", "执行成功"),
+    /**
+     * 没有找到脚本
+     */
+    NO_SCRIPT("4004", "没有找到groovy脚本");
 
     /**
      * 编码

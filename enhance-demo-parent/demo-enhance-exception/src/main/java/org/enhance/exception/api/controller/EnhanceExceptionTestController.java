@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/v1/test-enhance-exception")
 public class EnhanceExceptionTestController {
 
-    /**
-     * 默认数据源切换db测试
-     */
     @GetMapping("/test-01")
     public void test01() {
         // 手动制造异常
