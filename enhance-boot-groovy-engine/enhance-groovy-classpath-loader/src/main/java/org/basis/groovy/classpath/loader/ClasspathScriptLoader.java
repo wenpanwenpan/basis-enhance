@@ -1,15 +1,16 @@
-package org.basis.enhance.groovy.loader.impl;
+package org.basis.groovy.classpath.loader;
 
 import com.google.common.collect.Lists;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.basis.enhance.groovy.compiler.DynamicCodeCompiler;
-import org.basis.enhance.groovy.config.properties.GroovyEngineProperties;
 import org.basis.enhance.groovy.entity.ScriptEntry;
 import org.basis.enhance.groovy.entity.ScriptQuery;
 import org.basis.enhance.groovy.exception.LoadScriptException;
 import org.basis.enhance.groovy.loader.ScriptLoader;
+import org.basis.groovy.classpath.config.properties.GroovyClasspathLoaderProperties;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 
 import java.io.File;
@@ -31,19 +32,19 @@ import java.util.List;
  * @author wenpan 2022/09/18 12:16
  */
 @Slf4j
-public class DefaultScriptLoader implements ScriptLoader {
+public class ClasspathScriptLoader implements ScriptLoader {
 
     private final DynamicCodeCompiler dynamicCodeCompiler;
 
-    private final GroovyEngineProperties groovyEngineProperties;
+    private final GroovyClasspathLoaderProperties groovyClasspathLoaderProperties;
 
     private final FilenameFilter groovyFileNameFilter;
 
-    public DefaultScriptLoader(DynamicCodeCompiler dynamicCodeCompiler,
-                               FilenameFilter groovyFileNameFilter,
-                               GroovyEngineProperties groovyEngineProperties) {
+    public ClasspathScriptLoader(DynamicCodeCompiler dynamicCodeCompiler,
+                                 FilenameFilter groovyFileNameFilter,
+                                 GroovyClasspathLoaderProperties groovyClasspathLoaderProperties) {
         this.dynamicCodeCompiler = dynamicCodeCompiler;
-        this.groovyEngineProperties = groovyEngineProperties;
+        this.groovyClasspathLoaderProperties = groovyClasspathLoaderProperties;
         this.groovyFileNameFilter = groovyFileNameFilter;
     }
 
@@ -64,6 +65,7 @@ public class DefaultScriptLoader implements ScriptLoader {
         // 创建脚本对象
         ScriptEntry scriptEntry = new ScriptEntry(fileContext, fingerprint, System.currentTimeMillis());
         scriptEntry.setClazz(aClass);
+        // 以文件名作为唯一ID
         scriptEntry.setName(classPathResource.getFilename());
         return scriptEntry;
     }
@@ -72,18 +74,23 @@ public class DefaultScriptLoader implements ScriptLoader {
     public List<ScriptEntry> load() throws Exception {
         List<ScriptEntry> resultList = new ArrayList<>();
         // 获取到所有的脚本文件
-        List<File> files = loadClassPathFile(groovyEngineProperties.getDirectory(), groovyFileNameFilter);
+        List<File> files = loadClassPathFile(groovyClasspathLoaderProperties.getDirectory(), groovyFileNameFilter);
+        if (CollectionUtils.isEmpty(files)) {
+            log.warn("can not found groovy script from directory [{}]", groovyClasspathLoaderProperties.getDirectory());
+            return resultList;
+        }
         for (File file : files) {
             // 获取文件内容
             String fileContext = readFileAsString(file);
+            if (StringUtils.isBlank(fileContext)) {
+                log.error("note can not found script content by fileName [{}], because file content is empty.", file.getName());
+                continue;
+            }
             // 获取脚本指纹
             String fingerprint = DigestUtils.md5DigestAsHex(fileContext.getBytes());
             // 创建脚本对象
             ScriptEntry scriptEntry = new ScriptEntry(fileContext, fingerprint, System.currentTimeMillis());
-            // 动态加载脚本为Class
-            Class<?> aClass = dynamicCodeCompiler.compile(scriptEntry);
-            scriptEntry.setClazz(aClass);
-            // 以文件名作为唯一ID todo
+            // 以文件名作为唯一ID
             scriptEntry.setName(file.getName());
             resultList.add(scriptEntry);
         }
@@ -170,7 +177,7 @@ public class DefaultScriptLoader implements ScriptLoader {
     public File getDirectory(String sPath) {
         File directory = new File(sPath);
         if (!directory.isDirectory()) {
-            URL resource = DefaultScriptLoader.class.getClassLoader().getResource(sPath);
+            URL resource = ClasspathScriptLoader.class.getClassLoader().getResource(sPath);
             try {
                 assert resource != null;
                 directory = new File(resource.toURI());

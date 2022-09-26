@@ -1,0 +1,38 @@
+server:
+  port: 1234
+
+spring:
+  application:
+    name: enhance-groovy-engine
+  # redis基础配置
+  redis:
+    host: ${SPRING_REDIS_HOST:wenpan-host}
+    port: ${SPRING_REDIS_PORT:6379}
+    password: ${SPRING_REDIS_PASSWORD:WenPan@123}
+    database: ${SPRING_REDIS_DATABASE:2}
+    # 指定client类型
+    client-type: lettuce
+    lettuce:
+      pool:
+        # 资源池中最大连接数，默认8，-1表示无限制；可根据服务并发redis情况及服务端的支持上限调整
+        max-active: ${SPRING_REDIS_POOL_MAX_ACTIVE:16}
+        # 资源池运行最大空闲的连接数
+        # 默认8，-1表示无限制；可根据服务并发redis情况及服务端的支持上限调整，一般建议和max-active保持一致，避免资源伸缩带来的开销
+        max-idle: ${SPRING_REDIS_POOL_MAX_IDLE:16}
+        # 当资源池连接用尽后，调用者的最大等待时间(单位为毫秒) 默认 -1 表示永不超时，设置5秒
+        max-wait: ${SPRING_REDIS_POOL_MAX_WAIT:5000}
+
+enhance:
+  groovy:
+    engine:
+      # 脚本检查更新周期（单位：秒）
+      pollingCycle: 10
+      # 开启功能
+      enable: true
+      # 开启基于Redis加载groovy脚本
+      redis-loader:
+        group: demo-group
+        enable: true
+        # 开启加载classpath下的脚本的loader
+        #classpath-loader:
+        #enable: true

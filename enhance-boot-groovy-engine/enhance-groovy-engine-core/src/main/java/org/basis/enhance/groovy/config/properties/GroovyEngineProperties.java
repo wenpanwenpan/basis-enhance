@@ -19,11 +19,6 @@ public class GroovyEngineProperties {
     public static final String PREFIX = "enhance.groovy.engine";
 
     /**
-     * 读取groovy脚本的目录
-     */
-    private String directory;
-
-    /**
      * 轮询检查脚本变更时间周期，单位：秒
      */
     private Long pollingCycle = 300L;
@@ -32,4 +27,9 @@ public class GroovyEngineProperties {
      * 初次轮询检查脚本变更延时时间L
      */
     private Long initialDelay = 0L;
+
+    /**
+     * 是否开启groovy脚本引擎功能，默认不开启
+     */
+    private boolean enable = false;
 }

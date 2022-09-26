@@ -25,6 +25,7 @@
         <module>demo-springboot-cache</module>
         <module>demo-enhance-boot-limiting</module>
         <module>demo-common-algorithm</module>
+        <module>demo-enhance-groovy-engine</module>
     </modules>
 
 </project>

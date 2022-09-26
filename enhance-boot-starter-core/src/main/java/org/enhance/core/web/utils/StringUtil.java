@@ -29,7 +29,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Created by liuzh_3nofxnp on 2015/8/26.
+ * string 工具类
+ *
+ * @author wenpan 2022/9/25 12:05 下午
  */
 public class StringUtil {
 
@@ -139,7 +141,7 @@ public class StringUtil {
      */
     public static String join(Iterable<?> iterable, String separator) {
         StringBuilder builder = new StringBuilder();
-        Iterator iterator = iterable.iterator();
+        Iterator<?> iterator = iterable.iterator();
         while (iterator.hasNext()) {
             builder.append(iterator.next());
             if (iterator.hasNext()) {

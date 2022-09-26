@@ -54,6 +54,8 @@ public class DefaultScriptRegistry implements ScriptRegistry {
         if (Objects.isNull(entry) || allowToCover) {
             return register(scriptEntry);
         }
+        log.error("can not register [{}], because [{}] already exists, please check.",
+                scriptEntry.getName(), scriptEntry.getLastModifiedTime());
         // 不覆盖，返回false
         return false;
     }
@@ -67,7 +69,7 @@ public class DefaultScriptRegistry implements ScriptRegistry {
             return entry;
         }
 
-        // todo 如果每次都加载不存在的脚本，这里上锁有效率问题
+        // todo 如果恶意操作每次都加载不存在的脚本，这里上锁有效率问题
         // 缓存中没有则通过脚本加载器进行加载
         synchronized (scriptQuery.getUniqueKey()) {
             entry = SCRIPT_ENGINE_ENTRY_CACHE.get(scriptQuery.getUniqueKey());

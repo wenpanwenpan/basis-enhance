@@ -15,9 +15,11 @@ import java.io.IOException;
 import java.security.Signer;
 
 /**
+ * <p>
  * 为RestTemplate加上oauth token请求头
+ * </p>
  *
- * @author jiangzhou.bo@hand-china.com 2018/06/14 16:36
+ * @author wenpan 2022/9/25 12:02 下午
  */
 public class RequestTokenInterceptor implements EventRequestInterceptor {
     private static final Logger LOGGER = LoggerFactory.getLogger(RequestTokenInterceptor.class);

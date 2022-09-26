@@ -38,7 +38,7 @@ public class ScriptEntry {
     /**
      * 最近修改时间
      */
-    private final Long lastModifiedTime;
+    private Long lastModifiedTime;
 
     /**
      * 脚本code对应的Class
