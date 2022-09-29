@@ -2,6 +2,7 @@ package org.basis.enhance.groovy.runner;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.concurrent.BasicThreadFactory;
+import org.basis.enhance.groovy.alarm.HotLoadingGroovyScriptAlarm;
 import org.basis.enhance.groovy.compiler.DynamicCodeCompiler;
 import org.basis.enhance.groovy.config.properties.GroovyEngineProperties;
 import org.basis.enhance.groovy.entity.ScriptEntry;
@@ -42,6 +43,8 @@ public class HotLoadingGroovyScriptRunner implements CommandLineRunner {
     private DynamicCodeCompiler dynamicCodeCompiler;
 
     private AtomicBoolean isRunning = new AtomicBoolean(false);
+
+    private List<HotLoadingGroovyScriptAlarm> hotLoadingGroovyScriptAlarms;
 
     @Override
     public void run(String... args) {
@@ -99,6 +102,7 @@ public class HotLoadingGroovyScriptRunner implements CommandLineRunner {
                 }
             }
         } catch (Exception ex) {
+            // todo 告警
             throw new LoadScriptException("scriptLoader.load() occur error.", ex);
         }
         // 打印刷新情况

@@ -42,19 +42,18 @@ public class RedisScriptLoader implements ScriptLoader {
     @Override
     public ScriptEntry load(ScriptQuery query) throws Exception {
         // 从Redis中根据key查找脚本
-        String script = (String) redisTemplate.opsForHash().get(groovyRedisLoaderProperties.getGroup(), query.getUniqueKey());
+        String script = (String) redisTemplate.opsForHash()
+                .get(groovyRedisLoaderProperties.getGroup(), query.getUniqueKey());
         if (!StringUtils.hasText(script)) {
             return null;
         }
         // 获取脚本指纹
         String fingerprint = DigestUtils.md5DigestAsHex(script.getBytes());
         // 创建脚本对象
-        ScriptEntry scriptEntry = new ScriptEntry(script, fingerprint, System.currentTimeMillis());
+        ScriptEntry scriptEntry = new ScriptEntry(query.getUniqueKey(), script, fingerprint, System.currentTimeMillis());
         // 动态加载脚本为Class
         Class<?> aClass = dynamicCodeCompiler.compile(scriptEntry);
         scriptEntry.setClazz(aClass);
-        // 设置名称
-        scriptEntry.setName(query.getUniqueKey());
         return scriptEntry;
     }
 
@@ -82,9 +81,7 @@ public class RedisScriptLoader implements ScriptLoader {
             // 获取脚本指纹
             String fingerprint = DigestUtils.md5DigestAsHex(script.getBytes());
             // 创建脚本对象
-            ScriptEntry scriptEntry = new ScriptEntry(script, fingerprint, System.currentTimeMillis());
-            // 以文件名作为唯一ID
-            scriptEntry.setName(hashKey.toString());
+            ScriptEntry scriptEntry = new ScriptEntry(hashKey.toString(), script, fingerprint, System.currentTimeMillis());
             resultList.add(scriptEntry);
         }
 
