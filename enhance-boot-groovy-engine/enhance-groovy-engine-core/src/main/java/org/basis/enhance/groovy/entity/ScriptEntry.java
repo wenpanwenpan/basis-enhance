@@ -45,10 +45,12 @@ public class ScriptEntry {
      */
     private Class<?> clazz;
 
-    public ScriptEntry(String scriptContext, String fingerprint, Long lastModifiedTime) {
+    public ScriptEntry(String name, String scriptContext, String fingerprint, Long lastModifiedTime) {
+        Preconditions.checkArgument(StringUtils.isNotBlank(name), "name can not be null.");
         Preconditions.checkArgument(StringUtils.isNotBlank(scriptContext), "scriptContext can not be null.");
         Preconditions.checkArgument(StringUtils.isNotBlank(fingerprint), "fingerprint can not be null.");
         Preconditions.checkArgument(Objects.nonNull(lastModifiedTime), "lastModifiedTime can not be null.");
+        this.name = name;
         this.scriptContext = scriptContext;
         this.fingerprint = fingerprint;
         this.lastModifiedTime = lastModifiedTime;

@@ -62,11 +62,9 @@ public class ClasspathScriptLoader implements ScriptLoader {
         String fingerprint = DigestUtils.md5DigestAsHex(fileContext.getBytes());
         // 脚本内容编译为Class
         Class<?> aClass = dynamicCodeCompiler.compile(fileContext, uniqueKey);
-        // 创建脚本对象
-        ScriptEntry scriptEntry = new ScriptEntry(fileContext, fingerprint, System.currentTimeMillis());
+        // 创建脚本对象,以文件名作为唯一ID
+        ScriptEntry scriptEntry = new ScriptEntry(classPathResource.getFilename(), fileContext, fingerprint, System.currentTimeMillis());
         scriptEntry.setClazz(aClass);
-        // 以文件名作为唯一ID
-        scriptEntry.setName(classPathResource.getFilename());
         return scriptEntry;
     }
 
@@ -88,10 +86,8 @@ public class ClasspathScriptLoader implements ScriptLoader {
             }
             // 获取脚本指纹
             String fingerprint = DigestUtils.md5DigestAsHex(fileContext.getBytes());
-            // 创建脚本对象
-            ScriptEntry scriptEntry = new ScriptEntry(fileContext, fingerprint, System.currentTimeMillis());
-            // 以文件名作为唯一ID
-            scriptEntry.setName(file.getName());
+            // 创建脚本对象, 以文件名作为唯一ID
+            ScriptEntry scriptEntry = new ScriptEntry(file.getName(), fileContext, fingerprint, System.currentTimeMillis());
             resultList.add(scriptEntry);
         }
 
