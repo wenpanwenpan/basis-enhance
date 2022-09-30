@@ -16,3 +16,9 @@ mybatis:
 logging:
   level:
     org.enhance.core.demo.infra.mapper: debug
+
+hello:
+  wenpan:
+    name: wenpan
+    age: 18
+    address: 成都
