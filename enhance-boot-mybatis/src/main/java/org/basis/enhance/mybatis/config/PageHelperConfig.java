@@ -1,4 +1,4 @@
-package org.enhance.core.config;
+package org.basis.enhance.mybatis.config;
 
 import com.github.pagehelper.PageInterceptor;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -47,9 +47,7 @@ public class PageHelperConfig {
         pageInterceptor.setProperties(properties);
 
         // 添加分页拦截器
-        sqlSessionFactoryList.forEach(sqlSessionFactory -> {
-            sqlSessionFactory.getConfiguration().addInterceptor(pageInterceptor);
-        });
+        sqlSessionFactoryList.forEach(sqlSessionFactory -> sqlSessionFactory.getConfiguration().addInterceptor(pageInterceptor));
     }
 
 }

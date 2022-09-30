@@ -1,9 +1,9 @@
-package org.enhance.core.web.page;
+package org.basis.enhance.mybatis.page;
 
 import lombok.Data;
 
 /**
- * source : {@link org.springframework.data.domain.PageRequest}
+ * source : {@link org.springframework.data.domain# PageRequest}
  * 分页请求封装对象
  *
  * @author wenpan

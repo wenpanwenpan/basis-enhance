@@ -228,5 +228,4 @@ public class ApplicationContextHelper implements ApplicationContextAware {
         return false;
     }
 
-
 }

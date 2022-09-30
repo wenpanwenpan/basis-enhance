@@ -1,9 +1,11 @@
 package org.enhance.core.config;
 
-import org.apache.ibatis.session.SqlSessionFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.enhance.core.helper.ApplicationContextHelper;
+import org.enhance.core.helper.DefaultRequestHelper;
+import org.enhance.core.helper.RequestHelper;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 /**
  * 自动配置
@@ -14,11 +16,22 @@ import org.springframework.context.annotation.Import;
 public class EnhanceStarterCoreAutoConfiguration {
 
     /**
-     * 导入pageHelper自动分页插件配置类
+     * 注入spring容器助手
      */
-    @Import(PageHelperConfig.class)
-    @ConditionalOnClass(SqlSessionFactory.class)
-    public static class ImportPageHelperConfig {
+    @Bean
+    @ConditionalOnMissingBean(ApplicationContextHelper.class)
+    public ApplicationContextHelper applicationContextHelper() {
 
+        return new ApplicationContextHelper();
+    }
+
+    /**
+     * 注入http请求助手
+     */
+    @Bean
+    @ConditionalOnMissingBean(RequestHelper.class)
+    public RequestHelper requestHelper() {
+
+        return new DefaultRequestHelper();
     }
 }

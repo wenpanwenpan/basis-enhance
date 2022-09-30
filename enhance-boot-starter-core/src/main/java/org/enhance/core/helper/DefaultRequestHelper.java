@@ -66,7 +66,7 @@ public class DefaultRequestHelper implements RequestHelper, ApplicationContextAw
 
             restTemplate = new RestTemplate(httpRequestFactory);
             // 添加token拦截器
-//            restTemplate.getInterceptors().addAll(getEventRequestInterceptor());
+            restTemplate.getInterceptors().addAll(getEventRequestInterceptor());
         }
     }
 

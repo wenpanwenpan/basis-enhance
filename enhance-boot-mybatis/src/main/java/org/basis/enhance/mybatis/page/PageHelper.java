@@ -1,11 +1,8 @@
-package org.enhance.core.web.page.helper;
+package org.basis.enhance.mybatis.page;
 
 import com.github.pagehelper.PageInfo;
 import com.github.pagehelper.page.PageMethod;
-import org.enhance.core.web.page.BasisPageInfo;
-import org.enhance.core.web.page.Page;
-import org.enhance.core.web.page.PageRequest;
-import org.enhance.core.web.page.inf.Select;
+import org.basis.enhance.mybatis.annotation.Select;
 
 import java.util.List;
 
@@ -26,7 +23,7 @@ public class PageHelper extends PageMethod {
      * @return org.enhance.core.web.page.Page<E>
      */
     public static <E> Page<E> doPage(int page, int size, Select<E> select) {
-        startPage(page, size);
+        PageMethod.startPage(page, size);
         List<E> list = select.doSelect();
         PageInfo<E> pageInfo = new PageInfo<>(list);
         // 转换为我们自己的Page对象
@@ -58,7 +55,7 @@ public class PageHelper extends PageMethod {
      * @return org.enhance.core.web.page.Page<E>
      */
     public static <E> Page<E> doPage(int page, int size, boolean countSql, boolean reasonable, Boolean pageSizeZero, Select<E> select) {
-        startPage(page, size, countSql, reasonable, pageSizeZero);
+        PageMethod.startPage(page, size, countSql, reasonable, pageSizeZero);
         List<E> list = select.doSelect();
         PageInfo<E> pageInfo = new PageInfo<>(list);
         // 转换为我们自己的Page对象
@@ -73,7 +70,7 @@ public class PageHelper extends PageMethod {
      * @return org.enhance.core.web.page.Page<E>
      */
     public static <E> Page<E> doPage(PageRequest pageRequest, Select<E> select) {
-        startPage(pageRequest.getPage(), pageRequest.getSize(), pageRequest.isCountSql(), pageRequest.isReasonable(), null);
+        PageMethod.startPage(pageRequest.getPage(), pageRequest.getSize(), pageRequest.isCountSql(), pageRequest.isReasonable(), null);
         List<E> list = select.doSelect();
         PageInfo<E> pageInfo = new PageInfo<>(list);
         // 转换为我们自己的Page对象

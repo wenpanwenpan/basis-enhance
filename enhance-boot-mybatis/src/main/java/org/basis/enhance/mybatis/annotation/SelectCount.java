@@ -1,4 +1,4 @@
-package org.enhance.core.web.page.inf;
+package org.basis.enhance.mybatis.annotation;
 
 /**
  * SQL查询count数量

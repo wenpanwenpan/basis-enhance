@@ -1,4 +1,4 @@
-package org.enhance.core.web.page;
+package org.basis.enhance.mybatis.page;
 
 import lombok.Data;
 

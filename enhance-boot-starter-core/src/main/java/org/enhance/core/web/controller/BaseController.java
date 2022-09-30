@@ -10,7 +10,9 @@ import javax.validation.Validator;
 import java.util.Collection;
 
 /**
- * 基础Controller
+ * <p>
+ * 基础Controller，提供一些controller层基础的通用能力
+ * </p>
  *
  * @author Mr_wenpan@163.com 2022/4/15 5:22 下午
  */

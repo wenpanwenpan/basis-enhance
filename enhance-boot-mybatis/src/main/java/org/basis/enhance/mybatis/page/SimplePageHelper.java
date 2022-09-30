@@ -1,9 +1,7 @@
-package org.enhance.core.web.page.helper;
+package org.basis.enhance.mybatis.page;
 
-import org.enhance.core.web.page.BasisPageInfo;
-import org.enhance.core.web.page.Page;
-import org.enhance.core.web.page.inf.Select;
-import org.enhance.core.web.page.inf.SelectCount;
+import org.basis.enhance.mybatis.annotation.Select;
+import org.basis.enhance.mybatis.annotation.SelectCount;
 import org.springframework.lang.NonNull;
 import org.springframework.util.CollectionUtils;
 

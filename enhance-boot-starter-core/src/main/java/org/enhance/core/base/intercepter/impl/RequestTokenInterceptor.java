@@ -31,8 +31,8 @@ public class RequestTokenInterceptor implements EventRequestInterceptor {
     @Override
     public ClientHttpResponse intercept(HttpRequest request, @NonNull byte[] body, ClientHttpRequestExecution execution)
             throws IOException {
+        // 获取请求头
         HttpHeaders headers = request.getHeaders();
-
         setLabel(headers);
         return execution.execute(request, body);
     }
