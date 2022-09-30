@@ -1,5 +1,6 @@
 package org.basis.enhance.groovy.registry.impl;
 
+import com.github.benmanes.caffeine.cache.Cache;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -8,9 +9,7 @@ import org.basis.enhance.groovy.entity.ScriptQuery;
 import org.basis.enhance.groovy.loader.ScriptLoader;
 import org.basis.enhance.groovy.registry.ScriptRegistry;
 
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 默认注册中心
@@ -21,16 +20,19 @@ import java.util.concurrent.ConcurrentHashMap;
 public class DefaultScriptRegistry implements ScriptRegistry {
 
     /**
-     * 使用饿汉单例保证线程安全
+     * 咖啡因缓存
      */
-    private final static Map<String, ScriptEntry> SCRIPT_ENGINE_ENTRY_CACHE = new ConcurrentHashMap<>();
+    @Getter
+    @Setter
+    private final Cache<String, ScriptEntry> cache;
 
     @Setter
     @Getter
     private ScriptLoader scriptLoader;
 
-    public DefaultScriptRegistry(ScriptLoader scriptLoader) {
+    public DefaultScriptRegistry(ScriptLoader scriptLoader, Cache<String, ScriptEntry> cache) {
         this.scriptLoader = scriptLoader;
+        this.cache = cache;
     }
 
     @Override
@@ -40,7 +42,7 @@ public class DefaultScriptRegistry implements ScriptRegistry {
         }
         try {
             // 强制覆盖
-            SCRIPT_ENGINE_ENTRY_CACHE.put(scriptEntry.getName(), scriptEntry);
+            cache.put(scriptEntry.getName(), scriptEntry);
         } catch (Exception ex) {
             log.error("DefaultScriptRegistry#register occur exception.", ex);
             return false;
@@ -50,7 +52,7 @@ public class DefaultScriptRegistry implements ScriptRegistry {
 
     @Override
     public Boolean register(ScriptEntry scriptEntry, boolean allowToCover) {
-        ScriptEntry entry = SCRIPT_ENGINE_ENTRY_CACHE.get(scriptEntry.getName());
+        ScriptEntry entry = cache.getIfPresent(scriptEntry.getName());
         if (Objects.isNull(entry) || allowToCover) {
             return register(scriptEntry);
         }
@@ -63,7 +65,7 @@ public class DefaultScriptRegistry implements ScriptRegistry {
     @Override
     public ScriptEntry find(ScriptQuery scriptQuery) throws Exception {
         // 先从缓存中查找
-        ScriptEntry entry = SCRIPT_ENGINE_ENTRY_CACHE.get(scriptQuery.getUniqueKey());
+        ScriptEntry entry = cache.getIfPresent(scriptQuery.getUniqueKey());
 
         if (Objects.nonNull(entry)) {
             return entry;
@@ -72,7 +74,7 @@ public class DefaultScriptRegistry implements ScriptRegistry {
         // todo 如果恶意操作每次都加载不存在的脚本，这里上锁有效率问题
         // 缓存中没有则通过脚本加载器进行加载
         synchronized (scriptQuery.getUniqueKey()) {
-            entry = SCRIPT_ENGINE_ENTRY_CACHE.get(scriptQuery.getUniqueKey());
+            entry = cache.getIfPresent(scriptQuery.getUniqueKey());
             // DCL
             if (Objects.isNull(entry)) {
                 // 加载脚本
@@ -97,12 +99,12 @@ public class DefaultScriptRegistry implements ScriptRegistry {
 
     @Override
     public void clear() {
-        SCRIPT_ENGINE_ENTRY_CACHE.clear();
+        cache.invalidateAll();
     }
 
     @Override
     public Boolean clear(ScriptQuery scriptQuery) {
-        SCRIPT_ENGINE_ENTRY_CACHE.remove(scriptQuery.getUniqueKey());
+        cache.invalidate(scriptQuery.getUniqueKey());
         return true;
     }
 

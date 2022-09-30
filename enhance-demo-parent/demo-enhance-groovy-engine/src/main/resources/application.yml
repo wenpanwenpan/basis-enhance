@@ -29,6 +29,12 @@ enhance:
       pollingCycle: 10
       # 开启功能
       enable: true
+      # 缓存过期时间
+      cacheExpireAfterWrite: 10
+      #缓存初始容量
+      cacheInitialCapacity: 10
+      # 缓存最大容量
+      cacheMaximumSize: 20
       # 开启基于Redis加载groovy脚本
       redis-loader:
         group: demo-group

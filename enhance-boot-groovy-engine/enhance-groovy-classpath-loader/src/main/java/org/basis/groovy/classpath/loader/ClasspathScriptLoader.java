@@ -24,7 +24,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * 默认脚本加载器
+ * 脚本加载器
  * <ol>
  *     默认加载classpath下的groovy下的enhance目录下的*.groovy
  * </ol>

@@ -7,7 +7,6 @@ import org.basis.enhance.groovy.compiler.DynamicCodeCompiler;
 import org.basis.enhance.groovy.config.properties.GroovyEngineProperties;
 import org.basis.enhance.groovy.entity.ScriptEntry;
 import org.basis.enhance.groovy.entity.ScriptQuery;
-import org.basis.enhance.groovy.exception.LoadScriptException;
 import org.basis.enhance.groovy.loader.ScriptLoader;
 import org.basis.enhance.groovy.registry.ScriptRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,19 +31,16 @@ public class HotLoadingGroovyScriptRunner implements CommandLineRunner {
 
     @Autowired
     private ScriptLoader scriptLoader;
-
     @Autowired
     private ScriptRegistry scriptRegistry;
-
     @Autowired
     private GroovyEngineProperties groovyEngineProperties;
-
     @Autowired
     private DynamicCodeCompiler dynamicCodeCompiler;
+    @Autowired
+    private HotLoadingGroovyScriptAlarm hotLoadingGroovyScriptAlarm;
 
-    private AtomicBoolean isRunning = new AtomicBoolean(false);
-
-    private List<HotLoadingGroovyScriptAlarm> hotLoadingGroovyScriptAlarms;
+    private final AtomicBoolean isRunning = new AtomicBoolean(false);
 
     @Override
     public void run(String... args) {
@@ -72,7 +68,7 @@ public class HotLoadingGroovyScriptRunner implements CommandLineRunner {
         // 记录新增的脚本数量
         int addScriptCount = 0;
         int updateScriptCount = 0;
-        List<ScriptEntry> scriptEntries;
+        List<ScriptEntry> scriptEntries = null;
         try {
             // 加载所有脚本
             scriptEntries = scriptLoader.load();
@@ -102,11 +98,13 @@ public class HotLoadingGroovyScriptRunner implements CommandLineRunner {
                 }
             }
         } catch (Exception ex) {
-            // todo 告警
-            throw new LoadScriptException("scriptLoader.load() occur error.", ex);
+            log.error("scriptLoader.load() occur error, scriptEntries is : {}", scriptEntries, ex);
+            // 调用用户自定义告警接口
+            hotLoadingGroovyScriptAlarm.alarm(scriptEntries, ex);
         }
         // 打印刷新情况
         log.info("scheduled Task Thread refresh groovy script end,scriptCount is [{}], addScriptCount is [{}]," +
-                " updateScriptCount is [{}]", scriptEntries.size(), addScriptCount, updateScriptCount);
+                " updateScriptCount is [{}]", Objects.isNull(scriptEntries) ?
+                null : scriptEntries.size(), addScriptCount, updateScriptCount);
     }
 } 

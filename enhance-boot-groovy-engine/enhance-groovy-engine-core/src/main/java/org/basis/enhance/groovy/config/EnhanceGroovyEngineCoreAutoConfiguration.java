@@ -43,7 +43,7 @@ public class EnhanceGroovyEngineCoreAutoConfiguration {
     @ConditionalOnMissingBean(HotLoadingGroovyScriptAlarm.class)
     public HotLoadingGroovyScriptAlarm hotLoadingGroovyScriptAlarm() {
         // 默认打印告警信息到日志里
-        return scriptEntry -> log.error("scriptEntry load failed, scriptEntry info is : {}", scriptEntry);
+        return (scriptEntries, ex) -> log.error("scriptEntry load failed, scriptEntries info is : {}", scriptEntries, ex);
     }
 
     /**
