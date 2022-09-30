@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>basis-enhance-message-event</artifactId>
+    <artifactId>enhance-boot-message-event</artifactId>
 
     <dependencies>
         <dependency>

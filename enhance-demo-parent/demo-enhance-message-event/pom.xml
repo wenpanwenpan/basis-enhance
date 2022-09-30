@@ -13,8 +13,17 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.basis.enhance</groupId>
-            <artifactId>basis-enhance-message-event</artifactId>
+            <artifactId>enhance-boot-message-event</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
