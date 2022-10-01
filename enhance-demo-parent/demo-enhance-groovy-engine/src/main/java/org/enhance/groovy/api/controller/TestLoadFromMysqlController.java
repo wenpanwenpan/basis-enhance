@@ -3,7 +3,6 @@ package org.enhance.groovy.api.controller;
 import lombok.extern.slf4j.Slf4j;
 import org.basis.enhance.groovy.entity.EngineExecutorResult;
 import org.basis.enhance.groovy.entity.ExecuteParams;
-import org.basis.enhance.groovy.entity.ScriptEntry;
 import org.basis.enhance.groovy.entity.ScriptQuery;
 import org.basis.enhance.groovy.executor.EngineExecutor;
 import org.enhance.groovy.api.dto.OrderInfoDTO;
@@ -16,20 +15,22 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 
 /**
- * 测试groovy
+ * 测试从MySQL中加载脚本
  *
  * @author wenpan 2022/09/25 14:46
  */
 @Slf4j
-@RestController("TestEnhanceGroovyEngineController.v1")
-@RequestMapping("/v1/test-enhance-groovy")
-public class TestEnhanceGroovyEngineController {
+@RestController("TestLoadFromMysqlController.v1")
+@RequestMapping("/v1/load-from-mysql")
+public class TestLoadFromMysqlController {
 
     @Autowired
     private EngineExecutor engineExecutor;
 
     /**
-     * 测试{@link EngineExecutor#execute(ScriptQuery, ExecuteParams)}
+     * 测试从数据库加载脚本
+     * scriptName值（和数据库保持一致）：customer-console_console-manager_enhance_test_change-order，scriptName只要能唯一定位到脚本即可
+     * 请求URL：http://localhost:1234/v1/load-from-redis/change-order?scriptName=customer-console_console-manager_enhance_test_change-order
      */
     @GetMapping("/change-order")
     public String changeOrderInfo(String scriptName) {
@@ -49,7 +50,9 @@ public class TestEnhanceGroovyEngineController {
     }
 
     /**
-     * 测试{@link EngineExecutor#execute(String, ScriptEntry, ExecuteParams)}
+     * 测试从数据库加载脚本
+     * scriptName值（和数据库保持一致）：customer-console_console-manager_enhance_test_change-product，scriptName只要能唯一定位到脚本即可
+     * 请求URL：http://localhost:1234/v1/load-from-redis/change-product?scriptName=customer-console_console-manager_enhance_test_change-product
      */
     @GetMapping("/change-product")
     public String changeProductInfo(String scriptName) {
@@ -70,7 +73,9 @@ public class TestEnhanceGroovyEngineController {
     }
 
     /**
-     * 测试在groovy脚本里获取spring IOC容器上下文，并通过容器来获取bean，并调用bean的方法
+     * 测试从数据库加载脚本
+     * scriptName值（和数据库保持一致）：customer-console_console-manager_enhance_test_get-context，scriptName只要能唯一定位到脚本即可
+     * 请求URL：http://localhost:1234/v1/load-from-redis/get-context?scriptName=customer-console_console-manager_enhance_test_get-context
      */
     @GetMapping("/get-context")
     public String getContext(String scriptName) {

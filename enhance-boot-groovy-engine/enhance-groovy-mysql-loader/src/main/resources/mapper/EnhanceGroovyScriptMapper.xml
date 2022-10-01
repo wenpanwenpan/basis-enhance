@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.basis.groovy.mapper.EnhanceGroovyScriptMapper">
+
+    <select id="selectAll" resultType="org.basis.groovy.entity.EnhanceGroovyScript">
+        SELECT
+        id,
+        namespace,
+        platform_code,
+        product_code,
+        channel_code,
+        business_code,
+        enable,
+        script_content,
+        extend_info,
+        talent,
+        object_version_number,
+        creation_date,
+        latest_modified_date
+        FROM enhance_groovy_script
+    </select>
+
+    <select id="selectByCondition" resultType="org.basis.groovy.entity.EnhanceGroovyScript"
+            parameterType="org.basis.groovy.entity.EnhanceGroovyScript">
+        SELECT
+        id,
+        namespace,
+        platform_code,
+        product_code,
+        channel_code,
+        business_code,
+        enable,
+        script_content,
+        extend_info,
+        talent,
+        object_version_number,
+        creation_date,
+        latest_modified_date
+        FROM
+        enhance_groovy_script
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="namespace != null">
+                AND namespace = #{namespace}
+            </if>
+            <if test="platformCode != null">
+                AND platform_code = #{platformCode}
+            </if>
+            <if test="productCode != null">
+                AND product_code = #{productCode}
+            </if>
+            <if test="channelCode != null">
+                AND channel_code = #{channelCode}
+            </if>
+            <if test="businessCode != null">
+                AND business_code = #{businessCode}
+            </if>
+            <if test="enable != null">
+                AND enable = #{enable}
+            </if>
+            <if test="scriptContent != null">
+                AND script_content = #{scriptContent}
+            </if>
+            <if test="extendInfo != null">
+                AND extend_info = #{extendInfo}
+            </if>
+            <if test="talent != null">
+                AND talent = #{talent}
+            </if>
+            <if test="objectVersionNumber != null">
+                AND object_version_number = #{objectVersionNumber}
+            </if>
+            <if test="creationDate != null">
+                AND creation_date = #{creationDate}
+            </if>
+            <if test="latestModifiedDate != null">
+                AND latest_modified_date = #{latestModifiedDate}
+            </if>
+        </where>
+    </select>
+
+    <update id="updateByCondition">
+        UPDATE
+        enhance_groovy_script
+        <set>
+            <if test="id != null">
+                id = #{id},
+            </if>
+            <if test="namespace != null">
+                namespace = #{namespace},
+            </if>
+            <if test="platformCode != null">
+                platform_code = #{platformCode},
+            </if>
+            <if test="productCode != null">
+                product_code = #{productCode},
+            </if>
+            <if test="channelCode != null">
+                channel_code = #{channelCode},
+            </if>
+            <if test="businessCode != null">
+                business_code = #{businessCode},
+            </if>
+            <if test="enable != null">
+                enable = #{enable},
+            </if>
+            <if test="scriptContent != null">
+                script_content = #{scriptContent},
+            </if>
+            <if test="extendInfo != null">
+                extend_info = #{extendInfo},
+            </if>
+            <if test="talent != null">
+                talent = #{talent},
+            </if>
+            <if test="objectVersionNumber != null">
+                object_version_number = #{objectVersionNumber},
+            </if>
+            latest_modified_date = now()
+        </set>
+        <where>
+            <if test="id != null">
+                id = #{id}
+            </if>
+            <if test="namespace != null">
+                AND namespace = #{namespace}
+            </if>
+            <if test="platformCode != null">
+                AND platform_code = #{platformCode}
+            </if>
+            <if test="productCode != null">
+                AND product_code = #{productCode}
+            </if>
+            <if test="channelCode != null">
+                AND channel_code = #{channelCode}
+            </if>
+            <if test="businessCode != null">
+                AND business_code = #{businessCode}
+            </if>
+        </where>
+
+    </update>
+
+    <insert id="insert">
+        INSERT INTO
+        enhance_groovy_script(id,
+        namespace,
+        platform_code,
+        product_code,
+        channel_code,
+        business_code,
+        enable,
+        script_content,
+        extend_info,
+        talent,
+        object_version_number,
+        creation_date,
+        latest_modified_date)
+        VALUES(
+        #{id},
+        #{namespace},
+        #{platformCode},
+        #{productCode},
+        #{channelCode},
+        #{businessCode},
+        #{enable},
+        #{scriptContent},
+        #{extendInfo},
+        #{talent},
+        #{objectVersionNumber},
+        #{creationDate},
+        #{latestModifiedDate});
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM enhance_groovy_script WHERE id = #{id}
+    </delete>
+
+</mapper>

@@ -41,6 +41,7 @@ public class DefaultScriptRegistry implements ScriptRegistry {
     @Override
     public Boolean register(ScriptEntry scriptEntry) {
         if (Objects.isNull(scriptEntry)) {
+            log.warn("register scriptEntry failed, because it is null.");
             return true;
         }
         try {
@@ -69,8 +70,9 @@ public class DefaultScriptRegistry implements ScriptRegistry {
 
     @Override
     public Boolean register(ScriptEntry scriptEntry, boolean allowToCover) {
-        ScriptEntry entry = cache.getIfPresent(scriptEntry.getName());
-        if (Objects.isNull(entry) || allowToCover) {
+        // 旧entry
+        ScriptEntry oldEntry = cache.getIfPresent(scriptEntry.getName());
+        if (Objects.isNull(oldEntry) || allowToCover) {
             return register(scriptEntry);
         }
         log.error("can not register [{}], because [{}] already exists, please check.",
@@ -95,6 +97,7 @@ public class DefaultScriptRegistry implements ScriptRegistry {
 
     @Override
     public ScriptEntry findOnCache(ScriptQuery scriptQuery) {
+        // 直接从缓存中通过条件查询
         return cache.getIfPresent(scriptQuery.getUniqueKey());
     }
 

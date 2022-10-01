@@ -44,7 +44,7 @@ public class RedisScriptLoader implements ScriptLoader {
     public ScriptEntry load(@NonNull ScriptQuery query) throws Exception {
         // 从Redis中根据key查找脚本
         String script = (String) redisTemplate.opsForHash()
-                .get(groovyRedisLoaderProperties.getGroup(), query.getUniqueKey());
+                .get(groovyRedisLoaderProperties.getNamespace(), query.getUniqueKey());
         if (!StringUtils.hasText(script)) {
             return null;
         }
@@ -61,7 +61,7 @@ public class RedisScriptLoader implements ScriptLoader {
     @Override
     public List<ScriptEntry> load() {
         List<ScriptEntry> resultList = new ArrayList<>();
-        String key = groovyRedisLoaderProperties.getGroup();
+        String key = groovyRedisLoaderProperties.getNamespace();
 
         // 获取到所有脚本的key
         Set<Object> hashKeys = redisTemplate.opsForHash().keys(key);

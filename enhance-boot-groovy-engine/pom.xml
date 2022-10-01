@@ -15,6 +15,7 @@
     <modules>
         <module>enhance-groovy-redis-loader</module>
         <module>enhance-groovy-classpath-loader</module>
+        <module>enhance-groovy-mysql-loader</module>
     </modules>
 
 </project>

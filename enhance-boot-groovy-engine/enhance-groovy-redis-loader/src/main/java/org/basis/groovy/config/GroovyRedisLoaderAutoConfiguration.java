@@ -48,7 +48,6 @@ public class GroovyRedisLoaderAutoConfiguration {
                                                            ScriptLoader scriptLoader,
                                                            RedisTemplate<String, String> redisTemplate,
                                                            GroovyRedisLoaderProperties groovyRedisLoaderProperties) {
-
         return new ManualRegisterScriptHelper(scriptRegistry, scriptLoader, redisTemplate, groovyRedisLoaderProperties);
     }
 

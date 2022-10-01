@@ -16,21 +16,23 @@ public interface RegisterScriptHelper {
      * 注册groovy脚本
      * </p>
      *
-     * @param name    脚本名称
-     * @param content 脚本内容
+     * @param name       脚本名称
+     * @param content    脚本内容
+     * @param allowCover 是否允许覆盖
      * @return true / false
      * @throws Exception 异常
      */
-    boolean registerScript(@NonNull String name, @NonNull String content) throws Exception;
+    boolean registerScript(@NonNull String name, @NonNull String content, boolean allowCover) throws Exception;
 
     /**
      * <p>
      * 批量注册groovy脚本，key为脚本名称，value 为脚本内容
      * </p>
      *
-     * @param scriptMap 脚本信息map
+     * @param scriptMap  脚本信息map
+     * @param allowCover 是否允许覆盖
      * @return true / false
      * @throws Exception 异常
      */
-    boolean batchRegisterScript(@NonNull Map<String, String> scriptMap) throws Exception;
+    boolean batchRegisterScript(@NonNull Map<String, String> scriptMap, boolean allowCover) throws Exception;
 }

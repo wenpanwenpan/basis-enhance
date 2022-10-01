@@ -3,7 +3,13 @@ server:
 
 spring:
   application:
-    name: enhance-groovy-engine
+    name: customer-console
+  # mysql连接配置
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: ${SPRING_DATASOURCE_URL:jdbc:mysql://wenpan-host:3306/project_test?useUnicode=true&characterEncoding=UTF-8&useSSL=false}
+    username: ${SPRING_DATASOURCE_USERNAME:root}
+    password: ${SPRING_DATASOURCE_PASSWORD:wenpan}
   # redis基础配置
   redis:
     host: ${SPRING_REDIS_HOST:wenpan-host}
@@ -22,6 +28,16 @@ spring:
         # 当资源池连接用尽后，调用者的最大等待时间(单位为毫秒) 默认 -1 表示永不超时，设置5秒
         max-wait: ${SPRING_REDIS_POOL_MAX_WAIT:5000}
 
+mybatis:
+  mapperLocations: classpath*:/mapper/*.xml
+  configuration:
+    mapUnderscoreToCamelCase: true
+
+# 调整日志级别
+logging:
+  level:
+    org.basis.groovy.mapper: debug
+
 enhance:
   groovy:
     engine:
@@ -36,9 +52,12 @@ enhance:
       # 缓存最大容量(默认500)
       cacheMaximumSize: 20
       # 开启基于Redis加载groovy脚本
-      redis-loader:
-        group: demo-group
+      #      redis-loader:
+      #        namespace: customer-console
+      #        enable: true
+      mysql-loader:
+        namespace: customer-console
         enable: true
-        # 开启加载classpath下的脚本的loader
-        #classpath-loader:
-        #enable: true
+#    开启加载classpath下的脚本的loader
+#      classpath-loader:
+#      enable: true
