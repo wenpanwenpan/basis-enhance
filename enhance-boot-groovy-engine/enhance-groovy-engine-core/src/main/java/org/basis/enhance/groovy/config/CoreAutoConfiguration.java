@@ -9,6 +9,7 @@ import org.basis.enhance.groovy.config.properties.GroovyEngineProperties;
 import org.basis.enhance.groovy.entity.ScriptEntry;
 import org.basis.enhance.groovy.executor.EngineExecutor;
 import org.basis.enhance.groovy.executor.impl.DefaultEngineExecutor;
+import org.basis.enhance.groovy.helper.RefreshScriptHelper;
 import org.basis.enhance.groovy.loader.ScriptLoader;
 import org.basis.enhance.groovy.registry.ScriptRegistry;
 import org.basis.enhance.groovy.registry.impl.DefaultScriptRegistry;
@@ -31,16 +32,6 @@ import java.util.concurrent.TimeUnit;
 @Configuration
 @ConditionalOnExistingProperty(property = GroovyEngineProperties.PREFIX + ".enable", value = "true")
 public class CoreAutoConfiguration {
-
-    /**
-     * 核心配置映射类
-     */
-    @Bean
-    @ConditionalOnMissingBean(GroovyEngineProperties.class)
-    public GroovyEngineProperties groovyEngineProperties() {
-
-        return new GroovyEngineProperties();
-    }
 
     /**
      * groovy class编译器
@@ -87,5 +78,15 @@ public class CoreAutoConfiguration {
     public EngineExecutor defaultEngineExecutor(ScriptRegistry scriptRegistry) {
 
         return new DefaultEngineExecutor(scriptRegistry);
+    }
+
+    /**
+     * 注入刷新groovy脚本助手
+     */
+    @Bean
+    @ConditionalOnMissingBean(RefreshScriptHelper.class)
+    public RefreshScriptHelper refreshScriptHelper() {
+
+        return new RefreshScriptHelper();
     }
 }

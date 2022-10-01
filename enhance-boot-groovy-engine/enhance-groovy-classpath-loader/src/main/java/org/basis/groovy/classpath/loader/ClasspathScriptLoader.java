@@ -10,6 +10,7 @@ import org.basis.enhance.groovy.exception.LoadScriptException;
 import org.basis.enhance.groovy.loader.ScriptLoader;
 import org.basis.groovy.classpath.config.properties.GroovyClasspathLoaderProperties;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.lang.NonNull;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 
@@ -49,7 +50,7 @@ public class ClasspathScriptLoader implements ScriptLoader {
     }
 
     @Override
-    public ScriptEntry load(ScriptQuery query) throws Exception {
+    public ScriptEntry load(@NonNull ScriptQuery query) throws Exception {
         String uniqueKey = query.getUniqueKey();
         // 通过文件名称加载脚本
         ClassPathResource classPathResource = new ClassPathResource(uniqueKey);

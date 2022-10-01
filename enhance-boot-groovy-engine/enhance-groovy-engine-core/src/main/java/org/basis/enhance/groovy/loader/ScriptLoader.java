@@ -2,6 +2,7 @@ package org.basis.enhance.groovy.loader;
 
 import org.basis.enhance.groovy.entity.ScriptEntry;
 import org.basis.enhance.groovy.entity.ScriptQuery;
+import org.springframework.lang.NonNull;
 
 import java.util.List;
 
@@ -20,7 +21,7 @@ public interface ScriptLoader {
      * @throws Exception 异常
      * @author wenpan 2022/9/18 12:13 下午
      */
-    ScriptEntry load(ScriptQuery query) throws Exception;
+    ScriptEntry load(@NonNull ScriptQuery query) throws Exception;
 
     /**
      * 预加载所有的脚本

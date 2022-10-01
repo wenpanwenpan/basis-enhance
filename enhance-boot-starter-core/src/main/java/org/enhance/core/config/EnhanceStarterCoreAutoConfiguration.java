@@ -6,7 +6,6 @@ import org.enhance.core.helper.RequestHelper;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 /**
  * 自动配置
@@ -22,13 +21,8 @@ public class EnhanceStarterCoreAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(ApplicationContextHelper.class)
     public ApplicationContextHelper applicationContextHelper() {
-
+        System.out.println("EnhanceStarterCoreAutoConfiguration注入ApplicationContextHelper......");
         return new ApplicationContextHelper();
-    }
-
-    @Import(TestConfig.class)
-    public static class ImportClass {
-        
     }
 
     /**
@@ -37,7 +31,7 @@ public class EnhanceStarterCoreAutoConfiguration {
     @Bean
     @ConditionalOnMissingBean(RequestHelper.class)
     public RequestHelper requestHelper() {
-
+        System.out.println("EnhanceStarterCoreAutoConfiguration注入RequestHelper......");
         return new DefaultRequestHelper();
     }
 }

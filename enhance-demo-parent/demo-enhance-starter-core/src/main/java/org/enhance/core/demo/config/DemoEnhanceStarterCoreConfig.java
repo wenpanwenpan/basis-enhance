@@ -1,15 +1,13 @@
 package org.enhance.core.demo.config;
 
 import org.enhance.core.annotation.ConditionalOnProperties;
-import org.enhance.core.config.EnhanceStarterCoreAutoConfiguration;
 import org.enhance.core.demo.domain.entity.Product;
 import org.enhance.core.demo.domain.entity.UserInfo;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
 /**
- * 配置类
+ * 配置类，主要为了测试自定义注解 {@link ConditionalOnProperties}
  *
  * @author wenpanfeng 2022/09/08 20:09
  */
@@ -25,11 +23,6 @@ public class DemoEnhanceStarterCoreConfig {
     public Product product() {
 
         return new Product();
-    }
-
-    @Import(EnhanceStarterCoreAutoConfiguration.class)
-    public static class ImportClass {
-
     }
 
     @Bean

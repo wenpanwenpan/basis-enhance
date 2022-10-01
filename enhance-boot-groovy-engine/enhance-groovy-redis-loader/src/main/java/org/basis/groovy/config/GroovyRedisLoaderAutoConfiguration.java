@@ -3,7 +3,9 @@ package org.basis.groovy.config;
 import org.basis.enhance.groovy.annotation.ConditionalOnExistingProperty;
 import org.basis.enhance.groovy.compiler.DynamicCodeCompiler;
 import org.basis.enhance.groovy.loader.ScriptLoader;
+import org.basis.enhance.groovy.registry.ScriptRegistry;
 import org.basis.groovy.config.properties.GroovyRedisLoaderProperties;
+import org.basis.groovy.helper.ManualRegisterScriptHelper;
 import org.basis.groovy.loader.RedisScriptLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +21,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @Configuration
 @EnableConfigurationProperties(value = {GroovyRedisLoaderProperties.class})
+@ConditionalOnExistingProperty(property = GroovyRedisLoaderProperties.PREFIX + ".enable", value = "true")
 public class GroovyRedisLoaderAutoConfiguration {
 
     private final Logger logger = LoggerFactory.getLogger(getClass());
@@ -30,12 +33,23 @@ public class GroovyRedisLoaderAutoConfiguration {
      * </p>
      */
     @Bean
-    @ConditionalOnExistingProperty(property = GroovyRedisLoaderProperties.PREFIX + ".enable", value = "true")
     public ScriptLoader redisScriptLoader(RedisTemplate<String, String> redisTemplate,
                                           DynamicCodeCompiler dynamicCodeCompiler,
                                           GroovyRedisLoaderProperties groovyRedisLoaderProperties) {
         logger.info("loading ScriptLoader type is [{}]", RedisScriptLoader.class);
         return new RedisScriptLoader(redisTemplate, dynamicCodeCompiler, groovyRedisLoaderProperties);
+    }
+
+    /**
+     * 注入手动注册脚本助手
+     */
+    @Bean
+    public ManualRegisterScriptHelper registerScriptHelper(ScriptRegistry scriptRegistry,
+                                                           ScriptLoader scriptLoader,
+                                                           RedisTemplate<String, String> redisTemplate,
+                                                           GroovyRedisLoaderProperties groovyRedisLoaderProperties) {
+
+        return new ManualRegisterScriptHelper(scriptRegistry, scriptLoader, redisTemplate, groovyRedisLoaderProperties);
     }
 
 }

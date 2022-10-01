@@ -25,15 +25,15 @@ spring:
 enhance:
   groovy:
     engine:
-      # 脚本检查更新周期（单位：秒）
+      # 脚本检查更新周期（单位：秒），（默认300L）
       pollingCycle: 10
       # 开启功能
       enable: true
-      # 缓存过期时间
+      # 缓存过期时间(默认600L分钟)
       cacheExpireAfterWrite: 10
-      #缓存初始容量
+      #缓存初始容量(默认100)
       cacheInitialCapacity: 10
-      # 缓存最大容量
+      # 缓存最大容量(默认500)
       cacheMaximumSize: 20
       # 开启基于Redis加载groovy脚本
       redis-loader:

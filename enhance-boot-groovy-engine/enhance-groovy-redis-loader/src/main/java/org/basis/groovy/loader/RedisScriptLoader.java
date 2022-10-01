@@ -8,6 +8,7 @@ import org.basis.groovy.config.properties.GroovyRedisLoaderProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.lang.NonNull;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 import org.springframework.util.StringUtils;
@@ -40,7 +41,7 @@ public class RedisScriptLoader implements ScriptLoader {
     }
 
     @Override
-    public ScriptEntry load(ScriptQuery query) throws Exception {
+    public ScriptEntry load(@NonNull ScriptQuery query) throws Exception {
         // 从Redis中根据key查找脚本
         String script = (String) redisTemplate.opsForHash()
                 .get(groovyRedisLoaderProperties.getGroup(), query.getUniqueKey());

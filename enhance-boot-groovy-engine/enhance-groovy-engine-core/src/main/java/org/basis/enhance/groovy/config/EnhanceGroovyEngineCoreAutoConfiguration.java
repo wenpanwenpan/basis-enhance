@@ -3,9 +3,9 @@ package org.basis.enhance.groovy.config;
 import lombok.extern.slf4j.Slf4j;
 import org.basis.enhance.groovy.alarm.HotLoadingGroovyScriptAlarm;
 import org.basis.enhance.groovy.annotation.ConditionalOnExistingProperty;
-import org.basis.enhance.groovy.annotation.condition.OnExistingPropertyCondition;
 import org.basis.enhance.groovy.config.properties.GroovyEngineProperties;
 import org.basis.enhance.groovy.helper.ApplicationContextHelper;
+import org.basis.enhance.groovy.helper.RefreshScriptHelper;
 import org.basis.enhance.groovy.runner.HotLoadingGroovyScriptRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,19 +24,14 @@ import org.springframework.context.annotation.Import;
 @ConditionalOnExistingProperty(property = GroovyEngineProperties.PREFIX + ".enable", value = "true")
 public class EnhanceGroovyEngineCoreAutoConfiguration {
 
-    @Bean
-    public OnExistingPropertyCondition onExistingPropertyCondition() {
-
-        return new OnExistingPropertyCondition();
-    }
-
     /**
      * 热加载groovy脚本的runner
      */
     @Bean
-    public HotLoadingGroovyScriptRunner groovyRunner() {
+    public HotLoadingGroovyScriptRunner groovyRunner(GroovyEngineProperties groovyEngineProperties,
+                                                     RefreshScriptHelper refreshScriptHelper) {
 
-        return new HotLoadingGroovyScriptRunner();
+        return new HotLoadingGroovyScriptRunner(groovyEngineProperties, refreshScriptHelper);
     }
 
     @Bean

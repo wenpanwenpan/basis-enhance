@@ -2,7 +2,7 @@ package org.basis.enhance.groovy.executor.impl;
 
 import groovy.lang.Binding;
 import groovy.lang.Script;
-import org.basis.enhance.groovy.constants.ExecutionStatus;
+import org.apache.commons.lang3.StringUtils;
 import org.basis.enhance.groovy.constants.GroovyEngineConstants;
 import org.basis.enhance.groovy.entity.EngineExecutorResult;
 import org.basis.enhance.groovy.entity.ExecuteParams;
@@ -12,6 +12,9 @@ import org.basis.enhance.groovy.executor.EngineExecutor;
 import org.basis.enhance.groovy.helper.ApplicationContextHelper;
 import org.basis.enhance.groovy.registry.ScriptRegistry;
 import org.codehaus.groovy.runtime.InvokerHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.lang.NonNull;
 
 import java.util.Objects;
 
@@ -22,37 +25,102 @@ import java.util.Objects;
  */
 public class DefaultEngineExecutor implements EngineExecutor {
 
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     private ScriptRegistry scriptRegistry;
 
     public DefaultEngineExecutor(ScriptRegistry scriptRegistry) {
         this.scriptRegistry = scriptRegistry;
     }
 
+    @NonNull
     @Override
-    public EngineExecutorResult execute(ScriptQuery scriptQuery, ExecuteParams executeParams) throws Exception {
+    public EngineExecutorResult execute(@NonNull ScriptQuery scriptQuery, ExecuteParams executeParams) {
         // 先根据scriptEntryQuery查询到要执行的脚本
-        ScriptEntry scriptEntry = scriptRegistry.find(scriptQuery);
+        ScriptEntry scriptEntry;
+        try {
+            scriptEntry = scriptRegistry.find(scriptQuery);
+        } catch (Exception ex) {
+            logger.error("execute groovy script error, scriptQuery is : {}, " +
+                    "executeParams is : {}", scriptQuery, executeParams, ex);
+            return EngineExecutorResult.failed(ex);
+        }
         return execute(scriptEntry, executeParams);
     }
 
+    @NonNull
     @Override
-    public EngineExecutorResult execute(ScriptEntry scriptEntry, ExecuteParams executeParams) {
-        // 没有脚本，则直接返回NO_SCRIPT，响应content为null
-        if (Objects.isNull(scriptEntry)) {
-            return EngineExecutorResult.success(ExecutionStatus.NO_SCRIPT, null);
-        }
-        // 构建binding入参
-        Binding binding = buildBinding(executeParams);
+    public EngineExecutorResult execute(@NonNull ScriptEntry scriptEntry, ExecuteParams executeParams) {
 
-        // 创建脚本（可以看到这里就是基于Class去new一个script对象）
-        Script script = InvokerHelper.createScript(scriptEntry.getClazz(), binding);
+        logger.debug("DefaultEngineExecutor start execute script, scriptEntry is : {}, " +
+                "executeParams is : {}", scriptEntry, executeParams);
+
         Object result;
         try {
+            // 构建binding入参
+            Binding binding = buildBinding(executeParams);
+            // 创建脚本（可以看到这里就是基于Class去new一个script对象）
+            Script script = InvokerHelper.createScript(scriptEntry.getClazz(), binding);
+            script.setBinding(binding);
             // 执行脚本
             result = script.run();
         } catch (Exception ex) {
+            logger.error("execute groovy script error, scriptEntry is : {}," +
+                    " executeParams is : {}", scriptEntry, executeParams, ex);
             return EngineExecutorResult.failed(ex);
         }
+
+        logger.debug("DefaultEngineExecutor execute script success, result is : {}", result);
+
+        // 返回执行结果
+        return EngineExecutorResult.success(result);
+    }
+
+    @NonNull
+    @Override
+    public EngineExecutorResult execute(@NonNull String groovyMethodName,
+                                        @NonNull ScriptQuery scriptQuery,
+                                        ExecuteParams executeParams) {
+        // 先根据scriptEntryQuery查询到要执行的脚本
+        ScriptEntry scriptEntry;
+        try {
+            scriptEntry = scriptRegistry.find(scriptQuery);
+        } catch (Exception ex) {
+            logger.error("execute groovy script by groovyMethodName error, scriptQuery is : {}, " +
+                    "executeParams is : {}", scriptQuery, executeParams, ex);
+            return EngineExecutorResult.failed(ex);
+        }
+        return execute(groovyMethodName, scriptEntry, executeParams);
+    }
+
+    @NonNull
+    @Override
+    public EngineExecutorResult execute(@NonNull String groovyMethodName,
+                                        @NonNull ScriptEntry scriptEntry,
+                                        @NonNull ExecuteParams executeParams) {
+
+        logger.debug("DefaultEngineExecutor start execute script by groovyMethodName, scriptEntry is : {}, " +
+                "executeParams is : {}", scriptEntry, executeParams);
+
+        if (StringUtils.isBlank(groovyMethodName)) {
+            return EngineExecutorResult.failed("groovyMethodName can not be null.");
+        }
+
+        Object result;
+        try {
+            // 构建binding入参
+            Binding binding = buildBinding(executeParams);
+            // 创建脚本（可以看到这里就是基于Class去new一个script对象）
+            Script script = InvokerHelper.createScript(scriptEntry.getClazz(), binding);
+            // 按照groovy里的方法名来执行脚本
+            result = script.invokeMethod(groovyMethodName, executeParams);
+        } catch (Exception ex) {
+            logger.error("execute groovy script  by groovyMethodName error, scriptEntry is : {}," +
+                    " executeParams is : {}", scriptEntry, executeParams, ex);
+            return EngineExecutorResult.failed(ex);
+        }
+
+        logger.debug("DefaultEngineExecutor execute script by groovyMethodName success, result is : {}", result);
 
         // 返回执行结果
         return EngineExecutorResult.success(result);
@@ -63,12 +131,12 @@ public class DefaultEngineExecutor implements EngineExecutor {
      */
     private Binding buildBinding(ExecuteParams params) {
         Binding binding = new Binding();
+        // 将spring容器上下文放入脚本
+        binding.setProperty(GroovyEngineConstants.ContextConstants.APPLICATION_CONTEXT, ApplicationContextHelper.getContext());
         // 没有需要传递的参数
         if (Objects.isNull(params)) {
             return binding;
         }
-        // 将spring容器上下文放入脚本
-        binding.setProperty(GroovyEngineConstants.ContextConstants.APPLICATION_CONTEXT, ApplicationContextHelper.getContext());
         params.forEach(binding::setProperty);
         return binding;
     }

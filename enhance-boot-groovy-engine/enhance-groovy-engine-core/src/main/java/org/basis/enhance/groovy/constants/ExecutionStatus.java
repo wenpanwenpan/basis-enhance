@@ -22,7 +22,11 @@ public enum ExecutionStatus {
     /**
      * 没有找到脚本
      */
-    NO_SCRIPT("4004", "没有找到groovy脚本");
+    NO_SCRIPT("4004", "没有找到groovy脚本"),
+    /**
+     * 参数有误
+     */
+    PARAM_ERROR("3003", "没有找到groovy脚本");
 
     /**
      * 编码
