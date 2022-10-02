@@ -36,28 +36,31 @@ mybatis:
 # 调整日志级别
 logging:
   level:
+    org.basis: info
     org.basis.groovy.mapper: debug
 
 enhance:
   groovy:
     engine:
       # 脚本检查更新周期（单位：秒），（默认300L）
-      pollingCycle: 10
+      pollingCycle: 10000
       # 开启功能
       enable: true
       # 缓存过期时间(默认600L分钟)
-      cacheExpireAfterWrite: 10
+      cacheExpireAfterWrite: 20
       #缓存初始容量(默认100)
       cacheInitialCapacity: 10
       # 缓存最大容量(默认500)
-      cacheMaximumSize: 20
+      cacheMaximumSize: 50
       # 开启基于Redis加载groovy脚本
-      #      redis-loader:
-      #        namespace: customer-console
-      #        enable: true
-      mysql-loader:
+      redis-loader:
+        # 不配置则和应用名称相同
         namespace: customer-console
         enable: true
+#      mysql-loader:
+# 不配置则和应用名称相同
+#        namespace: customer-console
+#        enable: true
 #    开启加载classpath下的脚本的loader
 #      classpath-loader:
 #      enable: true

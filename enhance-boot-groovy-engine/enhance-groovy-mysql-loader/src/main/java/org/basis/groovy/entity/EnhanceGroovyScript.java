@@ -2,7 +2,10 @@ package org.basis.groovy.entity;
 
 import com.google.common.base.Joiner;
 import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
 import org.basis.enhance.groovy.entity.ScriptQuery;
+import org.basis.enhance.groovy.helper.ApplicationContextHelper;
+import org.basis.groovy.config.properties.GroovyMysqlLoaderProperties;
 import org.springframework.lang.NonNull;
 
 import java.util.Date;
@@ -15,7 +18,10 @@ import java.util.Date;
 @Data
 public class EnhanceGroovyScript {
 
-    private static final String LOWER_LINE = "_";
+    /**
+     * key分隔符
+     */
+    private static String KEY_SEPARATOR = null;
 
     /**
      * id
@@ -74,8 +80,12 @@ public class EnhanceGroovyScript {
      * 构建唯一key
      */
     public String buildOnlyKey() {
+        if (StringUtils.isBlank(KEY_SEPARATOR)) {
+            KEY_SEPARATOR = ApplicationContextHelper.getContext()
+                    .getBean(GroovyMysqlLoaderProperties.class).getKeySeparator();
+        }
         // 这5个字段值构成了唯一key，可以唯一确定一个groovy脚本
-        return Joiner.on(LOWER_LINE).join(namespace, platformCode, productCode, channelCode, businessCode);
+        return Joiner.on(KEY_SEPARATOR).join(namespace, platformCode, productCode, channelCode, businessCode);
     }
 
     /**
@@ -90,11 +100,16 @@ public class EnhanceGroovyScript {
      * 将字符串转换为查询条件
      */
     public EnhanceGroovyScript queryConverter(@NonNull String queryStr) {
-        // 按下划线切割
-        String[] split = queryStr.split(LOWER_LINE);
+        if (StringUtils.isBlank(KEY_SEPARATOR)) {
+            KEY_SEPARATOR = ApplicationContextHelper.getContext()
+                    .getBean(GroovyMysqlLoaderProperties.class).getKeySeparator();
+        }
+        // 按下指定分隔符切割
+        String[] split = queryStr.split(KEY_SEPARATOR);
         if (split.length != 5) {
             throw new UnsupportedOperationException("uniqueKey length must be 5.");
         }
+        // 【命名空间 + 平台编码 + 产品码 + 渠道码 + 业务code】唯一确定一个脚本项
         EnhanceGroovyScript groovyScript = new EnhanceGroovyScript();
         groovyScript.setNamespace(split[0]);
         groovyScript.setPlatformCode(split[1]);

@@ -5,14 +5,10 @@ import org.basis.enhance.groovy.entity.EngineExecutorResult;
 import org.basis.enhance.groovy.entity.ExecuteParams;
 import org.basis.enhance.groovy.entity.ScriptQuery;
 import org.basis.enhance.groovy.executor.EngineExecutor;
-import org.enhance.groovy.api.dto.OrderInfoDTO;
-import org.enhance.groovy.api.dto.ProductInfoDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Date;
 
 /**
  * 测试从MySQL中加载脚本
@@ -22,7 +18,7 @@ import java.util.Date;
 @Slf4j
 @RestController("TestLoadFromMysqlController.v1")
 @RequestMapping("/v1/load-from-mysql")
-public class TestLoadFromMysqlController {
+public class TestLoadFromMysqlController extends BaseController {
 
     @Autowired
     private EngineExecutor engineExecutor;
@@ -35,13 +31,7 @@ public class TestLoadFromMysqlController {
     @GetMapping("/change-order")
     public String changeOrderInfo(String scriptName) {
         // 构建参数
-        OrderInfoDTO orderInfoDTO = new OrderInfoDTO();
-        orderInfoDTO.setOrderAmount("1000");
-        orderInfoDTO.setOrderName("测试订单");
-        orderInfoDTO.setOrderNumber("BG-123987");
-        ExecuteParams executeParams = new ExecuteParams();
-        executeParams.put("orderInfo", orderInfoDTO);
-
+        ExecuteParams executeParams = buildOrderParams();
         // 执行脚本
         EngineExecutorResult executorResult = engineExecutor.execute(new ScriptQuery(scriptName), executeParams);
         log.info("changeOrderInfo=========>>>>>>>>>>>执行结果：{}", executorResult);
@@ -57,13 +47,7 @@ public class TestLoadFromMysqlController {
     @GetMapping("/change-product")
     public String changeProductInfo(String scriptName) {
         // 构建参数
-        ProductInfoDTO productInfoDTO = new ProductInfoDTO();
-        productInfoDTO.setCreateDate(new Date());
-        productInfoDTO.setName("小米手机");
-        productInfoDTO.setPrice(10D);
-        ExecuteParams executeParams = new ExecuteParams();
-        executeParams.put("productInfo", productInfoDTO);
-
+        ExecuteParams executeParams = buildProductParams();
         // 执行脚本中指定的方法 changeProduct
         EngineExecutorResult executorResult = engineExecutor.execute(
                 "changeProduct", new ScriptQuery(scriptName), executeParams);

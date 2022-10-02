@@ -8,6 +8,7 @@ import org.basis.enhance.groovy.entity.EngineExecutorResult;
 import org.basis.enhance.groovy.entity.ExecuteParams;
 import org.basis.enhance.groovy.entity.ScriptEntry;
 import org.basis.enhance.groovy.entity.ScriptQuery;
+import org.basis.enhance.groovy.exception.LoadScriptException;
 import org.basis.enhance.groovy.executor.EngineExecutor;
 import org.basis.enhance.groovy.helper.ApplicationContextHelper;
 import org.basis.enhance.groovy.registry.ScriptRegistry;
@@ -40,6 +41,10 @@ public class DefaultEngineExecutor implements EngineExecutor {
         ScriptEntry scriptEntry;
         try {
             scriptEntry = scriptRegistry.find(scriptQuery);
+            // 没有找到脚本，抛出异常
+            if (Objects.isNull(scriptEntry)) {
+                throw new LoadScriptException(String.format("can not found script by [%s]", scriptQuery.getUniqueKey()));
+            }
         } catch (Exception ex) {
             logger.error("execute groovy script error, scriptQuery is : {}, " +
                     "executeParams is : {}", scriptQuery, executeParams, ex);
@@ -85,6 +90,10 @@ public class DefaultEngineExecutor implements EngineExecutor {
         ScriptEntry scriptEntry;
         try {
             scriptEntry = scriptRegistry.find(scriptQuery);
+            // 没有找到脚本，抛出异常
+            if (Objects.isNull(scriptEntry)) {
+                throw new LoadScriptException(String.format("can not found script by [%s]", scriptQuery.getUniqueKey()));
+            }
         } catch (Exception ex) {
             logger.error("execute groovy script by groovyMethodName error, scriptQuery is : {}, " +
                     "executeParams is : {}", scriptQuery, executeParams, ex);

@@ -46,8 +46,6 @@
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
-            <!--由使用方决定-->
-            <scope>provided</scope>
             <version>2.0.1</version>
         </dependency>
         <!--加载Redis下的groovy脚本loader依赖-->
