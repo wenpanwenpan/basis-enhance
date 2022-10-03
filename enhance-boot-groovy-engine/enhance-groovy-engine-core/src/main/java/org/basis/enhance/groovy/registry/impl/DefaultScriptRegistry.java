@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.basis.enhance.groovy.entity.ScriptEntry;
 import org.basis.enhance.groovy.entity.ScriptQuery;
 import org.basis.enhance.groovy.exception.LoadScriptException;
+import org.basis.enhance.groovy.exception.RegisterScriptException;
 import org.basis.enhance.groovy.loader.ScriptLoader;
 import org.basis.enhance.groovy.registry.ScriptRegistry;
 import org.springframework.util.CollectionUtils;
@@ -57,15 +58,9 @@ public class DefaultScriptRegistry implements ScriptRegistry {
     @Override
     public Boolean batchRegister(List<ScriptEntry> scriptEntries) {
         log.debug("batch register start, scriptEntries is : {}", scriptEntries);
-        if (CollectionUtils.isEmpty(scriptEntries)) {
-            log.warn("scriptEntries is empty, not register.");
-            return true;
-        }
-        for (ScriptEntry scriptEntry : scriptEntries) {
-            register(scriptEntry);
-        }
-        log.debug("batch register success, scriptEntries is : {}", scriptEntries);
-        return true;
+        Boolean success = batchRegister(scriptEntries, true);
+        log.debug("batch register result is : [{}], scriptEntries is : {}", success, scriptEntries);
+        return success;
     }
 
     @Override
@@ -88,11 +83,12 @@ public class DefaultScriptRegistry implements ScriptRegistry {
             log.warn("scriptEntries is empty, not register.");
             return true;
         }
+        boolean executeResult = true;
         for (ScriptEntry scriptEntry : scriptEntries) {
-            register(scriptEntry, allowToCover);
+            executeResult &= register(scriptEntry, allowToCover);
         }
         log.debug("batch register success, scriptEntries is : {}, allowToCover is : {}", scriptEntries, allowToCover);
-        return true;
+        return executeResult;
     }
 
     @Override
@@ -151,7 +147,10 @@ public class DefaultScriptRegistry implements ScriptRegistry {
                 throw new LoadScriptException("load script by scriptLoader occur exception.", ex);
             }
             // 注册到本地注册中心
-            batchRegister(scriptEntries, false);
+            if (!batchRegister(scriptEntries, false)) {
+                // 注册失败，抛出异常，保证获取到的数据一定是最新的
+                throw new RegisterScriptException("batch register failed.");
+            }
         }
         return cache.asMap();
     }

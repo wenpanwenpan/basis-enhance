@@ -56,13 +56,12 @@ public class RegisterScriptToMysqlHelper implements RegisterScriptHelper {
             // 从mysql加载
             ScriptEntry scriptEntry = scriptLoader.load(new ScriptQuery(name));
             // 注册到脚本注册中心
-            scriptRegistry.register(scriptEntry);
-            log.warn("[{}] script register to registry successfully.", name);
-        } else {
-            throw new UnsupportedOperationException(
-                    String.format("can not register script, because [%s] is already exists in datasource.", name));
+            Boolean success = scriptRegistry.register(scriptEntry);
+            log.warn("[{}] script register to registry result is : [{}].", name, success);
+            return success;
         }
-        return true;
+        throw new UnsupportedOperationException(
+                String.format("can not register script, because [%s] is already exists in datasource.", name));
     }
 
     @Override

@@ -19,7 +19,7 @@ public interface ScriptRegistry {
      * </p>
      *
      * @param scriptEntry 脚本项
-     * @return java.lang.Boolean
+     * @return java.lang.Boolean 注册失败，则返回false，不抛出异常
      * @author wenpan 2022/9/18 12:22 下午
      */
     Boolean register(ScriptEntry scriptEntry);
@@ -30,7 +30,7 @@ public interface ScriptRegistry {
      * </p>
      *
      * @param scriptEntries 脚本项集合
-     * @return java.lang.Boolean
+     * @return java.lang.Boolean 注册失败，则返回false，不抛出异常
      * @author wenpan 2022/10/1 3:08 下午
      */
     Boolean batchRegister(List<ScriptEntry> scriptEntries);
@@ -42,7 +42,7 @@ public interface ScriptRegistry {
      *
      * @param scriptEntry  脚本项
      * @param allowToCover 当有重复时是否允许覆盖
-     * @return java.lang.Boolean
+     * @return java.lang.Boolean 注册失败，则返回false，不抛出异常
      * @author wenpan 2022/9/18 12:22 下午
      */
     Boolean register(ScriptEntry scriptEntry, boolean allowToCover);
@@ -54,7 +54,7 @@ public interface ScriptRegistry {
      *
      * @param scriptEntries 脚本项集合
      * @param allowToCover  是否允许覆盖
-     * @return java.lang.Boolean
+     * @return java.lang.Boolean 注册失败，则返回false，不抛出异常
      * @author wenpan 2022/10/1 3:08 下午
      */
     Boolean batchRegister(List<ScriptEntry> scriptEntries, boolean allowToCover);

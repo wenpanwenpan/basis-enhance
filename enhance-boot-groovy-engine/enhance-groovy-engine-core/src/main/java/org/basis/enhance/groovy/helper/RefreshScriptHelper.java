@@ -5,6 +5,7 @@ import org.basis.enhance.groovy.alarm.HotLoadingGroovyScriptAlarm;
 import org.basis.enhance.groovy.compiler.DynamicCodeCompiler;
 import org.basis.enhance.groovy.entity.ScriptEntry;
 import org.basis.enhance.groovy.entity.ScriptQuery;
+import org.basis.enhance.groovy.exception.RegisterScriptException;
 import org.basis.enhance.groovy.loader.ScriptLoader;
 import org.basis.enhance.groovy.registry.ScriptRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,20 +63,19 @@ public class RefreshScriptHelper {
                 log.warn("register scriptEntry to registry, oldScriptEntry is : {}," +
                         " newScriptEntry is : {}", oldScriptEntry, scriptEntry);
                 // 注册到注册中心统一进行管理
-                scriptRegistry.register(scriptEntry);
+                Boolean success = scriptRegistry.register(scriptEntry);
+                log.warn("RefreshScriptHelper refresh groovy script result is : [{}], scriptQuery is : {}", success, scriptQuery);
+                return success;
             } else {
                 log.warn("can not refresh, oldScriptEntry is : {}, newScriptEntry is : {}", oldScriptEntry, scriptEntry);
                 return false;
             }
-
         } catch (Exception ex) {
             log.error("RefreshScriptHelper refresh occur error, scriptEntry is : {}", scriptEntry, ex);
             // 调用用户自定义告警接口
             hotLoadingGroovyScriptAlarm.alarm(Collections.singletonList(scriptEntry), ex);
             return false;
         }
-        log.warn("RefreshScriptHelper refresh groovy script success, scriptQuery is : {}", scriptQuery);
-        return true;
     }
 
     /**
@@ -101,13 +101,17 @@ public class RefreshScriptHelper {
             log.info("RefreshScriptHelper load script count is : {}", scriptEntries.size());
             for (ScriptEntry scriptEntry : scriptEntries) {
                 ScriptEntry oldScriptEntry = scriptRegistry.find(new ScriptQuery(scriptEntry.getName()));
+
                 // 缓存中没有，则注册进缓存
                 if (Objects.isNull(oldScriptEntry)) {
                     log.info("can not found script by [{}], register to registry directly.", scriptEntry.getName());
-                    scriptRegistry.register(scriptEntry);
+                    if (!scriptRegistry.register(scriptEntry)) {
+                        throw new RegisterScriptException("register script return false.");
+                    }
                     addScriptCount++;
                     continue;
                 }
+
                 boolean isEquals = oldScriptEntry.fingerprintIsEquals(scriptEntry.getFingerprint());
                 // 指纹相同，则说明脚本没有变化，指纹不同则说明脚本有变化
                 if (!isEquals) {
@@ -117,10 +121,12 @@ public class RefreshScriptHelper {
                     scriptEntry.setClazz(aClass);
                     scriptEntry.setLastModifiedTime(System.currentTimeMillis());
                     // 注册
-                    scriptRegistry.register(scriptEntry);
+                    if (!scriptRegistry.register(scriptEntry)) {
+                        throw new RegisterScriptException("register script return false.");
+                    }
                     updateScriptCount++;
-                    log.info("modify [{}] complete.", scriptEntry.getName());
                 }
+
             }
         } catch (Exception ex) {
             success = false;

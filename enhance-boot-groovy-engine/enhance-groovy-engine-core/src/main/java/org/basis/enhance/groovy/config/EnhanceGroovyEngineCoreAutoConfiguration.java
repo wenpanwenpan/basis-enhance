@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.basis.enhance.groovy.alarm.HotLoadingGroovyScriptAlarm;
 import org.basis.enhance.groovy.annotation.ConditionalOnExistingProperty;
 import org.basis.enhance.groovy.config.properties.GroovyEngineProperties;
+import org.basis.enhance.groovy.executor.AutoRefreshScriptExecutor;
 import org.basis.enhance.groovy.helper.ApplicationContextHelper;
 import org.basis.enhance.groovy.helper.RefreshScriptHelper;
-import org.basis.enhance.groovy.runner.HotLoadingGroovyScriptRunner;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -25,13 +25,13 @@ import org.springframework.context.annotation.Import;
 public class EnhanceGroovyEngineCoreAutoConfiguration {
 
     /**
-     * 热加载groovy脚本的runner
+     * 自动刷新脚本executor
      */
     @Bean
-    public HotLoadingGroovyScriptRunner groovyRunner(GroovyEngineProperties groovyEngineProperties,
-                                                     RefreshScriptHelper refreshScriptHelper) {
+    public AutoRefreshScriptExecutor autoRefreshScriptExecutor(GroovyEngineProperties groovyEngineProperties,
+                                                               RefreshScriptHelper refreshScriptHelper) {
 
-        return new HotLoadingGroovyScriptRunner(groovyEngineProperties, refreshScriptHelper);
+        return new AutoRefreshScriptExecutor(groovyEngineProperties, refreshScriptHelper);
     }
 
     @Bean
